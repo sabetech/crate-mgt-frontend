@@ -12,10 +12,10 @@ const TableEmptiesLog: React.FC<TableEmptiesLogProps> = ({columns, data}) => (
   <Table
     columns={columns}
     expandable={{
-      expandedRowRender: (record) => <Table columns={[{ title: 'SKU', dataIndex: 'sku', key: 'sku' },
+      expandedRowRender: (record) => <Table columns={[{ title: 'SKU', dataIndex: 'sku_name', key: 'sku' },
       { title: 'Quantity', dataIndex: 'quantity', key: 'quantity' },
       ]}
-      dataSource={[{ key: 1, sku: '123456', quantity: 1 }]}
+      dataSource={(record.products.length > 0 ? record.products.map(p => ({...p, quantity:p.pivot?.quantity, key: p.id})) : [])}
       />,
       rowExpandable: (record) => record.products.length > 0,
     }}

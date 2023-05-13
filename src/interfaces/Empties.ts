@@ -6,8 +6,10 @@ export interface ServerResponse<T> {
 export interface IProduct {
     id?: number;
     sku_name: string;
-    quantity?: number;
     sku_code?: string;
+    pivot?: {
+        quantity: number;
+    }
 }
 
 export interface IEmptyLog {
