@@ -12,6 +12,8 @@ import {
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import AddReturningEmpties from '../pages/empties/AddReturningEmpties';
+import TableEmptiesReturnedLog from '../components/TableEmptiesReturnedLog';
+import ReturningEmptiesLog from '../pages/empties/ReturningEmptiesLog';
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -38,6 +40,7 @@ const items: MenuItem[] = [
   ]),
   getItem('Empties', 'empties', <DesktopOutlined />, [
     getItem('Empties Log', 'empties/empties_log'),
+    getItem('Empties Returned Log', 'empties/empties_returned_log'),
     getItem('Add Purchase Order', 'empties/add_purchase_order'),
     getItem('Add Returning Empties', 'empties/add_returning_empties'),
   ]),
@@ -67,6 +70,7 @@ const LayoutBase = () => {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/empties/empties_log" element={<EmptiesLog />} />
+              <Route path="/empties/empties_returned_log" element={<ReturningEmptiesLog />} />
               <Route path="/empties/add_purchase_order" element={<AddPurchaseOrder />} />
               <Route path="/empties/add_returning_empties" element={<AddReturningEmpties />} />
             </Routes>

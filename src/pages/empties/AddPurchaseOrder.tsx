@@ -1,11 +1,14 @@
 import React from 'react';
-import { Button, Form, Input, DatePicker, Space, Select, Upload } from 'antd';
+import { Button, Form, Input, DatePicker, Space, Select, Upload, App, notification, message } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { IProduct } from '../../interfaces/Product';
 import { ServerResponse } from '../../interfaces/Server';
 import { getProducts } from '../../services/ProductsAPI';
 import { useEffect } from 'react';
+import { IEmptyLog } from '../../interfaces/Empties';
+import { addEmptiesLog } from '../../services/EmptiesAPI';
+
 
 const { Option } = Select;
 const normFile = (e: any) => {
@@ -17,12 +20,19 @@ const normFile = (e: any) => {
 
 const AddPurchaseOrder = () => {
     const [form] = Form.useForm();
-
-    const { isLoading, data } = useQuery<ServerResponse<IProduct[]>, Error>(
+    const [messageApi ] = message.useMessage();
+    const { data } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
         () => getProducts("")
     );
-
+    
+    const { mutate } = useMutation({
+        mutationFn: (values: IEmptyLog) => addEmptiesLog(values, ""),
+        onSuccess: (data) => {
+            success(data.data)
+        }
+    });
+    
     const [productList, setProductList] = React.useState<IProduct[] | undefined>([]);
     
     useEffect(() => {
@@ -35,7 +45,18 @@ const AddPurchaseOrder = () => {
     },[data]);
 
     const onFinish = (values: any) => {
+        console.log(values)
+        
+        mutate(values)
+    }
 
+    const success = (msg: string) => {
+        messageApi.open({
+            type: 'success',
+            content: msg,
+            duration: 0
+        });
+        setTimeout(messageApi.destroy, 2500);
     }
 
     return (
@@ -46,32 +67,34 @@ const AddPurchaseOrder = () => {
                 style={{ maxWidth: '90%' }}
                 layout={'vertical'}
                 size={'large'}
+                onFinish={onFinish}
             >
                 <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridGap: '20px'}}>
                     <div>
                         <Form.Item 
                             label="Purchase Order Number"
                             rules={[{ required: true, message: 'Please Enter Purchase Order' }]}
+                            name="purchase_order"
                         >
                             <Input />
                         </Form.Item>
 
-                        <Form.Item label="Date">
+                        <Form.Item label="Date" name="date">
                             <DatePicker />
                         </Form.Item>
 
-                        <Form.Item label="Vehicle Number">
+                        <Form.Item label="Vehicle Number" name="vehicle_number">
                             <Input />
                         </Form.Item>
 
-                        <Form.Item label="Received By">
+                        <Form.Item label="Received By" name="received_by">
                             <Input />
                         </Form.Item>
 
-                        <Form.Item label="Delivered By">
+                        <Form.Item label="Delivered By" name="delievered_by">
                             <Input />
                         </Form.Item>
-                        <Form.Item label="Upload" valuePropName="fileList" getValueFromEvent={normFile}>
+                        <Form.Item label="Upload" valuePropName="fileList" getValueFromEvent={normFile} name="image_ref">
                             <Upload action="/upload.do" listType="picture-card">
                                 <div>
                                 <PlusOutlined />
@@ -139,7 +162,7 @@ const AddPurchaseOrder = () => {
                     </div>
                 </div>
                 <Form.Item>
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" >
                         Submit
                     </Button>
                 </Form.Item>

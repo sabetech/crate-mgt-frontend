@@ -9,3 +9,7 @@ export const getEmptiesLog = async (token: string): Promise<ServerResponse<IEmpt
 export const getEmptiesReturnedLog = async (token: string): Promise<ServerResponse<IEmptyReturnedLog[]>> => {
     return (await api.get('/empties-returned-logs', {'Authorization': token})).data;
 }
+
+export const addEmptiesLog = async (values: IEmptyLog, token: string): Promise<ServerResponse<string>> => {
+    return (await api.post('/empties-receiving-logs', values, {'Authorization': token})).data;
+}
