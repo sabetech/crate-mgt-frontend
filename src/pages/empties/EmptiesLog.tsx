@@ -27,8 +27,6 @@ const EmptiesLog: React.FC = () => {
         }
     },[data]);
 
-    console.log("EMPTIES LOG:::", emptiesLog);
-
     const columns: ColumnsType<IEmptyLog> = [
         { title: 'Date', dataIndex: 'date', key: 'date' },
         Table.EXPAND_COLUMN,

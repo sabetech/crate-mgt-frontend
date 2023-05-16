@@ -19,3 +19,12 @@ export interface IEmptyLog {
     image_reference: string;
     products: IProduct[];
 }
+
+export interface IEmptyReturnedLog {
+    id?: number;
+    date: string;
+    quantity_returned: number;
+    vehicle_number: string;
+    returned_by: string;
+    products: IProduct[]
+}

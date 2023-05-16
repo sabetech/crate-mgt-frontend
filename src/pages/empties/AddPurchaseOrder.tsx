@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Form, Input, DatePicker, Space, Select } from 'antd';
+import { Button, Form, Input, DatePicker, Space, Select, Upload } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import { useQuery } from '@tanstack/react-query';
 import { IProduct } from '../../interfaces/Product';
@@ -8,6 +8,12 @@ import { getProducts } from '../../services/ProductsAPI';
 import { useEffect } from 'react';
 
 const { Option } = Select;
+const normFile = (e: any) => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e?.fileList;
+  };
 
 const AddPurchaseOrder = () => {
     const [form] = Form.useForm();
@@ -64,6 +70,14 @@ const AddPurchaseOrder = () => {
 
                         <Form.Item label="Delivered By">
                             <Input />
+                        </Form.Item>
+                        <Form.Item label="Upload" valuePropName="fileList" getValueFromEvent={normFile}>
+                            <Upload action="/upload.do" listType="picture-card">
+                                <div>
+                                <PlusOutlined />
+                                <div style={{ marginTop: 8 }}>Upload</div>
+                                </div>
+                            </Upload>
                         </Form.Item>
 
                     </div>
