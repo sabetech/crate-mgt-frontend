@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import TableEmptiesLog from '../../components/TableEmptiesLog';
-import { IEmptyLog, ServerResponse } from '../../interfaces/Empties';
+import { ServerResponse } from '../../interfaces/Server';
+import { IEmptyLog } from '../../interfaces/Empties';
 import { useQuery } from '@tanstack/react-query';
 import { getEmptiesLog } from '../../services/EmptiesAPI';
 import type { ColumnsType } from 'antd/es/table';
+import { Table } from 'antd';
 
 const EmptiesLog: React.FC = () => {
 
@@ -29,6 +31,7 @@ const EmptiesLog: React.FC = () => {
 
     const columns: ColumnsType<IEmptyLog> = [
         { title: 'Date', dataIndex: 'date', key: 'date' },
+        Table.EXPAND_COLUMN,
         { title: 'Quanity Received', dataIndex: 'quantity_received', key: 'quantity_received' },
         { title: 'Vehicle Number', dataIndex: 'vehicle_number', key: 'vehicle_number' },
         { title: 'Purchse Order Number', dataIndex: 'purchase_order_number', key: 'purchase_order_number' },

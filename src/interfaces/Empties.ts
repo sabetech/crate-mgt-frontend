@@ -1,8 +1,3 @@
-export interface ServerResponse<T> {
-    data: T;
-    success: boolean;
-}
-
 export interface IProduct {
     id?: number;
     sku_name: string;

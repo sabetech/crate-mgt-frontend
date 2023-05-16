@@ -16,8 +16,10 @@ const TableEmptiesLog: React.FC<TableEmptiesLogProps> = ({columns, data}) => (
       { title: 'Quantity', dataIndex: 'quantity', key: 'quantity' },
       ]}
       dataSource={(record.products.length > 0 ? record.products.map(p => ({...p, quantity:p.pivot?.quantity, key: p.id})) : [])}
+      pagination={false}
       />,
       rowExpandable: (record) => record.products.length > 0,
+      
     }}
     dataSource={data}
   />
