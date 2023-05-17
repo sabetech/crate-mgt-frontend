@@ -20,7 +20,10 @@ const normFile = (e: any) => {
 
 const AddPurchaseOrder = () => {
     const [form] = Form.useForm();
-    const [messageApi ] = message.useMessage();
+
+    
+
+    const [messageApi, contextHolder ] = message.useMessage();
     const { data } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
         () => getProducts("")
@@ -29,7 +32,7 @@ const AddPurchaseOrder = () => {
     const { mutate } = useMutation({
         mutationFn: (values: IEmptyLog) => addEmptiesLog(values, ""),
         onSuccess: (data) => {
-            success(data.data)
+            success(data.data || "")
         }
     });
     
@@ -46,8 +49,19 @@ const AddPurchaseOrder = () => {
 
     const onFinish = (values: any) => {
         console.log(values)
+
+        console.log(form.getFieldsValue(true))
+
+        let formValues = {
+            ...values,
+            "product-quanties": JSON.stringify(values['product-quanties'].map((item: any) => ({
+                product: item.product,
+                quantity: item.quantity
+            })))
+        };
+
+        mutate(formValues)
         
-        mutate(values)
     }
 
     const success = (msg: string) => {
@@ -61,9 +75,11 @@ const AddPurchaseOrder = () => {
 
     return (
         <div>
+            {contextHolder}
             <h1>Add Purchase Order</h1>
             
             <Form 
+                form={form}
                 style={{ maxWidth: '90%' }}
                 layout={'vertical'}
                 size={'large'}

@@ -11,5 +11,9 @@ export const getEmptiesReturnedLog = async (token: string): Promise<ServerRespon
 }
 
 export const addEmptiesLog = async (values: IEmptyLog, token: string): Promise<ServerResponse<string>> => {
-    return (await api.post('/empties-receiving-logs', values, {'Authorization': token})).data;
+    return (await api.postWithFile('/empties-receiving-logs', values, {'Authorization': token})).data;
+}
+
+export const addEmptiesReturnedLog = async (values: IEmptyReturnedLog, token: string): Promise<ServerResponse<string>> => {
+    return (await api.post('/empties-returned-logs', values, {'Authorization': token})).data;
 }

@@ -9,10 +9,10 @@ import {
   DesktopOutlined,
   PieChartOutlined,
   UserOutlined,
+  FileTextOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import AddReturningEmpties from '../pages/empties/AddReturningEmpties';
-import TableEmptiesReturnedLog from '../components/TableEmptiesReturnedLog';
 import ReturningEmptiesLog from '../pages/empties/ReturningEmptiesLog';
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -34,15 +34,20 @@ function getItem(
 const items: MenuItem[] = [
   getItem('Dashboard', 'dashboard', <PieChartOutlined />),
   getItem('Customers', 'customers', <UserOutlined />, [
-    getItem('Add Customer', 'add_customer'),
-    getItem('Show Account History', 'account_history'),
-    getItem('List All Customers', 'list_all_customers'),
+    getItem('Add Customer', 'customers/add_customer'),
+    getItem('Return Empties', 'customers/return_empties'),
+    getItem('Empties Account History', 'customers/empties_account_history'),
+    getItem('List All Customers', 'customers/list_all_customers'),
   ]),
   getItem('Empties', 'empties', <DesktopOutlined />, [
     getItem('Empties Log', 'empties/empties_log'),
     getItem('Empties Returned Log', 'empties/empties_returned_log'),
     getItem('Add Purchase Order', 'empties/add_purchase_order'),
     getItem('Add Returning Empties', 'empties/add_returning_empties'),
+  ]),
+  getItem('Reports', 'reports', <FileTextOutlined />, [
+    getItem('Balances', 'reports/balances'),
+    getItem('GBL Transactions', 'reports/gbl_transactions'),
   ]),
 ];
 const LayoutBase = () => {
@@ -69,6 +74,10 @@ const LayoutBase = () => {
           <div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>
             <Routes>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/customers/add_customer" element={<></>} />
+              <Route path="/customers/return_empties" element={<></>} />
+              <Route path="/customers/empties_account_history" element={<></>} />
+              <Route path="/customers/list_all_customers" element={<></>} />
               <Route path="/empties/empties_log" element={<EmptiesLog />} />
               <Route path="/empties/empties_returned_log" element={<ReturningEmptiesLog />} />
               <Route path="/empties/add_purchase_order" element={<AddPurchaseOrder />} />

@@ -8,8 +8,28 @@ import axios from "axios";
 const BASE_URL = "http://localhost:8000/api/v1";
 const SERVER_URL = "http://localhost:8000";
 
-
 const post = (url: string, data: any, headers: object) => {
+    const formData = new FormData();
+    
+    Object.keys(data).forEach(key => {
+        if (key === "products")
+            formData.append(key, JSON.stringify(data[key]));
+        else{
+            formData.append(key, data[key]);
+        }
+    });
+    
+    return axios(BASE_URL+url, {
+         method: 'POST',
+         headers: {
+           'Content-Type': '"application/json"',
+           ...headers,
+         },
+         data: formData
+       });
+   }
+
+const postWithFile = (url: string, data: any, headers: object) => {
  const formData = new FormData();
  
  Object.keys(data).forEach(key => {
@@ -58,4 +78,4 @@ const put = (url: string, data: any, headers: object) => {
 }
 
 
-export { post, get, deleteRequest, put, SERVER_URL };
+export { post, postWithFile, get, deleteRequest, put, SERVER_URL };
