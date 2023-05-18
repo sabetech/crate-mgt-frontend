@@ -14,6 +14,7 @@ import {
 import type { MenuProps } from 'antd';
 import AddReturningEmpties from '../pages/empties/AddReturningEmpties';
 import ReturningEmptiesLog from '../pages/empties/ReturningEmptiesLog';
+import AddNewCustomers from '../pages/customers/AddNewCustomers';
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -74,7 +75,7 @@ const LayoutBase = () => {
           <div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/customers/add_customer" element={<></>} />
+              <Route path="/customers/add_customer" element={<AddNewCustomers />} />
               <Route path="/customers/return_empties" element={<></>} />
               <Route path="/customers/empties_account_history" element={<></>} />
               <Route path="/customers/list_all_customers" element={<></>} />

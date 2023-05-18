@@ -5,12 +5,12 @@ import { IEmptyReturnedLog } from '../../interfaces/Empties';
 import { useQuery } from '@tanstack/react-query';
 import { getEmptiesReturnedLog } from '../../services/EmptiesAPI';
 import type { ColumnsType } from 'antd/es/table';
-import { Table } from 'antd';
+import { Card, Table } from 'antd';
 
 const ReturningEmptiesLog: React.FC = () => {
 
     //use react query to fetch data from server
-    const { isLoading, error, data } = useQuery<ServerResponse<IEmptyReturnedLog[]>, Error>(
+    const { data } = useQuery<ServerResponse<IEmptyReturnedLog[]>, Error>(
         ['empties'],
         () => getEmptiesReturnedLog("")
     );
@@ -30,7 +30,7 @@ const ReturningEmptiesLog: React.FC = () => {
     const columns: ColumnsType<IEmptyReturnedLog> = [
         { title: 'Date', dataIndex: 'date', key: 'date' },
         Table.EXPAND_COLUMN,
-        { title: 'Quanity Returned', dataIndex: 'quantity_returned', key: 'quantity_returned' },
+        { title: 'Quanity Returned', dataIndex: 'quantity', key: 'quantity' },
         { title: 'Vehicle Number', dataIndex: 'vehicle_number', key: 'vehicle_number' },
         { title: 'Returned By', dataIndex: 'returned_by', key: 'returned_by' },
         {
@@ -43,6 +43,9 @@ const ReturningEmptiesLog: React.FC = () => {
 
     return (
         <>
+            <Card>
+
+            </Card>
             <TableEmptiesReturnedLog columns={columns} data={emptiesReturnedLog} />
         </>
     ); 

@@ -8,6 +8,7 @@ import { ServerResponse } from '../../interfaces/Server';
 import { addEmptiesReturnedLog } from '../../services/EmptiesAPI';
 import { getProducts } from '../../services/ProductsAPI';
 import { useEffect } from 'react';
+import { Spin } from 'antd';
 
 const { Option } = Select;
 
@@ -15,12 +16,12 @@ const AddReturningEmpties = () => {
     const [form] = Form.useForm();
     const [messageApi, contextHolder ] = message.useMessage();
 
-    const { isLoading, data } = useQuery<ServerResponse<IProduct[]>, Error>(
+    const { data } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
         () => getProducts("")
     );
 
-    const { mutate } = useMutation({
+    const { isLoading: isSubmitting, mutate } = useMutation({
         mutationFn: (values: IEmptyReturnedLog) => addEmptiesReturnedLog(values, ""),
         onSuccess: (data) => {
             success(data.data || "")
@@ -48,15 +49,12 @@ const AddReturningEmpties = () => {
     }
 
     const onFinish = (values: any) => {
-        console.log(values);
-
-        console.log(form.getFieldsValue(true));
-
+        
         let formValues: IEmptyReturnedLog = {
             date: values.date.format('YYYY-MM-DD'),
             vehicle_number: values.vehicle_number,
             returned_by: values.returned_by,
-            quantity_returned: values['product-quanties'].reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0),
+            quantity: values['product-quanties'].reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0),
             products: values['product-quanties'].map((item: any) => ({
                 product_id: item.product, // product id
                 quantity: parseInt(item.quantity)
@@ -64,6 +62,8 @@ const AddReturningEmpties = () => {
         };
 
         mutate(formValues);
+
+        form.resetFields();
 
     }
 
@@ -152,7 +152,7 @@ const AddReturningEmpties = () => {
                 </div>
                 <Form.Item>
                     <Button type="primary" htmlType="submit">
-                        Submit
+                        {isSubmitting && <Spin /> || "Submit"}
                     </Button>
                 </Form.Item>
             </Form>

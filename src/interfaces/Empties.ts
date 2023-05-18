@@ -23,7 +23,7 @@ export interface IEmptyLog {
 export interface IEmptyReturnedLog {
     id?: number;
     date: string;
-    quantity_returned: number;
+    quantity: number;
     vehicle_number: string;
     returned_by: string;
     products: IProduct[]
