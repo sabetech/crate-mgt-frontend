@@ -48,16 +48,16 @@ const AddPurchaseOrder = () => {
     },[data]);
 
     const onFinish = (values: any) => {
-        console.log(values)
-
-        console.log(form.getFieldsValue(true))
-
+        
         let formValues = {
             ...values,
             "product-quanties": JSON.stringify(values['product-quanties'].map((item: any) => ({
                 product: item.product,
                 quantity: item.quantity
-            })))
+            }))),
+            "date": values.date.format('YYYY-MM-DD'),
+            "image_ref": values.image_ref[0].originFileObj,
+            "quantity": values['product-quanties'].reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0)
         };
 
         mutate(formValues)

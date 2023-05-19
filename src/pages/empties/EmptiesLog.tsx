@@ -5,7 +5,7 @@ import { IEmptyLog } from '../../interfaces/Empties';
 import { useQuery } from '@tanstack/react-query';
 import { getEmptiesLog } from '../../services/EmptiesAPI';
 import type { ColumnsType } from 'antd/es/table';
-import { Table } from 'antd';
+import { Table, Image} from 'antd';
 
 const EmptiesLog: React.FC = () => {
 
@@ -35,7 +35,7 @@ const EmptiesLog: React.FC = () => {
         { title: 'Purchse Order Number', dataIndex: 'purchase_order_number', key: 'purchase_order_number' },
         { title: 'Received By', dataIndex: 'received_by', key: 'received_by' },
         { title: 'Delivered By', dataIndex: 'delivered_by', key: 'delivered_by' },
-        { title: 'Image Reference', dataIndex: 'image_reference', key: 'image_reference' },
+        { title: 'Image Reference', dataIndex: 'image_reference', key: 'image_reference', render: (value) => (<Image width={200} src={value.image_reference} />) },
         {
           title: 'Action',
           dataIndex: '',
