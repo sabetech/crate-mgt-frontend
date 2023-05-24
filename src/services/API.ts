@@ -40,6 +40,7 @@ const postWithFile = (url: string, data: any, headers: object) => {
       method: 'POST',
       headers: {
         'Content-Type': '"multipart/form-data"',
+        'Accept': 'application/json',
         ...headers,
       },
       data: formData
@@ -51,6 +52,7 @@ const get = (url: string, headers: object) => {
         method: 'GET',
         headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         ...headers,
         },
     });
@@ -61,6 +63,7 @@ const deleteRequest = (url: string, headers: object) => {
         method: 'DELETE',
         headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         ...headers,
         },
     });
@@ -71,11 +74,24 @@ const put = (url: string, data: any, headers: object) => {
         method: 'PUT',
         headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         ...headers,
         },
         data: data
     });
 }
 
+const auth = (url: string, data: any, headers: object) => {
+    return axios(BASE_URL+url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': '"application/json"',
+            'Accept': 'application/json',
+            ...headers,
+        },
+        data: JSON.stringify(data)
+    });
+}
 
-export { post, postWithFile, get, deleteRequest, put, SERVER_URL };
+
+export { post, postWithFile, get, deleteRequest, put, auth, SERVER_URL };
