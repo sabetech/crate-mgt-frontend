@@ -16,16 +16,20 @@ const Login: React.FC = () => {
     const [messageApi, contextHolder] = message.useMessage();
 
     const onFinish = async (values: IUser) => {
-        // 
+        // : Promise<ServerResponse<IUser | Error>>
         console.log(values);
         try {
             const response = await login({email:values.email, password: values.password});
             showSuccess('Login successful');
-            // signIn({
-            //     token: response.data.token,
-            //     expiresIn: response.data.expires_in,
-            //     tokenType: response.data.token_type,
-            // });
+            console.log(response);
+            if (response.status === 201){
+                signIn({
+                    token: response.data.token,
+                    expiresIn: response.data.expires_at,
+                    tokenType: response.data.token_type,
+                    authState: response.data.user,
+                });
+            }
         } catch (error: AxiosError<any> | any) {
             if (error.response.status === 401) {
                 console.log(error.response.data.message);

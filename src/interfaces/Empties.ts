@@ -16,6 +16,7 @@ export interface IEmptyLog {
     purchase_order_number: string;
     received_by: string;
     delivered_by: string;
+    pallets_number: number;
     image_reference: string;
     products: IProduct[];
 }
@@ -26,5 +27,6 @@ export interface IEmptyReturnedLog {
     quantity: number;
     vehicle_number: string;
     returned_by: string;
+    pallets_number: number;
     products: IProduct[]
 }

@@ -37,12 +37,12 @@ const items: MenuItem[] = [
   getItem('Dashboard', 'dashboard', <PieChartOutlined />),
   getItem('Customers', 'customers', <UserOutlined />, [
     getItem('Add Customer', 'customers/add_customer'),
+    getItem('List All Customers', 'customers/list_all_customers'),
     getItem('Return Empties', 'customers/return_empties'),
     getItem('Empties Account History', 'customers/empties_account_history'),
-    getItem('List All Customers', 'customers/list_all_customers'),
   ]),
   getItem('Empties', 'empties', <DesktopOutlined />, [
-    getItem('Empties Log', 'empties/empties_log'),
+    getItem('Sales In', 'empties/empties_log'),
     getItem('Empties Returned Log', 'empties/empties_returned_log'),
     getItem('Add Purchase Order', 'empties/add_purchase_order'),
     getItem('Add Returning Empties', 'empties/add_returning_empties'),

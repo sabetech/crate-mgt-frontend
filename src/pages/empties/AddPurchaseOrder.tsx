@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Form, Input, DatePicker, Space, Select, Upload, message } from 'antd';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import { Button, Form, Input, DatePicker, Space, Select, Upload, message,Spin } from 'antd';
+import { MinusCircleOutlined, PlusOutlined, LoadingOutlined } from '@ant-design/icons'
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { IProduct } from '../../interfaces/Product';
 import { ServerResponse } from '../../interfaces/Server';
@@ -8,7 +8,7 @@ import { getProducts } from '../../services/ProductsAPI';
 import { useEffect } from 'react';
 import { IEmptyLog } from '../../interfaces/Empties';
 import { addEmptiesLog } from '../../services/EmptiesAPI';
-
+import { useSignOut, useAuthHeader } from 'react-auth-kit';
 
 const { Option } = Select;
 const normFile = (e: any) => {
@@ -18,21 +18,24 @@ const normFile = (e: any) => {
     return e?.fileList;
   };
 
+const antIcon = <LoadingOutlined style={{ fontSize: 24, marginRight: 10 }} spin />;
+
 const AddPurchaseOrder = () => {
     const [form] = Form.useForm();
-
+    const authHeader = useAuthHeader();
     
 
     const [messageApi, contextHolder ] = message.useMessage();
     const { data } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
-        () => getProducts("")
+        () => getProducts(authHeader())
     );
     
-    const { mutate } = useMutation({
-        mutationFn: (values: IEmptyLog) => addEmptiesLog(values, ""),
+    const { isLoading: isSubmitting, mutate } = useMutation({
+        mutationFn: (values: IEmptyLog) => addEmptiesLog(values, authHeader()),
         onSuccess: (data) => {
             success(data.data || "")
+            form.resetFields();
         }
     });
     
@@ -110,6 +113,9 @@ const AddPurchaseOrder = () => {
                         <Form.Item label="Delivered By" name="delievered_by">
                             <Input />
                         </Form.Item>
+                        <Form.Item label="Number of Pallets" name={"pallets_number"}>
+                            <Input />
+                        </Form.Item>
                         <Form.Item label="Upload" valuePropName="fileList" getValueFromEvent={normFile} name="image_ref">
                             <Upload action="/upload.do" listType="picture-card">
                                 <div>
@@ -178,8 +184,8 @@ const AddPurchaseOrder = () => {
                     </div>
                 </div>
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" >
-                        Submit
+                    <Button type="primary" htmlType="submit" disabled={isSubmitting} >
+                        {isSubmitting && <Spin indicator={antIcon} />} Submit
                     </Button>
                 </Form.Item>
             </Form>

@@ -1,40 +1,63 @@
 import React, { useEffect } from 'react';
 import TableEmptiesLog from '../../components/TableEmptiesLog';
 import { ServerResponse } from '../../interfaces/Server';
-import { IEmptyLog } from '../../interfaces/Empties';
+import { IEmptyLog, IEmptyReturnedLog } from '../../interfaces/Empties';
 import { useQuery } from '@tanstack/react-query';
-import { getEmptiesLog } from '../../services/EmptiesAPI';
+import { getEmptiesLog, getEmptiesReturnedLog } from '../../services/EmptiesAPI';
 import type { ColumnsType } from 'antd/es/table';
 import { Table, Image, DatePicker, Row, Col, Statistic, Card} from 'antd';
+import { useSignOut, useAuthHeader } from 'react-auth-kit';
 const { RangePicker } = DatePicker;
 
 const EmptiesLog: React.FC = () => {
-
+    const authHeader = useAuthHeader();
+    const signOut = useSignOut();
     //use react query to fetch data from server
-    const { isLoading, error, data } = useQuery<ServerResponse<IEmptyLog[]>, Error>(
-        ['empties'],
-        () => getEmptiesLog("")
+    const { error: emptiesReceivedError, data: receivedEmpties } = useQuery<ServerResponse<IEmptyLog[]>, Error>(
+        ['empties_received'],
+        () => getEmptiesLog(authHeader())
     );
 
+    const { data: returnedEmpties } = useQuery<ServerResponse<IEmptyReturnedLog[]>, Error>(
+        ['empties_returned'],
+        () => getEmptiesReturnedLog(authHeader())
+    );
+
+    if (emptiesReceivedError) {
+        //DONT FORGET TO HANDLE THIS >> VERY IMPORTANT
+        if (emptiesReceivedError.response.status === 401) {
+            signOut();
+        }
+    }
+
     const [emptiesLog, setEmptiesLog] = React.useState<IEmptyLog[] | undefined>(undefined);
+    const [emptiesReturnedLog, setEmptiesReturnedLog] = React.useState<IEmptyReturnedLog[] | undefined>(undefined);
+    let emptiesBalance = (emptiesLog && emptiesReturnedLog) ? emptiesReturnedLog.reduce((acc: number, item: IEmptyReturnedLog) => acc + item.quantity, 0) - emptiesLog.reduce((acc: number, item: IEmptyLog) => acc + item.quantity_received, 0) : 0
     const [dateRange, setDateRange] = React.useState<string[] | undefined>(undefined);
 
     useEffect(() => {
-        if (data) {
-            setEmptiesLog(data.data?.map((item) => ({
+        if (receivedEmpties) {
+            setEmptiesLog(receivedEmpties.data?.map((item) => ({
                     ...item,
                     key: item.id})
                 )
             );
         }
-    },[data]);
+        if (returnedEmpties) {
+            setEmptiesReturnedLog(returnedEmpties.data?.map((item) => ({
+                ...item,
+                key: item.id})
+            ));
+        }
+
+    },[receivedEmpties, returnedEmpties]);
 
     useEffect(() => {
 
         if (dateRange) {
             console.log(dateRange);
             let [start, end] = dateRange;
-            let filteredData = data?.data?.filter((item) => {
+            let filteredData = receivedEmpties?.data?.filter((item) => {
                 let date = new Date(item.date);
                 let startDate = new Date(start);
                 let endDate = new Date(end);
@@ -89,8 +112,8 @@ const EmptiesLog: React.FC = () => {
                     <Card bordered={true}>
                         <Statistic
                             title="Quantity Balance"
-                            value={-123}
-                            valueStyle={{ color: '#ff0000' }}
+                            value={emptiesBalance}
+                            valueStyle={{ color: emptiesBalance < 0?'#ff0000':'#3f8600' }}
                             suffix="empties"
                         />
                     </Card>

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Form, Input, DatePicker, Space, Select, message } from 'antd';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import { Button, Form, Input, DatePicker, Space, Select, message, Spin } from 'antd';
+import { MinusCircleOutlined, PlusOutlined, Loading3QuartersOutlined } from '@ant-design/icons'
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { IProduct } from '../../interfaces/Product';
 import { IEmptyReturnedLog } from '../../interfaces/Empties';
@@ -8,23 +8,26 @@ import { ServerResponse } from '../../interfaces/Server';
 import { addEmptiesReturnedLog } from '../../services/EmptiesAPI';
 import { getProducts } from '../../services/ProductsAPI';
 import { useEffect } from 'react';
-import { Spin } from 'antd';
+import { useAuthHeader } from 'react-auth-kit';
 
 const { Option } = Select;
+const antIcon = <Loading3QuartersOutlined style={{ fontSize: 24, marginRight: 10 }} spin />;
 
 const AddReturningEmpties = () => {
+    const authHeader = useAuthHeader();
     const [form] = Form.useForm();
     const [messageApi, contextHolder ] = message.useMessage();
 
     const { data } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
-        () => getProducts("")
+        () => getProducts(authHeader())
     );
 
     const { isLoading: isSubmitting, mutate } = useMutation({
-        mutationFn: (values: IEmptyReturnedLog) => addEmptiesReturnedLog(values, ""),
+        mutationFn: (values: IEmptyReturnedLog) => addEmptiesReturnedLog(values, authHeader()),
         onSuccess: (data) => {
             success(data.data || "")
+            form.resetFields();
         }
     });
 
@@ -54,6 +57,7 @@ const AddReturningEmpties = () => {
             date: values.date.format('YYYY-MM-DD'),
             vehicle_number: values.vehicle_number,
             returned_by: values.returned_by,
+            pallets_number: values.pallets_number,
             quantity: values['product-quanties'].reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0),
             products: values['product-quanties'].map((item: any) => ({
                 product_id: item.product, // product id
@@ -62,9 +66,6 @@ const AddReturningEmpties = () => {
         };
 
         mutate(formValues);
-
-        form.resetFields();
-
     }
 
     return (
@@ -90,6 +91,10 @@ const AddReturningEmpties = () => {
                         </Form.Item>
 
                         <Form.Item label="Returned By" name={"returned_by"}>
+                            <Input />
+                        </Form.Item>
+
+                        <Form.Item label="Number of Pallets" name={"pallets_number"}>
                             <Input />
                         </Form.Item>
                     </div>
@@ -151,8 +156,8 @@ const AddReturningEmpties = () => {
                     </div>
                 </div>
                 <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                        {isSubmitting && <Spin /> || "Submit"}
+                    <Button type="primary" htmlType="submit" disabled={isSubmitting}>
+                    {isSubmitting && <Spin indicator={antIcon} />} Submit
                     </Button>
                 </Form.Item>
             </Form>
