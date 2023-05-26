@@ -4,10 +4,11 @@ FROM node:16.13.0-alpine3.14
 # Set the working directory inside the container
 WORKDIR /app
 
-# Install dependencies
+# Copy package.json and package-lock.json to the container
 COPY package.json package-lock.json ./
-RUN npm ci --only=production
-RUN npm install -g typescript
+
+# Install all dependencies (including devDependencies)
+RUN npm ci
 
 # Copy the application code
 COPY . .
