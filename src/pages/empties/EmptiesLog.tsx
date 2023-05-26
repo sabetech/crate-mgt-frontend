@@ -5,7 +5,7 @@ import { IEmptyLog, IEmptyReturnedLog } from '../../interfaces/Empties';
 import { useQuery } from '@tanstack/react-query';
 import { getEmptiesLog, getEmptiesReturnedLog } from '../../services/EmptiesAPI';
 import type { ColumnsType } from 'antd/es/table';
-import { Table, Image, DatePicker, Row, Col, Statistic, Card} from 'antd';
+import { Table, Image, DatePicker, Row, Col, Statistic, Card, Tag} from 'antd';
 import { useSignOut, useAuthHeader } from 'react-auth-kit';
 const { RangePicker } = DatePicker;
 
@@ -88,9 +88,12 @@ const EmptiesLog: React.FC = () => {
         { title: 'Image Reference', dataIndex: 'image_reference', key: 'image_reference', render: (value) => (<Image width={200} src={value} />) },
         {
           title: 'Action',
-          dataIndex: '',
+          dataIndex: 'approved',
           key: 'x',
-          render: () => <a>Delete</a>,
+          render: (value) => <>
+            {(value === 0 ? <Tag color="error">Unapproved</Tag> : <Tag color="success">Approved</Tag>)}
+            <a>Delete</a>
+          </>,
         },
       ];
 

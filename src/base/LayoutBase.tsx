@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import { Breadcrumb, Layout, Menu, theme, Avatar, Space } from 'antd';
 import Dashboard from '../pages/Dashboard';
 import opkLogo from '../assets/opk_logo.png'
-import { Route, RouteObject, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import EmptiesLog from '../pages/empties/EmptiesLog';
 import AddPurchaseOrder from '../pages/empties/AddPurchaseOrder';
 import {
@@ -16,6 +16,8 @@ import AddReturningEmpties from '../pages/empties/AddReturningEmpties';
 import ReturningEmptiesLog from '../pages/empties/ReturningEmptiesLog';
 import AddNewCustomers from '../pages/customers/AddNewCustomers';
 import Login from '../pages/users/Login';
+import { useAuthUser } from 'react-auth-kit';
+import { auth } from '../services/API';
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -54,6 +56,10 @@ const items: MenuItem[] = [
 ];
 const LayoutBase = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const authUser = useAuthUser();
+  const userState = authUser();
+  
+  console.log(authUser())
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -73,7 +79,12 @@ const LayoutBase = () => {
       <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" onClick={onClick} items={items} />
     </Sider>
     <Layout className="site-layout">
-      <Header style={{ padding: 0, background: colorBgContainer }} />
+      <Header style={{ padding: 0, background: colorBgContainer, display: 'flex', justifyContent: 'flex-end' }}>
+        <Space style={{marginRight: '2em'}}>
+          <h3>{ userState?.name }({userState?.email})</h3>
+          <Avatar size={"large"} icon={<UserOutlined />} />
+        </Space>
+      </Header>
       <Content style={{ margin: '0 16px' }}>
         <Breadcrumb style={{ margin: '16px 0' }} items={[{ title: 'TODO' }]}/>
         <div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>

@@ -18,6 +18,7 @@ export interface IEmptyLog {
     delivered_by: string;
     pallets_number: number;
     image_reference: string;
+    approved?: boolean;
     products: IProduct[];
 }
 
