@@ -1,5 +1,4 @@
 import * as api from './API';
-import { ServerResponse  } from '../interfaces/Server'
 import { IUser } from '../interfaces/User'
 
 

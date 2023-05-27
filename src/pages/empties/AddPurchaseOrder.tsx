@@ -4,11 +4,13 @@ import { MinusCircleOutlined, PlusOutlined, LoadingOutlined } from '@ant-design/
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { IProduct } from '../../interfaces/Product';
 import { ServerResponse } from '../../interfaces/Server';
+import { AppError } from '../../interfaces/Error';
 import { getProducts } from '../../services/ProductsAPI';
 import { useEffect } from 'react';
 import { IEmptyLog } from '../../interfaces/Empties';
 import { addEmptiesLog } from '../../services/EmptiesAPI';
-import { useSignOut, useAuthHeader } from 'react-auth-kit';
+import { useAuthHeader } from 'react-auth-kit';
+
 
 const { Option } = Select;
 const normFile = (e: any) => {
@@ -28,14 +30,32 @@ const AddPurchaseOrder = () => {
     const [messageApi, contextHolder ] = message.useMessage();
     const { data } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
-        () => getProducts(authHeader())
+        () => getProducts(authHeader()),
+        {
+            onError: (error: AppError) => {
+                messageApi.open({
+                    type: 'error',
+                    content: error.message + ". Please Check your internet connection and refresh the page."
+                });
+                setTimeout(messageApi.destroy, 2500);
+            }
+        }    
     );
+        
+    
     
     const { isLoading: isSubmitting, mutate } = useMutation({
         mutationFn: (values: IEmptyLog) => addEmptiesLog(values, authHeader()),
         onSuccess: (data) => {
             success(data.data || "")
             form.resetFields();
+        },
+        onError: (error: AppError) => {
+            messageApi.open({
+                type: 'error',
+                content: error.message + ". Please Check your internet connection and refresh the page."
+            });
+            setTimeout(messageApi.destroy, 2500);
         }
     });
     

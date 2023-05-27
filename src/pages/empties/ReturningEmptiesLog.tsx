@@ -9,15 +9,14 @@ import { getEmptiesReturnedLog } from '../../services/EmptiesAPI';
 import type { ColumnsType } from 'antd/es/table';
 import { Card, Table } from 'antd';
 import { DatePicker, Row, Col, Statistic } from 'antd';
-import { useSignOut, useAuthHeader } from 'react-auth-kit';
+import { useAuthHeader } from 'react-auth-kit';
 
 const { RangePicker } = DatePicker;
 const ReturningEmptiesLog: React.FC = () => {
     const authHeader = useAuthHeader();
-    const signOut = useSignOut();
 
     //use react query to fetch data from server
-    const { error, data: returnedEmpties } = useQuery<ServerResponse<IEmptyReturnedLog[]>, Error>(
+    const { data: returnedEmpties } = useQuery<ServerResponse<IEmptyReturnedLog[]>, Error>(
         ['empties_returned'],
         () => getEmptiesReturnedLog(authHeader())
     );
@@ -27,12 +26,6 @@ const ReturningEmptiesLog: React.FC = () => {
         () => getEmptiesLog(authHeader())
     );
 
-    if (error) {
-        //DONT FORGET TO HANDLE THIS >> VERY IMPORTANT
-        if (error.response.status === 401) {
-            signOut();
-        }
-    }
 
     const [emptiesReturnedLog, setEmptiesReturnedLog] = React.useState<IEmptyReturnedLog[] | undefined>(undefined);
     const [emptiesReceivedLog, setEmptiesReceivedLog] = React.useState<IEmptyLog[] | undefined>(undefined);

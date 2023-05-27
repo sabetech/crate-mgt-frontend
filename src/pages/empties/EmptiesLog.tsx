@@ -6,29 +6,26 @@ import { useQuery } from '@tanstack/react-query';
 import { getEmptiesLog, getEmptiesReturnedLog } from '../../services/EmptiesAPI';
 import type { ColumnsType } from 'antd/es/table';
 import { Table, Image, DatePicker, Row, Col, Statistic, Card, Tag} from 'antd';
-import { useSignOut, useAuthHeader } from 'react-auth-kit';
+import { useAuthHeader } from 'react-auth-kit';
 const { RangePicker } = DatePicker;
 
 const EmptiesLog: React.FC = () => {
     const authHeader = useAuthHeader();
-    const signOut = useSignOut();
+    
     //use react query to fetch data from server
-    const { error: emptiesReceivedError, data: receivedEmpties } = useQuery<ServerResponse<IEmptyLog[]>, Error>(
-        ['empties_received'],
-        () => getEmptiesLog(authHeader())
+    const { data: receivedEmpties } = useQuery<ServerResponse<IEmptyLog[]>, Error>({
+        queryKey: ['empties_received'],
+        queryFn: () => getEmptiesLog(authHeader()),
+        
+     }
     );
 
-    const { data: returnedEmpties } = useQuery<ServerResponse<IEmptyReturnedLog[]>, Error>(
-        ['empties_returned'],
-        () => getEmptiesReturnedLog(authHeader())
-    );
-
-    if (emptiesReceivedError) {
-        //DONT FORGET TO HANDLE THIS >> VERY IMPORTANT
-        if (emptiesReceivedError.response.status === 401) {
-            signOut();
+    const { data: returnedEmpties } = useQuery<ServerResponse<IEmptyReturnedLog[]>, Error>({
+        queryKey: ['empties_returned'],
+        queryFn: () => getEmptiesReturnedLog(authHeader()),
+        
         }
-    }
+    );
 
     const [emptiesLog, setEmptiesLog] = React.useState<IEmptyLog[] | undefined>(undefined);
     const [emptiesReturnedLog, setEmptiesReturnedLog] = React.useState<IEmptyReturnedLog[] | undefined>(undefined);

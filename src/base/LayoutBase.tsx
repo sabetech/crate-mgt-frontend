@@ -17,7 +17,7 @@ import ReturningEmptiesLog from '../pages/empties/ReturningEmptiesLog';
 import AddNewCustomers from '../pages/customers/AddNewCustomers';
 import Login from '../pages/users/Login';
 import { useAuthUser } from 'react-auth-kit';
-import { auth } from '../services/API';
+
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 
