@@ -11,7 +11,7 @@ const AddNewCustomers = () => {
     const authHeader = useAuthHeader();
     const [messageApi, contextHolder] = message.useMessage();
 
-    const {mutate} = useMutation({
+    useMutation({
         mutationFn: (values: any) => addCustomer(values, authHeader()),
         onSuccess: (data) => {
             success(data || "")
