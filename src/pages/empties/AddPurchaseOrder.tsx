@@ -136,6 +136,9 @@ const AddPurchaseOrder = () => {
                         <Form.Item label="Number of Pallets" name={"pallets_number"}>
                             <Input />
                         </Form.Item>
+                        <Form.Item label="Number of PCs" name={"pcs_number"}>
+                            <Input />
+                        </Form.Item>
                         <Form.Item label="Upload" valuePropName="fileList" getValueFromEvent={normFile} name="image_ref">
                             <Upload action="/upload.do" listType="picture-card">
                                 <div>

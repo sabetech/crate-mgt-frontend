@@ -1,16 +1,48 @@
 import { useForm } from "antd/es/form/Form";
-import { Form, Input, Select, Button } from "antd";
+import { Form, Input, Select, Button, message } from "antd";
+import { useMutation } from "@tanstack/react-query";
+import { addCustomer } from "../../services/CustomersAPI";
+import { useAuthHeader } from "react-auth-kit";
+import { AppError } from "../../interfaces/Error";
 
 const { Option } = Select;
 const AddNewCustomers = () => {
     const [form] = useForm();
+    const authHeader = useAuthHeader();
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const {mutate} = useMutation({
+        mutationFn: (values: any) => addCustomer(values, authHeader()),
+        onSuccess: (data) => {
+            success(data || "")
+            form.resetFields();
+        },
+        onError: (error: AppError) => {
+            messageApi.open({
+                type: 'error',
+                content: error.message + ". Please Check your internet connection and refresh the page."
+            });
+            setTimeout(messageApi.destroy, 2500);
+        }
+    });
+
+    const success = (msg:string) => {
+        messageApi.open({
+          type: 'success',
+          content: msg,
+        });
+    }
+    
 
     const onFinish = (_values: any) => {
+        console.log(_values);
 
+        
     }
 
     return (
         <>
+            {contextHolder}
             <Button size="large" style={{float:"right"}}>Import Customer from Excel</Button>
 
             <h1>Add A Customer</h1>

@@ -97,6 +97,9 @@ const AddReturningEmpties = () => {
                         <Form.Item label="Number of Pallets" name={"pallets_number"}>
                             <Input />
                         </Form.Item>
+                        <Form.Item label="Number of PCs" name={"pcs_number"}>
+                            <Input />
+                        </Form.Item>
                     </div>
             
                     <div>

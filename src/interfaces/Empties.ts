@@ -17,6 +17,7 @@ export interface IEmptyLog {
     received_by: string;
     delivered_by: string;
     pallets_number: number;
+    pcs_number?: number;
     image_reference: string;
     approved?: boolean;
     products: IProduct[];
@@ -29,5 +30,6 @@ export interface IEmptyReturnedLog {
     vehicle_number: string;
     returned_by: string;
     pallets_number: number;
+    pcs_number?: number;
     products: IProduct[]
 }

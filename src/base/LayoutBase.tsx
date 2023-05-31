@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Breadcrumb, Layout, Menu, theme, Avatar, Space } from 'antd';
+import { Dropdown, Breadcrumb, Layout, Menu, theme, Avatar, Space } from 'antd';
 import Dashboard from '../pages/Dashboard';
 import opkLogo from '../assets/opk_logo.png'
 import { Route, Routes, useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ import {
   PieChartOutlined,
   UserOutlined,
   FileTextOutlined,
+  DownOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import AddReturningEmpties from '../pages/empties/AddReturningEmpties';
@@ -20,6 +21,33 @@ import { useAuthUser } from 'react-auth-kit';
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
+
+const UserDropdown: MenuProps['items'] = [
+  {
+    label: (
+      <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+        1st menu item
+      </a>
+    ),
+    key: '0',
+  },
+  {
+    label: (
+      <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
+        2nd menu item
+      </a>
+    ),
+    key: '1',
+  },
+  {
+    type: 'divider',
+  },
+  {
+    label: '3rd menu item disabled',
+    key: '3',
+    disabled: true,
+  },
+];
 
 function getItem(
   label: React.ReactNode,
@@ -81,8 +109,16 @@ const LayoutBase = () => {
     <Layout className="site-layout">
       <Header style={{ padding: 0, background: colorBgContainer, display: 'flex', justifyContent: 'flex-end' }}>
         <Space style={{marginRight: '2em'}}>
-          <h3>{ userState?.name }({userState?.email})</h3>
-          <Avatar size={"large"} icon={<UserOutlined />} />
+        <Dropdown menu={ {items: UserDropdown} }>
+          <a onClick={(e) => e.preventDefault()}>
+            <Space>
+            <h3>{ userState?.name }({userState?.email})</h3>
+            <Avatar size={"large"} icon={<UserOutlined />} />
+              <DownOutlined />
+            </Space>
+          </a>
+        </Dropdown>
+          
         </Space>
       </Header>
       <Content style={{ margin: '0 16px' }}>
