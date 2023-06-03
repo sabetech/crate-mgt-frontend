@@ -63,7 +63,6 @@ const items: MenuItem[] = [
     getItem('Add Customer', 'customers/add_customer'),
     getItem('List All Customers', 'customers/list_all_customers'),
     getItem('Return Empties', 'customers/return_empties'),
-    getItem('Empties Account History', 'customers/empties_account_history'),
   ]),
   getItem('Empties with GGBL', 'empties', <DesktopOutlined />, [
     getItem('Sales In', 'empties/empties_log'),

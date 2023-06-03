@@ -7,8 +7,8 @@ export const getCustomers = async (token: string): Promise<ServerResponse<ICusto
     return (await api.get('/customers', {'Authorization': token})).data;
 }
 
-export const getCustomersWithHistory = async (token: string): Promise<ServerResponse<ICustomer[]>> => {
-    return (await api.get('/customers?get-history=true', {'Authorization': token})).data;
+export const getCustomersWithBalance = async (token: string): Promise<ServerResponse<ICustomer[]>> => {
+    return (await api.get('/customers?with-balance=true', {'Authorization': token})).data;
 }
 
 export const addCustomer = async (values: ICustomer, token: string) => {

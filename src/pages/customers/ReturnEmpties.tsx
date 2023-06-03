@@ -8,7 +8,7 @@ import { addCustomerReturnEmpties, getCustomers } from '../../services/Customers
 import { getProducts } from '../../services/ProductsAPI';
 import { useEffect } from 'react';
 import { useAuthHeader } from 'react-auth-kit';
-import { ICustomeReturnEmpties, ICustomer } from '../../interfaces/Customer';
+import { ICustomerReturnEmpties, ICustomer } from '../../interfaces/Customer';
 
 const { Option } = Select;
 const antIcon = <Loading3QuartersOutlined style={{ fontSize: 24, marginRight: 10 }} spin />;
@@ -29,7 +29,7 @@ const CustomerReturnEmpties = () => {
     );
 
     const { isLoading: isSubmitting, mutate } = useMutation({
-        mutationFn: (values: ICustomeReturnEmpties) => addCustomerReturnEmpties(values, authHeader()),
+        mutationFn: (values: ICustomerReturnEmpties) => addCustomerReturnEmpties(values, authHeader()),
         onSuccess: (data) => {
             success(data.data || "")
             form.resetFields();
@@ -49,7 +49,7 @@ const CustomerReturnEmpties = () => {
     },[productsData]);
 
     useEffect(() => {
-        console.log(customers);
+        
         if (customers) {
             setCustomerList(customers.data.map(item => ({
                 ...item,
@@ -69,10 +69,10 @@ const CustomerReturnEmpties = () => {
 
     const onFinish = (values: any) => {
         
-        let formValues: ICustomeReturnEmpties = {
+        let formValues: ICustomerReturnEmpties = {
             date: values.date.format('YYYY-MM-DD'),
-            customer: values.customer,
-            quantity: values['product-quanties'].reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0),
+            customer: values.customer_name,
+            quantity_transacted: values['product-quanties'].reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0),
             products: values['product-quanties'].map((item: any) => ({
                 product_id: item.product, // product id
                 quantity: parseInt(item.quantity)
@@ -100,20 +100,21 @@ const CustomerReturnEmpties = () => {
                         <Form.Item label="Date" name={"date"}>
                             <DatePicker />
                         </Form.Item>
-
+                        
+                        {/* Make the customers searchable... */}
                         <Form.Item label="Customer" name={"customer_name"}>
                             <Select style={{ width: 400 }}>
                                 {
                                     customerList && customerList.map((item) => (
                                         <Option key={ item.key } value={ item.id }>
-                                            {item.name}
+                                            {item.name}(<em>{item.customer_type}</em>)
                                         </Option>
                                     ))
                                 }
                             </Select>
                         </Form.Item>
 
-                        <Form.Item label="transaction_type" name={"Transaction Type"}>
+                        <Form.Item label="Transaction Type" name={"transaction_type"}>
                             <Select style={{ width: 400 }}>
                                <Option value={"in"}>In</Option>
                                <Option value={"out"}>Out</Option>

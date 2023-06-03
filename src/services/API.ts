@@ -48,6 +48,7 @@ const postWithFile = (url: string, data: any, headers: object) => {
 }
 
 const get = (url: string, headers: object) => {
+    
     return axios(BASE_URL+url, {
         method: 'GET',
         headers: {

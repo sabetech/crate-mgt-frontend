@@ -5,11 +5,12 @@ export interface ICustomer {
     name: string;
     phone: string;
     customer_type: string;
+    customer_empties_account?: ICustomerReturnEmpties[];
 }
-export interface ICustomeReturnEmpties {
+export interface ICustomerReturnEmpties {
     date: string,
     customer: ICustomer,
     products: IProduct[],
-    quantity: number,
+    quantity_transacted: number,
     transaction_type: string,
 }
