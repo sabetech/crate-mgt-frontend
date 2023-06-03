@@ -16,8 +16,10 @@ import type { MenuProps } from 'antd';
 import AddReturningEmpties from '../pages/empties/AddReturningEmpties';
 import ReturningEmptiesLog from '../pages/empties/ReturningEmptiesLog';
 import AddNewCustomers from '../pages/customers/AddNewCustomers';
+import ListCustomers from '../pages/customers/ListAllCustomers';
 import Login from '../pages/users/Login';
 import { useAuthUser } from 'react-auth-kit';
+import CustomerReturnEmpties from '../pages/customers/ReturnEmpties';
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -26,26 +28,18 @@ const UserDropdown: MenuProps['items'] = [
   {
     label: (
       <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-        1st menu item
+        Manage Users
       </a>
     ),
-    key: '0',
-  },
-  {
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-        2nd menu item
-      </a>
-    ),
-    key: '1',
+    key: 'add_a_user',
   },
   {
     type: 'divider',
   },
   {
-    label: '3rd menu item disabled',
-    key: '3',
-    disabled: true,
+    label: 'Logout',
+    key: 'logout',
+    
   },
 ];
 
@@ -71,7 +65,7 @@ const items: MenuItem[] = [
     getItem('Return Empties', 'customers/return_empties'),
     getItem('Empties Account History', 'customers/empties_account_history'),
   ]),
-  getItem('Empties', 'empties', <DesktopOutlined />, [
+  getItem('Empties with GGBL', 'empties', <DesktopOutlined />, [
     getItem('Sales In', 'empties/empties_log'),
     getItem('Empties Returned Log', 'empties/empties_returned_log'),
     getItem('Add Purchase Order', 'empties/add_purchase_order'),
@@ -79,7 +73,7 @@ const items: MenuItem[] = [
   ]),
   getItem('Reports', 'reports', <FileTextOutlined />, [
     getItem('Balances', 'reports/balances'),
-    getItem('GBL Transactions', 'reports/gbl_transactions'),
+    getItem('GGBL Transactions', 'reports/gbl_transactions'),
   ]),
 ];
 const LayoutBase = () => {
@@ -127,9 +121,9 @@ const LayoutBase = () => {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/customers/add_customer" element={<AddNewCustomers />} />
-            <Route path="/customers/return_empties" element={<></>} />
+            <Route path="/customers/return_empties" element={<CustomerReturnEmpties />} />
             <Route path="/customers/empties_account_history" element={<></>} />
-            <Route path="/customers/list_all_customers" element={<></>} />
+            <Route path="/customers/list_all_customers" element={<ListCustomers />} />
             <Route path="/empties/empties_log" element={<EmptiesLog />} />
             <Route path="/empties/empties_returned_log" element={<ReturningEmptiesLog />} />
             <Route path="/empties/add_purchase_order" element={<AddPurchaseOrder />} />

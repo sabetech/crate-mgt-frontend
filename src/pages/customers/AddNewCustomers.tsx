@@ -11,10 +11,10 @@ const AddNewCustomers = () => {
     const authHeader = useAuthHeader();
     const [messageApi, contextHolder] = message.useMessage();
 
-    useMutation({
+    const { mutate } = useMutation({
         mutationFn: (values: any) => addCustomer(values, authHeader()),
         onSuccess: (data) => {
-            success(data || "")
+            success(data?.data || "")
             form.resetFields();
         },
         onError: (error: AppError) => {
@@ -25,19 +25,18 @@ const AddNewCustomers = () => {
             setTimeout(messageApi.destroy, 2500);
         }
     });
-
+ 
     const success = (msg:string) => {
         messageApi.open({
           type: 'success',
           content: msg,
         });
+        setTimeout(messageApi.destroy, 2500);
     }
     
-
     const onFinish = (_values: any) => {
         console.log(_values);
-
-        
+        mutate(_values);
     }
 
     return (

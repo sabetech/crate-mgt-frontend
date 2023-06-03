@@ -19,7 +19,6 @@ const TableEmptiesLog: React.FC<TableEmptiesLogProps> = ({columns, data}) => (
       pagination={false}
       />,
       rowExpandable: (record) => record.products.length > 0,
-      
     }}
     dataSource={data}
   />
