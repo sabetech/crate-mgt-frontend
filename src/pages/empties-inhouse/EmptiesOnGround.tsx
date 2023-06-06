@@ -13,7 +13,7 @@ import { ICustomerReturnEmpties, ICustomer } from '../../interfaces/Customer';
 const { Option } = Select;
 const antIcon = <Loading3QuartersOutlined style={{ fontSize: 24, marginRight: 10 }} spin />;
 
-const CustomerReturnEmpties = () => {
+const SaveInHouseEmpties = () => {
     const authHeader = useAuthHeader();
     const [form] = Form.useForm();
     const [messageApi, contextHolder ] = message.useMessage();
@@ -86,7 +86,7 @@ const CustomerReturnEmpties = () => {
     return (
         <div>
              {contextHolder}
-            <h1>Add Customer Returning Empties</h1>
+            <h1>Save Empties Count On Ground</h1>
             
             <Form 
                 style={{ maxWidth: '90%' }}
@@ -101,33 +101,13 @@ const CustomerReturnEmpties = () => {
                             <DatePicker />
                         </Form.Item>
                         
-                        {/* Make the customers searchable... */}
-                        <Form.Item label="Customer" name={"customer_name"}>
-                            <Select style={{ width: 400 }}>
-                                {
-                                    customerList && customerList.map((item) => (
-                                        <Option key={ item.key } value={ item.id }>
-                                            {item.name}(<em>{item.customer_type}</em>)
-                                        </Option>
-                                    ))
-                                }
-                            </Select>
-                        </Form.Item>
-                        
                         <Form.Item label="Number of PCs" name={"pcs_number"} style={{ width: 400 }}>
                             <Input />
-                        </Form.Item>                                
-
-                        <Form.Item label="Transaction Type" name={"transaction_type"}>
-                            <Select style={{ width: 400 }}>
-                               <Option value={"in"}>In</Option>
-                               <Option value={"out"}>Out</Option>
-                            </Select>
                         </Form.Item>
-                        
                     </div>
             
                     <div>
+                        <h2>Empties</h2>
                         <Form.List name="product-quanties">
                             {(fields, { add, remove }) => (
                                 <>
@@ -181,6 +161,61 @@ const CustomerReturnEmpties = () => {
                                 </>
                             )}
                         </Form.List>
+
+                        <h2>Fulls</h2>
+                        <Form.List name="product-quanties">
+                            {(fields, { add, remove }) => (
+                                <>
+                                    {
+                                    fields.map((field) => (
+                                        <Space key={field.key} align="baseline">
+                                            <Form.Item
+                                                noStyle
+                                                shouldUpdate={(prevValues, curValues) =>
+                                                    prevValues.area !== curValues.area || prevValues.sights !== curValues.sights
+                                                }
+                                                >
+                                                {
+                                                    () => (
+                                                        <Form.Item
+                                                            {...field}
+                                                            label="Product"
+                                                            name={[field.name, 'fulls-product']}
+                                                            rules={[{ required: true, message: 'Product missing'}]}
+                                                        >
+                                                            <Select disabled={!productList || productList.length === 0} style={{ width: 130 }}>
+                                                               {
+                                                                productList && productList.map((item) => (
+                                                                    <Option key={item.key} value={item.id}>
+                                                                        {item.sku_code}
+                                                                    </Option>
+                                                                ))
+                                                                }
+                                                            </Select>
+                                                        </Form.Item>
+                                                    )
+                                                }
+                                            </Form.Item>
+                                            <Form.Item
+                                                {...field}
+                                                label="Quantity"
+                                                name={[field.name, 'fulls-quantity']}
+                                                rules={[{ required: true, message: 'Missing Qty' }]}
+                                                >
+                                                <Input />
+                                            </Form.Item>
+                                            <MinusCircleOutlined onClick={() => remove(field.name)} />
+                                        </Space>
+                                    ))   
+                                }
+                                <Form.Item>
+                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                        Add Product and Quantity Fields
+                                    </Button>
+                                </Form.Item>
+                                </>
+                            )}
+                        </Form.List>
                     </div>
                 </div>
                 <Form.Item>
@@ -194,4 +229,4 @@ const CustomerReturnEmpties = () => {
 
 }
 
-export default CustomerReturnEmpties;
+export default SaveInHouseEmpties;

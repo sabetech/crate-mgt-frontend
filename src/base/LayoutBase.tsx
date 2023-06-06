@@ -20,6 +20,8 @@ import ListCustomers from '../pages/customers/ListAllCustomers';
 import Login from '../pages/users/Login';
 import { useAuthUser } from 'react-auth-kit';
 import CustomerReturnEmpties from '../pages/customers/ReturnEmpties';
+import SaveInHouseEmpties from '../pages/empties-inhouse/EmptiesOnGround';
+import ListInHouseEmpties from '../pages/empties-inhouse/ListInHouseEmpties';
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -64,11 +66,15 @@ const items: MenuItem[] = [
     getItem('List All Customers', 'customers/list_all_customers'),
     getItem('Return Empties', 'customers/return_empties'),
   ]),
-  getItem('Empties with GGBL', 'empties', <DesktopOutlined />, [
+  getItem('Empties with GGBL', 'empties-ggbl', <DesktopOutlined />, [
     getItem('Sales In', 'empties/empties_log'),
     getItem('Empties Returned Log', 'empties/empties_returned_log'),
     getItem('Add Purchase Order', 'empties/add_purchase_order'),
     getItem('Add Returning Empties', 'empties/add_returning_empties'),
+  ]),
+  getItem('Empties Inhouse Mgt', 'empties-inhouse', <DesktopOutlined />, [
+    getItem('Add Empties on Ground', 'empties/on-ground'),
+    getItem('List Empties on Ground', 'empties/list-on-ground'),
   ]),
   getItem('Reports', 'reports', <FileTextOutlined />, [
     getItem('Balances', 'reports/balances'),
@@ -80,7 +86,6 @@ const LayoutBase = () => {
   const authUser = useAuthUser();
   const userState = authUser();
   
-  console.log(authUser())
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -89,8 +94,6 @@ const LayoutBase = () => {
   const onClick: MenuProps['onClick'] = (e) => {
     navigate('/' + e.key)
   };
-
-  
 
   return (<Layout style={{ minHeight: '100vh' }}>
     <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} width={'15%'}>
@@ -119,6 +122,7 @@ const LayoutBase = () => {
         <div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/customers/add_customer" element={<AddNewCustomers />} />
             <Route path="/customers/return_empties" element={<CustomerReturnEmpties />} />
             <Route path="/customers/empties_account_history" element={<></>} />
@@ -127,6 +131,8 @@ const LayoutBase = () => {
             <Route path="/empties/empties_returned_log" element={<ReturningEmptiesLog />} />
             <Route path="/empties/add_purchase_order" element={<AddPurchaseOrder />} />
             <Route path="/empties/add_returning_empties" element={<AddReturningEmpties />} />
+            <Route path="/empties/on-ground" element={<SaveInHouseEmpties />} />
+            <Route path="empties/list-on-ground" element={<ListInHouseEmpties />} />
             <Route path={"/login"} element={<Login />} />
           </Routes>
         </div>

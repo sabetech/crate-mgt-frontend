@@ -11,6 +11,7 @@ export interface ICustomerReturnEmpties {
     date: string,
     customer: ICustomer,
     products: IProduct[],
+    number_of_pcs?: number,
     quantity_transacted: number,
     transaction_type: string,
 }

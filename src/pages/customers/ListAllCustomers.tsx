@@ -19,7 +19,6 @@ const ListCustomers: React.FC = () => {
     const [customerList, setCustomerList] = React.useState<ICustomer[] | undefined>(undefined);
 
     useEffect(() => {
-        console.log("CUSTOMER oo::", data)
         if (data) {
             setCustomerList(data.data?.map((item) => ({
                 ...item,
