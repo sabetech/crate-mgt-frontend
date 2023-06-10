@@ -2,11 +2,11 @@ import axios from "axios";
 //create a post request with the data from the cheque object using fetch
 //create base url from environment variable base url
 
-// const BASE_URL = "https://crate-mgt-backend.firstlovegallery.com/api/v1";
-// const SERVER_URL = "https://crate-mgt-backend.firstlovegallery.com/";
+const BASE_URL = "https://crate-mgt-backend.firstlovegallery.com/public/api/v1";
+const SERVER_URL = "https://crate-mgt-backend.firstlovegallery.com/public";
 
-const BASE_URL = "http://localhost:8000/api/v1";
-const SERVER_URL = "http://localhost:8000";
+//const BASE_URL = "http://localhost:8000/api/v1";
+///const SERVER_URL = "http://localhost:8000";
 
 const post = (url: string, data: any, headers: object) => {
     const formData = new FormData();
