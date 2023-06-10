@@ -5,6 +5,7 @@ export interface IProduct {
     pivot?: {
         quantity: number;
     }
+    is_empty?: boolean;
 }
 
 export interface IEmptyLog {
@@ -33,3 +34,13 @@ export interface IEmptyReturnedLog {
     pcs_number?: number;
     products: IProduct[]
 }
+
+export interface IEmptiesInHouseCount {
+    id?: number;
+    date: string;
+    quantity: number;
+    products: IProduct[];
+    pcs_number?: number;
+}
+
+//Add Pallets???

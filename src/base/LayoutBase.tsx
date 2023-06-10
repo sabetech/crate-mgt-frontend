@@ -18,10 +18,12 @@ import ReturningEmptiesLog from '../pages/empties/ReturningEmptiesLog';
 import AddNewCustomers from '../pages/customers/AddNewCustomers';
 import ListCustomers from '../pages/customers/ListAllCustomers';
 import Login from '../pages/users/Login';
-import { useAuthUser } from 'react-auth-kit';
+import { useAuthUser, useSignOut } from 'react-auth-kit';
 import CustomerReturnEmpties from '../pages/customers/ReturnEmpties';
 import SaveInHouseEmpties from '../pages/empties-inhouse/EmptiesOnGround';
 import ListInHouseEmpties from '../pages/empties-inhouse/ListInHouseEmpties';
+import ManageUsers from '../pages/users/ManageUsers';
+import LogoutConfirm from '../components/LogoutConfirm';
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -29,7 +31,7 @@ type MenuItem = Required<MenuProps>['items'][number];
 const UserDropdown: MenuProps['items'] = [
   {
     label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+      <a href="/users/manage">
         Manage Users
       </a>
     ),
@@ -39,7 +41,11 @@ const UserDropdown: MenuProps['items'] = [
     type: 'divider',
   },
   {
-    label: 'Logout',
+    label: (
+      <a  href="/users/logout">
+        Logout
+      </a>
+    ),
     key: 'logout',
     
   },
@@ -84,6 +90,7 @@ const items: MenuItem[] = [
 const LayoutBase = () => {
   const [collapsed, setCollapsed] = useState(false);
   const authUser = useAuthUser();
+  
   const userState = authUser();
   
   const {
@@ -132,7 +139,10 @@ const LayoutBase = () => {
             <Route path="/empties/add_purchase_order" element={<AddPurchaseOrder />} />
             <Route path="/empties/add_returning_empties" element={<AddReturningEmpties />} />
             <Route path="/empties/on-ground" element={<SaveInHouseEmpties />} />
-            <Route path="empties/list-on-ground" element={<ListInHouseEmpties />} />
+            <Route path="/empties/list-on-ground" element={<ListInHouseEmpties />} />
+            
+            <Route path="/users/manage" element={<ManageUsers />} />
+            <Route path="/users/logout" element={<LogoutConfirm />} />
             <Route path={"/login"} element={<Login />} />
           </Routes>
         </div>

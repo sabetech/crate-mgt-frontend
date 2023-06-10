@@ -1,5 +1,5 @@
 import * as api from './API';
-import { IEmptyLog, IEmptyReturnedLog } from '../interfaces/Empties';
+import { IEmptyLog, IEmptyReturnedLog, IEmptiesInHouseCount } from '../interfaces/Empties';
 import { ServerResponse  } from '../interfaces/Server'
 
 export const getEmptiesLog = async (token: string): Promise<ServerResponse<IEmptyLog[]>> => {
@@ -16,4 +16,8 @@ export const addEmptiesLog = async (values: IEmptyLog, token: string): Promise<S
 
 export const addEmptiesReturnedLog = async (values: IEmptyReturnedLog, token: string): Promise<ServerResponse<string>> => {
     return (await api.post('/empties-returned-logs', values, {'Authorization': token})).data;
+}
+
+export const AddInHouseEmptiesCount = async (values: IEmptiesInHouseCount, token: string): Promise<ServerResponse<string>> => {
+    return (await api.post('/empties-onground-log', values, {'Authorization': token})).data;
 }

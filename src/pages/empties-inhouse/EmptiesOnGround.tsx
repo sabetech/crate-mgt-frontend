@@ -4,11 +4,12 @@ import { MinusCircleOutlined, PlusOutlined, Loading3QuartersOutlined } from '@an
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { IProduct } from '../../interfaces/Product';
 import { ServerResponse } from '../../interfaces/Server';
-import { addCustomerReturnEmpties, getCustomers } from '../../services/CustomersAPI';
+import { AddInHouseEmptiesCount } from '../../services/EmptiesAPI';
 import { getProducts } from '../../services/ProductsAPI';
 import { useEffect } from 'react';
 import { useAuthHeader } from 'react-auth-kit';
-import { ICustomerReturnEmpties, ICustomer } from '../../interfaces/Customer';
+import { AppError } from '../../interfaces/Error';
+import { IEmptiesInHouseCount } from '../../interfaces/Empties';
 
 const { Option } = Select;
 const antIcon = <Loading3QuartersOutlined style={{ fontSize: 24, marginRight: 10 }} spin />;
@@ -23,21 +24,22 @@ const SaveInHouseEmpties = () => {
         () => getProducts(authHeader())
     );
 
-    const { data: customers } = useQuery<ServerResponse<ICustomer[]>> (
-        ['customers'],
-        () => getCustomers(authHeader())
-    );
-
-    const { isLoading: isSubmitting, mutate } = useMutation({
-        mutationFn: (values: ICustomerReturnEmpties) => addCustomerReturnEmpties(values, authHeader()),
+    const { mutate, isLoading: isSubmitting } = useMutation({
+        mutationFn: (values: any) => AddInHouseEmptiesCount(values, authHeader()),
         onSuccess: (data) => {
-            success(data.data || "")
+            success(data?.data || "")
             form.resetFields();
+        },
+        onError: (error: AppError) => {
+            messageApi.open({
+                type: 'error',
+                content: error.message + ". Please Check your internet connection and refresh the page."
+            });
+            setTimeout(messageApi.destroy, 2500);
         }
     });
 
     const [productList, setProductList] = React.useState<IProduct[] | undefined>([]);
-    const [customerList, setCustomerList] = React.useState<ICustomer[] | undefined>([]);
     
     useEffect(() => {
         if (productsData) {
@@ -47,16 +49,6 @@ const SaveInHouseEmpties = () => {
             })));
         }
     },[productsData]);
-
-    useEffect(() => {
-        
-        if (customers) {
-            setCustomerList(customers.data.map(item => ({
-                ...item,
-                key: item.id
-            })));
-        }
-    },[customers]);
 
     const success = (msg: string) => {
         messageApi.open({
@@ -69,18 +61,29 @@ const SaveInHouseEmpties = () => {
 
     const onFinish = (values: any) => {
         
-        let formValues: ICustomerReturnEmpties = {
+        let formValues: IEmptiesInHouseCount = {
             date: values.date.format('YYYY-MM-DD'),
-            customer: values.customer_name,
-            quantity_transacted: values['product-quanties'].reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0),
-            products: values['product-quanties'].map((item: any) => ({
+            quantity: values['product-quanties'].reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0) 
+            + 
+            values['fulls-quantity'].reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0),
+            
+            products: [
+                ...values['product-quanties'].map((item: any) => ({
                 product_id: item.product, // product id
-                quantity: parseInt(item.quantity)
-            })),
-            transaction_type: values.transaction_type
+                quantity: parseInt(item.quantity),
+                is_empty: true
+            })), 
+            ...values['fulls-quantity'].map((item: any) => ({
+                product_id: item.product, // product id
+                quantity: parseInt(item.quantity),
+                is_empty: false
+            }))],
+
+            pcs_number: values['pcs_number'],
         };
 
-        mutate(formValues);
+        mutate(formValues)
+
     }
 
     return (
@@ -113,7 +116,7 @@ const SaveInHouseEmpties = () => {
                                 <>
                                     {
                                     fields.map((field) => (
-                                        <Space key={field.key} align="baseline">
+                                        <Space key={field.key+"empty"} align="baseline">
                                             <Form.Item
                                                 noStyle
                                                 shouldUpdate={(prevValues, curValues) =>
@@ -151,7 +154,7 @@ const SaveInHouseEmpties = () => {
                                             </Form.Item>
                                             <MinusCircleOutlined onClick={() => remove(field.name)} />
                                         </Space>
-                                    ))   
+                                    ))
                                 }
                                 <Form.Item>
                                     <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
@@ -163,12 +166,12 @@ const SaveInHouseEmpties = () => {
                         </Form.List>
 
                         <h2>Fulls</h2>
-                        <Form.List name="product-quanties">
+                        <Form.List name="fulls-quantity">
                             {(fields, { add, remove }) => (
                                 <>
                                     {
                                     fields.map((field) => (
-                                        <Space key={field.key} align="baseline">
+                                        <Space key={field.key+"full"} align="baseline">
                                             <Form.Item
                                                 noStyle
                                                 shouldUpdate={(prevValues, curValues) =>
@@ -180,7 +183,7 @@ const SaveInHouseEmpties = () => {
                                                         <Form.Item
                                                             {...field}
                                                             label="Product"
-                                                            name={[field.name, 'fulls-product']}
+                                                            name={[field.name, 'product']}
                                                             rules={[{ required: true, message: 'Product missing'}]}
                                                         >
                                                             <Select disabled={!productList || productList.length === 0} style={{ width: 130 }}>
@@ -199,7 +202,7 @@ const SaveInHouseEmpties = () => {
                                             <Form.Item
                                                 {...field}
                                                 label="Quantity"
-                                                name={[field.name, 'fulls-quantity']}
+                                                name={[field.name, 'quantity']}
                                                 rules={[{ required: true, message: 'Missing Qty' }]}
                                                 >
                                                 <Input />
