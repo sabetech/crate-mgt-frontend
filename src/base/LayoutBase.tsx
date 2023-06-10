@@ -18,7 +18,7 @@ import ReturningEmptiesLog from '../pages/empties/ReturningEmptiesLog';
 import AddNewCustomers from '../pages/customers/AddNewCustomers';
 import ListCustomers from '../pages/customers/ListAllCustomers';
 import Login from '../pages/users/Login';
-import { useAuthUser, useSignOut } from 'react-auth-kit';
+import { useAuthUser } from 'react-auth-kit';
 import CustomerReturnEmpties from '../pages/customers/ReturnEmpties';
 import SaveInHouseEmpties from '../pages/empties-inhouse/EmptiesOnGround';
 import ListInHouseEmpties from '../pages/empties-inhouse/ListInHouseEmpties';
