@@ -71,6 +71,7 @@ const items: MenuItem[] = [
     getItem('Add Customer', 'customers/add_customer'),
     getItem('List All Customers', 'customers/list_all_customers'),
     getItem('Return Empties', 'customers/return_empties'),
+    getItem('Empties Loan', 'customers/loan_empties'),
   ]),
   getItem('Empties with GGBL', 'empties-ggbl', <DesktopOutlined />, [
     getItem('Sales In', 'empties/empties_log'),
@@ -81,6 +82,15 @@ const items: MenuItem[] = [
   getItem('Empties Inhouse Mgt', 'empties-inhouse', <DesktopOutlined />, [
     getItem('Add Empties on Ground', 'empties/on-ground'),
     getItem('List Empties on Ground', 'empties/list-on-ground'),
+  ]),
+  getItem('Warehouse', 'warehouse', <DesktopOutlined />, [
+    getItem('Receivables', 'warehouse/receivables'),
+    getItem('List Inventory', 'warehouse/inventory'),
+    getItem('TBD', 'warehouse/tbd'),
+  ]),
+  getItem('POS', 'pos', <DesktopOutlined />, [
+    getItem('Sales', 'POS/sales'),
+    getItem('TBDD', 'POS/inventory')
   ]),
   getItem('Reports', 'reports', <FileTextOutlined />, [
     getItem('Balances', 'reports/balances'),

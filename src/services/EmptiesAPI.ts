@@ -21,3 +21,7 @@ export const addEmptiesReturnedLog = async (values: IEmptyReturnedLog, token: st
 export const AddInHouseEmptiesCount = async (values: IEmptiesInHouseCount, token: string): Promise<ServerResponse<string>> => {
     return (await api.post('/empties-onground-log', values, {'Authorization': token})).data;
 }
+
+export const getInHouseEmpties = async (token: string): Promise<ServerResponse<IEmptiesInHouseCount[]>> => {
+    return (await api.get('/empties-onground-log', {'Authorization': token})).data;
+}
