@@ -6,16 +6,19 @@ import { ServerResponse } from "../../interfaces/Server";
 import { getInHouseEmpties } from "../../services/EmptiesAPI";
 import type { ColumnsType } from 'antd/es/table';
 import TableEmptiesOnGround from "../../components/TableEmptiesOnGround";
-import { Table } from 'antd';
+import { Table, DatePicker, Row, Col, Statistic, Card, Tag } from 'antd';
 
 const ListInHouseEmpties = () => {
+    const { RangePicker } = DatePicker;
     const authHeader = useAuthHeader();
     const [inHouseEmptiesData, setInHouseEmptiesData] = React.useState<IEmptiesInHouseCount[] | undefined>(undefined);
 
-    const { data: inHouseEmpties } = useQuery<ServerResponse<IEmptiesInHouseCount[]>, Error>({
+    const { data: inHouseEmpties, isLoading } = useQuery<ServerResponse<IEmptiesInHouseCount[]>, Error>({
         queryKey: ['in-house-empties'],
         queryFn: () => getInHouseEmpties(authHeader()),
     });
+
+    const [dateRange, setDateRange] = React.useState<string[] | undefined>(undefined);
 
     React.useEffect(() => {
         if (inHouseEmpties) {
@@ -26,7 +29,10 @@ const ListInHouseEmpties = () => {
         }
     }, [inHouseEmpties]);
 
-    console.log("INHOUSE EMPTIES:::", inHouseEmpties)
+    const dateRangeOnChange = (date: any, dateString: string[]) => {
+        console.log(date, dateString);
+        setDateRange(dateString);
+    }
 
     const columns: ColumnsType<IEmptiesInHouseCount> = [
         {
@@ -47,9 +53,35 @@ const ListInHouseEmpties = () => {
         }
     ]
 
+
+
     return (
         <>
+        Select a date Range <RangePicker onChange={dateRangeOnChange}/>
+            <Row gutter={16}>
+                <Col span={12}>
+                    <Card bordered={true}>
+                        <Statistic
+                            title="Total Empties On Ground"
+                            value={inHouseEmptiesData?.reduce((acc: number, item: IEmptiesInHouseCount) => acc + item.quantity, 0)}
+                            valueStyle={{ color: '#3f8600' }}
+                            suffix="empties"
+                        />
+                    </Card>
+                </Col>
+                <Col span={12}>
+                    <Card bordered={true}>
+                        <Statistic
+                            title="Total Fulls On Ground"
+                            value={inHouseEmptiesData?.reduce((acc: number, item: IEmptiesInHouseCount) => acc + ((item.products !== undefined) ? item.products.filter(p => !p.is_empty).length : 0), 0)}
+                            // valueStyle={{ color: emptiesBalance < 0?'#ff0000':'#3f8600' }}
+                            suffix="empties"
+                        />
+                    </Card>
+                </Col>
+            </Row>
             <TableEmptiesOnGround 
+                isDataLoading={isLoading}
                 columns={columns}
                 data={inHouseEmptiesData}
             />

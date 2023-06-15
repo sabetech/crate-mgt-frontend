@@ -4,15 +4,17 @@ import { ICustomer } from '../interfaces/Customer';
 
 type TableCustomersProps = {
     columns :any,
-    data: ICustomer[] | undefined
+    data: ICustomer[] | undefined,
+    isLoading: boolean
 
 }
 
-const TableCustomers: React.FC<TableCustomersProps> = ({columns, data}) => (
+const TableCustomers: React.FC<TableCustomersProps> = ({isLoading, columns, data}) => (
 
     <Table
         columns={columns}
         dataSource={data}
+        loading={isLoading}
     />
 );
 

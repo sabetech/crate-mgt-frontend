@@ -1,17 +1,19 @@
 import { useForm } from "antd/es/form/Form";
-import { Form, Input, Select, Button, message } from "antd";
+import { Form, Input, Select, Button, message, Spin } from "antd";
 import { useMutation } from "@tanstack/react-query";
 import { addCustomer } from "../../services/CustomersAPI";
 import { useAuthHeader } from "react-auth-kit";
 import { AppError } from "../../interfaces/Error";
+import { Loading3QuartersOutlined } from '@ant-design/icons'
 
 const { Option } = Select;
+const antIcon = <Loading3QuartersOutlined style={{ fontSize: 24, marginRight: 10 }} spin />;
 const AddNewCustomers = () => {
     const [form] = useForm();
     const authHeader = useAuthHeader();
     const [messageApi, contextHolder] = message.useMessage();
 
-    const { mutate } = useMutation({
+    const { mutate, isLoading: isSubmitting } = useMutation({
         mutationFn: (values: any) => addCustomer(values, authHeader()),
         onSuccess: (data) => {
             success(data?.data || "")
@@ -81,7 +83,9 @@ const AddNewCustomers = () => {
                 <Form.Item
 
                 >
-                    <Button type="primary" htmlType="submit">Submit</Button>
+                    <Button type="primary" htmlType="submit" disabled={isSubmitting}>
+                    {isSubmitting && <Spin indicator={antIcon} />} Submit
+                    </Button>
                 </Form.Item>
 
             </Form>

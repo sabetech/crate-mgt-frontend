@@ -1,3 +1,5 @@
+import { IEmptyOnGroundProducts } from "./Product";
+
 export interface IProduct {
     id?: number;
     sku_name: string;
@@ -39,7 +41,7 @@ export interface IEmptiesInHouseCount {
     id?: number;
     date: string;
     quantity: number;
-    products: IProduct[];
+    products: IEmptyOnGroundProducts[];
     pcs_number?: number;
 }
 

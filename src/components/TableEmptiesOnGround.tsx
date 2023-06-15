@@ -5,9 +5,10 @@ import { IEmptyOnGroundProducts } from '../interfaces/Product';
 type TableEmptiesOnGroundProps = {
     columns: any;
     data: any;
+    isDataLoading: boolean;
 }
 
-const TableEmptiesOnGround: React.FC<TableEmptiesOnGroundProps> = ({columns, data}) => 
+const TableEmptiesOnGround: React.FC<TableEmptiesOnGroundProps> = ({columns, data, isDataLoading}) => 
 
     (
     <Table
@@ -38,6 +39,7 @@ const TableEmptiesOnGround: React.FC<TableEmptiesOnGroundProps> = ({columns, dat
         rowExpandable: (record) => record.empties_on_ground_products.length > 0,
         }}
         dataSource={data}
+        loading={isDataLoading}
     />
 )
 
