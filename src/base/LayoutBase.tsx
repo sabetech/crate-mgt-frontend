@@ -24,6 +24,7 @@ import SaveInHouseEmpties from '../pages/empties-inhouse/EmptiesOnGround';
 import ListInHouseEmpties from '../pages/empties-inhouse/ListInHouseEmpties';
 import ManageUsers from '../pages/users/ManageUsers';
 import LogoutConfirm from '../components/LogoutConfirm';
+import CreateCustomerEmptiesLoan from '../pages/customers/CreateCustomerEmptiesLoan';
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -71,7 +72,7 @@ const items: MenuItem[] = [
     getItem('Add Customer', 'customers/add_customer'),
     getItem('List All Customers', 'customers/list_all_customers'),
     getItem('Return Empties', 'customers/return_empties'),
-    getItem('Empties Loan', 'customers/loan_empties'),
+    getItem('Empties Loan', 'customers/add_empties_loan'),
   ]),
   getItem('Empties with GGBL', 'empties-ggbl', <DesktopOutlined />, [
     getItem('Sales In', 'empties/empties_log'),
@@ -114,8 +115,8 @@ const LayoutBase = () => {
 
   return (<Layout style={{ minHeight: '100vh' }}>
     <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} width={'15%'}>
-      <div style={{ height: 112, margin: 16, background: 'rgba(255, 255, 255, 0.2)' }} >
-        <img src={opkLogo} alt="Empties Manager" style={{height: 112}} />
+      <div style={{ margin: 16, background: 'rgba(255, 255, 255, 0.2)' }} >
+        
       </div>
       <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" onClick={onClick} items={items} />
     </Sider>
@@ -144,6 +145,7 @@ const LayoutBase = () => {
             <Route path="/customers/return_empties" element={<CustomerReturnEmpties />} />
             <Route path="/customers/empties_account_history" element={<></>} />
             <Route path="/customers/list_all_customers" element={<ListCustomers />} />
+            <Route path="/customers/add_empties_loan" element={<CreateCustomerEmptiesLoan />} />
             <Route path="/empties/empties_log" element={<EmptiesLog />} />
             <Route path="/empties/empties_returned_log" element={<ReturningEmptiesLog />} />
             <Route path="/empties/add_purchase_order" element={<AddPurchaseOrder />} />

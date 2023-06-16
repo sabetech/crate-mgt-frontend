@@ -5,8 +5,9 @@ import { IEmptyLog, IEmptyReturnedLog } from '../../interfaces/Empties';
 import { useQuery } from '@tanstack/react-query';
 import { getEmptiesLog, getEmptiesReturnedLog } from '../../services/EmptiesAPI';
 import type { ColumnsType } from 'antd/es/table';
-import { Table, Image, DatePicker, Row, Col, Statistic, Card, Tag} from 'antd';
+import { Table, Image, DatePicker, Row, Col, Statistic, Card, Tag, Button, Tooltip} from 'antd';
 import { useAuthHeader } from 'react-auth-kit';
+import { CheckOutlined, UndoOutlined, DeleteOutlined } from '@ant-design/icons';
 const { RangePicker } = DatePicker;
 
 const EmptiesLog: React.FC = () => {
@@ -67,7 +68,15 @@ const EmptiesLog: React.FC = () => {
             );
         }
 
-    }, [dateRange])
+    }, [dateRange]);
+
+    const onApproveHandle = () => {
+        console.log("Approve");
+    }
+
+    const onUnapproveHandle = () => {
+        console.log("Unapprove");
+    }
 
     const dateRangeOnChange = (date: any, dateString: string[]) => {
         console.log(date, dateString);
@@ -87,10 +96,29 @@ const EmptiesLog: React.FC = () => {
           title: 'Action',
           dataIndex: 'approved',
           key: 'x',
-          render: (value) => <>
-            {(value === 0 ? <Tag color="error">Unapproved</Tag> : <Tag color="success">Approved</Tag>)}
-            <a>Delete</a>
-          </>,
+          render: (value) => 
+          <div style={{display: "flex" }}>
+            {
+            (value === 0 ? 
+            <>
+                <Tag color="error">Unapproved</Tag> 
+                <Tooltip title="Approve">
+                    <Button shape="circle" style={{marginRight: 7}}  icon={<CheckOutlined />} onClick={onApproveHandle}/>
+                </Tooltip>
+            </>
+            : 
+            <>
+                <Tag color="success">Approved</Tag>
+                <Tooltip title="Unapprove">
+                    <Button shape="circle" style={{marginRight: 7}} icon={<UndoOutlined />} onClick={onUnapproveHandle} />
+                </Tooltip>
+            </>
+            )
+            }
+            <Tooltip title="Delete">
+                <Button shape="circle" danger icon={<DeleteOutlined />} />
+            </Tooltip>
+          </div>,
         },
       ];
 

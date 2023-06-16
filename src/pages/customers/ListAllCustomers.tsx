@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 const ListCustomers: React.FC = () => {
     const authHeader = useAuthHeader();
     
-    const { data } = useQuery<ServerResponse<ICustomer[]>, Error>(
+    const { data, isLoading } = useQuery<ServerResponse<ICustomer[]>, Error>(
         {
             queryKey: ['customer_with_balance'],
             queryFn: () => getCustomersWithBalance(authHeader())
@@ -49,6 +49,7 @@ const ListCustomers: React.FC = () => {
         <TableCustomers 
             columns={columms}
             data={customerList}
+            isLoading={isLoading}
         />
     );
 }
