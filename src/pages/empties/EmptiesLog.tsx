@@ -2,22 +2,24 @@ import React, { useEffect } from 'react';
 import TableEmptiesLog from '../../components/TableEmptiesLog';
 import { ServerResponse } from '../../interfaces/Server';
 import { IEmptyLog, IEmptyReturnedLog } from '../../interfaces/Empties';
-import { useQuery } from '@tanstack/react-query';
-import { getEmptiesLog, getEmptiesReturnedLog } from '../../services/EmptiesAPI';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getEmptiesLog, getEmptiesReturnedLog, approvePurchaseOrder } from '../../services/EmptiesAPI';
 import type { ColumnsType } from 'antd/es/table';
-import { Table, Image, DatePicker, Row, Col, Statistic, Card, Tag, Button, Tooltip} from 'antd';
+import { Table, Image, DatePicker, Spin, Row, Col, Statistic, Card, Tag, Button, message, Tooltip} from 'antd';
 import { useAuthHeader } from 'react-auth-kit';
-import { CheckOutlined, UndoOutlined, DeleteOutlined } from '@ant-design/icons';
+import { CheckOutlined, UndoOutlined, DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
 const { RangePicker } = DatePicker;
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />
 
 const EmptiesLog: React.FC = () => {
     const authHeader = useAuthHeader();
-    
+    const [messageApi, contextHolder] = message.useMessage();
+    const queryClient = useQueryClient()
+
     //use react query to fetch data from server
     const { data: receivedEmpties } = useQuery<ServerResponse<IEmptyLog[]>, Error>({
         queryKey: ['empties_received'],
         queryFn: () => getEmptiesLog(authHeader()),
-        
      }
     );
 
@@ -27,6 +29,22 @@ const EmptiesLog: React.FC = () => {
         
         }
     );
+
+    const { mutate, isLoading: isSubmitting } = useMutation({
+        mutationFn: (id:number) => approvePurchaseOrder(id, authHeader()),
+        onSuccess: () => {
+            queryClient.invalidateQueries()
+            success("Purchase Order Approved")
+        }
+    });
+
+    const success = (msg:string) => {
+        messageApi.open({
+          type: 'success',
+          content: msg,
+        });
+        setTimeout(messageApi.destroy, 2500);
+    }
 
     const [emptiesLog, setEmptiesLog] = React.useState<IEmptyLog[] | undefined>(undefined);
     const [emptiesReturnedLog, setEmptiesReturnedLog] = React.useState<IEmptyReturnedLog[] | undefined>(undefined);
@@ -70,8 +88,9 @@ const EmptiesLog: React.FC = () => {
 
     }, [dateRange]);
 
-    const onApproveHandle = () => {
-        console.log("Approve");
+    const onApproveHandle = (id: number) => {
+        console.log("Approve ID", id)
+        mutate(id);
     }
 
     const onUnapproveHandle = () => {
@@ -96,14 +115,14 @@ const EmptiesLog: React.FC = () => {
           title: 'Action',
           dataIndex: 'approved',
           key: 'x',
-          render: (value) => 
+          render: (value: number, record) => 
           <div style={{display: "flex" }}>
             {
             (value === 0 ? 
             <>
                 <Tag color="error">Unapproved</Tag> 
                 <Tooltip title="Approve">
-                    <Button shape="circle" style={{marginRight: 7}}  icon={<CheckOutlined />} onClick={onApproveHandle}/>
+                    <Button shape="circle" style={{marginRight: 7}}  icon={isSubmitting ? <Spin indicator={antIcon} /> : <CheckOutlined /> } onClick={() => onApproveHandle( record.id || 0 )}/>
                 </Tooltip>
             </>
             : 
@@ -124,6 +143,7 @@ const EmptiesLog: React.FC = () => {
 
     return (
         <>
+        {contextHolder}
             Select a date Range <RangePicker onChange={dateRangeOnChange}/>
             <Row gutter={16}>
                 <Col span={12}>

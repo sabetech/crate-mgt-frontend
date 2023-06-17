@@ -25,3 +25,7 @@ export const AddInHouseEmptiesCount = async (values: IEmptiesInHouseCount, token
 export const getInHouseEmpties = async (token: string): Promise<ServerResponse<IEmptiesInHouseCount[]>> => {
     return (await api.get('/empties-onground-log', {'Authorization': token})).data;
 }
+
+export const approvePurchaseOrder = async (id: number, token: string): Promise<ServerResponse<string>> => {
+    return (await api.put(`/empties-receiving-logs/${id}`, {approved: true}, {'Authorization': token})).data;
+}
