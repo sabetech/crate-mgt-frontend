@@ -1,7 +1,7 @@
-import { useAuthHeader } from "react-auth-kit";
+// import { useAuthHeader } from "react-auth-kit";
 
 const LoanList: React.FC = () => {
-    const authHeader = useAuthHeader();
+    // const authHeader = useAuthHeader();
 
 
     return (

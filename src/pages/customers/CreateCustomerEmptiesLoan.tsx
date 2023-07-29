@@ -1,7 +1,7 @@
 import type { DatePickerProps } from 'antd';
 import { useForm } from "antd/es/form/Form";
-import { Form, Input, Select, Button, message, Spin,Upload, DatePicker, Space } from "antd";
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { Form, Input, Select, Upload, DatePicker, Space } from "antd";
+import { PlusOutlined } from '@ant-design/icons';
 
 const CreateCustomerEmptiesLoan = () => {
     const [form] = useForm();

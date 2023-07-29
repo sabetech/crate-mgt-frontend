@@ -6,7 +6,7 @@ import { ServerResponse } from "../../interfaces/Server";
 import { getInHouseEmpties } from "../../services/EmptiesAPI";
 import type { ColumnsType } from 'antd/es/table';
 import TableEmptiesOnGround from "../../components/TableEmptiesOnGround";
-import { Table, DatePicker, Row, Col, Statistic, Card, Tag } from 'antd';
+import { Table, DatePicker, Row, Col, Statistic, Card } from 'antd';
 
 const ListInHouseEmpties = () => {
     const { RangePicker } = DatePicker;
@@ -18,7 +18,7 @@ const ListInHouseEmpties = () => {
         queryFn: () => getInHouseEmpties(authHeader()),
     });
 
-    const [dateRange, setDateRange] = React.useState<string[] | undefined>(undefined);
+    const [_, setDateRange] = React.useState<string[] | undefined>(undefined);
 
     React.useEffect(() => {
         if (inHouseEmpties) {

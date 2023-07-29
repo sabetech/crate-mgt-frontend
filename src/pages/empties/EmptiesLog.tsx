@@ -38,7 +38,7 @@ const EmptiesLog: React.FC = () => {
         }
     });
 
-    const { mutate: deleteMutation, isLoading: isDeleting } = useMutation({
+    const { mutate: deleteMutation } = useMutation({
         mutationFn: (values: any) => deletePurchaseOrder(values.id, authHeader()),
         onSuccess: () => {
             queryClient.invalidateQueries()
