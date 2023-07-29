@@ -26,6 +26,14 @@ export const getInHouseEmpties = async (token: string): Promise<ServerResponse<I
     return (await api.get('/empties-onground-log', {'Authorization': token})).data;
 }
 
-export const approvePurchaseOrder = async (id: number, token: string): Promise<ServerResponse<string>> => {
-    return (await api.put(`/empties-receiving-logs/${id}`, {approved: true}, {'Authorization': token})).data;
+export const toggleApprovePurchaseOrder = async (id: number, approved: boolean, token: string): Promise<ServerResponse<string>> => {
+    return (await api.put(`/empties-receiving-logs/${id}`, {approved: !approved}, {'Authorization': token})).data;
+}
+
+export const deletePurchaseOrder = async (id: number, token: string): Promise<ServerResponse<string>> => {
+    return (await api.deleteRequest(`/empties-receiving-logs/${id}`, {'Authorization': token})).data;
+}
+
+export const addCustomerEmptiesLoan = async (values: IEmptyLog, token: string): Promise<ServerResponse<string>> => {
+    return (await api.post('/empties-loan', values, {'Authorization': token})).data;
 }

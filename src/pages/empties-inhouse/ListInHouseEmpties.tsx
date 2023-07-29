@@ -34,6 +34,9 @@ const ListInHouseEmpties = () => {
         setDateRange(dateString);
     }
 
+    console.log("In House Empties Data ", inHouseEmptiesData);
+    console.log("In House Empties Data ", inHouseEmptiesData?.reduce((acc: number, item: IEmptiesInHouseCount) => acc + ((item.empties_on_ground_products !== undefined) ? 1:0), 0));
+
     const columns: ColumnsType<IEmptiesInHouseCount> = [
         {
             title: 'Date',
@@ -73,8 +76,9 @@ const ListInHouseEmpties = () => {
                     <Card bordered={true}>
                         <Statistic
                             title="Total Fulls On Ground"
-                            value={inHouseEmptiesData?.reduce((acc: number, item: IEmptiesInHouseCount) => acc + ((item.products !== undefined) ? item.products.filter(p => !p.is_empty).length : 0), 0)}
-                            // valueStyle={{ color: emptiesBalance < 0?'#ff0000':'#3f8600' }}
+                            value={inHouseEmptiesData
+                                ?.reduce(
+                                    (acc: number, item: IEmptiesInHouseCount) => acc + ((item.empties_on_ground_products !== undefined) ? item.empties_on_ground_products.filter(p => !p.is_empty).reduce((acc: number, p) => acc + p.quantity, 0):0), 0)}
                             suffix="empties"
                         />
                     </Card>

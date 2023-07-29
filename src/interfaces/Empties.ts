@@ -41,7 +41,7 @@ export interface IEmptiesInHouseCount {
     id?: number;
     date: string;
     quantity: number;
-    products: IEmptyOnGroundProducts[];
+    empties_on_ground_products: IEmptyOnGroundProducts[];
     pcs_number?: number;
 }
 

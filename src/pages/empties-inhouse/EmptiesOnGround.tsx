@@ -61,24 +61,31 @@ const SaveInHouseEmpties = () => {
 
     const onFinish = (values: any) => {
         
+        if (!values['product-quanties']) {
+            values['product-quanties'] = [];
+        }
+
+        if (!values['fulls-quantity']) {
+            values['fulls-quantity'] = [];
+        } 
+
         let formValues: IEmptiesInHouseCount = {
             date: values.date.format('YYYY-MM-DD'),
-            quantity: values['product-quanties'].reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0) 
+            quantity: values['product-quanties']?.reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0) || 0 
             + 
-            values['fulls-quantity'].reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0),
+            values['fulls-quantity']?.reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0) || 0,
             
-            products: [
-                ...values['product-quanties'].map((item: any) => ({
+            empties_on_ground_products: [
+                ...values['product-quanties']?.map((item: any) => ({
                 product_id: item.product, // product id
                 quantity: parseInt(item.quantity),
                 is_empty: true
-            })), 
-            ...values['fulls-quantity'].map((item: any) => ({
+            })) ,
+            ...values['fulls-quantity']?.map((item: any) => ({
                 product_id: item.product, // product id
                 quantity: parseInt(item.quantity),
                 is_empty: false
             }))],
-
             pcs_number: values['pcs_number'],
         };
 
@@ -104,7 +111,7 @@ const SaveInHouseEmpties = () => {
                             <DatePicker />
                         </Form.Item>
                         
-                        <Form.Item label="Number of PCs" name={"pcs_number"} style={{ width: 400 }}>
+                        <Form.Item label="Number of PCs" name={"pcs_number"} style={{ width: 400 }} initialValue={0} required>
                             <Input />
                         </Form.Item>
                     </div>

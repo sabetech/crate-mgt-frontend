@@ -3,7 +3,7 @@ import TableEmptiesLog from '../../components/TableEmptiesLog';
 import { ServerResponse } from '../../interfaces/Server';
 import { IEmptyLog, IEmptyReturnedLog } from '../../interfaces/Empties';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getEmptiesLog, getEmptiesReturnedLog, approvePurchaseOrder } from '../../services/EmptiesAPI';
+import { getEmptiesLog, getEmptiesReturnedLog, toggleApprovePurchaseOrder, deletePurchaseOrder } from '../../services/EmptiesAPI';
 import type { ColumnsType } from 'antd/es/table';
 import { Table, Image, DatePicker, Spin, Row, Col, Statistic, Card, Tag, Button, message, Tooltip} from 'antd';
 import { useAuthHeader } from 'react-auth-kit';
@@ -31,10 +31,18 @@ const EmptiesLog: React.FC = () => {
     );
 
     const { mutate, isLoading: isSubmitting } = useMutation({
-        mutationFn: (id:number) => approvePurchaseOrder(id, authHeader()),
+        mutationFn: (values: any) => toggleApprovePurchaseOrder(values.id, values.approved, authHeader()),
         onSuccess: () => {
             queryClient.invalidateQueries()
-            success("Purchase Order Approved")
+            success("Purchase Order Modified Successfully")
+        }
+    });
+
+    const { mutate: deleteMutation, isLoading: isDeleting } = useMutation({
+        mutationFn: (values: any) => deletePurchaseOrder(values.id, authHeader()),
+        onSuccess: () => {
+            queryClient.invalidateQueries()
+            success("Purchase Order Deleted Successfully")
         }
     });
 
@@ -85,21 +93,25 @@ const EmptiesLog: React.FC = () => {
                 )
             );
         }
-
     }, [dateRange]);
 
-    const onApproveHandle = (id: number) => {
-        console.log("Approve ID", id)
-        mutate(id);
+    const onApproveHandle = (id: number, approved: boolean) => {
+        mutate({id, approved});
     }
 
-    const onUnapproveHandle = () => {
+    const onUnapproveHandle = (id: number, approved: boolean) => {
+        mutate({id, approved})
         console.log("Unapprove");
     }
 
     const dateRangeOnChange = (date: any, dateString: string[]) => {
         console.log(date, dateString);
         setDateRange(dateString);
+    }
+
+    const handleOndelete = (id: number) => {
+        console.log(id);
+        deleteMutation({id})
     }
 
     const columns: ColumnsType<IEmptyLog> = [
@@ -122,20 +134,20 @@ const EmptiesLog: React.FC = () => {
             <>
                 <Tag color="error">Unapproved</Tag> 
                 <Tooltip title="Approve">
-                    <Button shape="circle" style={{marginRight: 7}}  icon={isSubmitting ? <Spin indicator={antIcon} /> : <CheckOutlined /> } onClick={() => onApproveHandle( record.id || 0 )}/>
+                    <Button shape="circle" style={{marginRight: 7}}  icon={isSubmitting ? <Spin indicator={antIcon} /> : <CheckOutlined /> } onClick={() => onApproveHandle(record.id || 0, record.approved || false )}/>
                 </Tooltip>
             </>
             : 
             <>
                 <Tag color="success">Approved</Tag>
                 <Tooltip title="Unapprove">
-                    <Button shape="circle" style={{marginRight: 7}} icon={<UndoOutlined />} onClick={onUnapproveHandle} />
+                    <Button shape="circle" style={{marginRight: 7}} icon={isSubmitting ? <Spin indicator={antIcon} /> : <UndoOutlined />} onClick={() => onUnapproveHandle(record.id || 0, record.approved || true)} />
                 </Tooltip>
             </>
             )
             }
             <Tooltip title="Delete">
-                <Button shape="circle" danger icon={<DeleteOutlined />} />
+                <Button shape="circle" danger icon={<DeleteOutlined />} onClick={() => handleOndelete(record.id || 0)} />
             </Tooltip>
           </div>,
         },

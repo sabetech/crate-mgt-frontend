@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Dropdown, Breadcrumb, Layout, Menu, theme, Avatar, Space } from 'antd';
 import Dashboard from '../pages/Dashboard';
-import opkLogo from '../assets/opk_logo.png'
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import EmptiesLog from '../pages/empties/EmptiesLog';
 import AddPurchaseOrder from '../pages/empties/AddPurchaseOrder';
 import {
@@ -103,6 +102,9 @@ const LayoutBase = () => {
   const authUser = useAuthUser();
   
   const userState = authUser();
+  const location  = useLocation();
+  
+  console.log("PATH name: ", location.pathname)
   
   const {
     token: { colorBgContainer },
@@ -118,7 +120,7 @@ const LayoutBase = () => {
       <div style={{ margin: 16, background: 'rgba(255, 255, 255, 0.2)' }} >
         
       </div>
-      <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" onClick={onClick} items={items} />
+      <Menu theme="dark" defaultSelectedKeys={[location.pathname.substring(1)]} selectedKeys={[location.pathname.substring(1)]}  mode="inline" onClick={onClick} items={items}  />
     </Sider>
     <Layout className="site-layout">
       <Header style={{ padding: 0, background: colorBgContainer, display: 'flex', justifyContent: 'flex-end' }}>
