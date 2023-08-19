@@ -109,6 +109,7 @@ const AddNewCustomers: React.FC = () => {
                     <Select style={{ width: 130 }}>
                         <Option value="wholesaler">Wholesaler</Option>
                         <Option value="retailer">Retailer</Option>
+                        <Option value="retailer-vse">Retailer(VSE)</Option>
                     </Select>
                 </Form.Item>
 

@@ -12,7 +12,7 @@ const post = (url: string, data: any, headers: object) => {
     const formData = new FormData();
     
     Object.keys(data).forEach(key => {
-        if (key === "products")
+        if ((key === "products") || (key === "product-quanties") || (key === "empties-returned"))
             formData.append(key, JSON.stringify(data[key]));
         else{
             formData.append(key, data[key]);

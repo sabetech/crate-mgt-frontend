@@ -29,12 +29,11 @@ const ListCustomers: React.FC = () => {
         }
     },[data]);
 
-    console.log("Customer List: ", customerList)
 
     const columms = [
         { title: 'Name', dataIndex: 'name', key: 'name', render: (_: any, customer: ICustomer) => <Link to={`${customer.id}/history`}>{customer.name}</Link> },
         { title: 'Phone', dataIndex: 'phone', key: 'phone' },
-        { title: 'Type', dataIndex: 'customer_type', key: 'customer_type' },
+        { title: 'Type', dataIndex: 'customer_type', key: 'customer_type', render: (value: string) => value.toUpperCase() },
         {
             title: 'Empties Balance',
             dataIndex: 'customer_empties_account',

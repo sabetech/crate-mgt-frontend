@@ -1,20 +1,22 @@
 import React, { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Form, DatePicker, Select, Input, Space, Button, message } from "antd";
 import { MinusCircleOutlined, PlusOutlined, SendOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
-import { getCustomers } from "../../services/CustomersAPI";
+import { getCustomers, recordVSESales } from "../../services/CustomersAPI";
 import { useAuthHeader } from 'react-auth-kit';
 import { ICustomer } from "../../interfaces/Customer";
 import { ServerResponse } from "../../interfaces/Server";
 import { AppError } from "../../interfaces/Error";
 import { IProduct } from "../../interfaces/Product";
 import { getProducts } from "../../services/ProductsAPI";
+import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 const RecordVSESales: React.FC = () => {
     const [form] = useForm();
     const [customerList, setCustomerList] = React.useState<ICustomer[] | undefined>([]);
+    const navigate = useNavigate();
     const authHeader = useAuthHeader();
     const [messageApi, contextHolder ] = message.useMessage();
 
@@ -36,6 +38,22 @@ const RecordVSESales: React.FC = () => {
             }
         } 
     );
+
+    const { mutate } = useMutation({
+        mutationFn: (values: any) => recordVSESales(values.customer_id, values, authHeader()),
+        onSuccess: (data) => {
+            success(data?.data || "")
+            navigate("/customers")
+            form.resetFields();
+        },
+        onError: (error: AppError) => {
+            messageApi.open({
+                type: 'error',
+                content: error.message + ". Please Check your internet connection and refresh the page."
+            });
+            setTimeout(messageApi.destroy, 2500);
+        }}
+    )
     
     useEffect(() => {
         
@@ -58,11 +76,21 @@ const RecordVSESales: React.FC = () => {
         }
     },[data]);
 
+    const success = (msg: string) => {
+        messageApi.open({
+            type: 'success',
+            content: msg,
+            duration: 0
+        });
+        setTimeout(messageApi.destroy, 2500);
+    }
+
     const onFinish = (_values: any) => {
         console.log(_values);
-           // mutate(_values);
+        mutate(_values);
     }
     return (<>
+        {contextHolder}
         <h1>Record a Sale</h1>
             <Form 
                 form={form}
@@ -77,7 +105,7 @@ const RecordVSESales: React.FC = () => {
                         <DatePicker />
                         {/* Make the customers searchable... */}
                     </Form.Item>
-                    <Form.Item label="Customer" name={"customer_name"}>
+                    <Form.Item label="Customer" name={"customer_id"}>
                         <Select style={{ width: 400 }}>
                             {
                                 customerList && customerList.map((item) => (

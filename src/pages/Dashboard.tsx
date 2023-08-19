@@ -23,7 +23,7 @@ const Dashboard = () => {
     const handleClick = (location: string) => {
         switch (location) {
             case 'customers':
-                navigate('/customers/list_all_customers');
+                navigate('/customers');
             break;
         }
     }

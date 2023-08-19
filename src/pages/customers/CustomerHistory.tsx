@@ -5,6 +5,7 @@ import { getCustomerHistory } from '../../services/CustomersAPI';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { IHistoryItem } from '../../interfaces/Customer';
+import { formatDate } from '../../utils/helpers';
 
 const CustomerHistory = () => {
     const authHeader = useAuthHeader();
@@ -33,22 +34,24 @@ const CustomerHistory = () => {
                 }
 
             }
-            console.log("HISOTRY OBJECT::", historyObjectArray)
+            
             setCustomerHistory(historyObjectArray)
         }
 
     }, [customerHistory])
 
     const items = () : TimelineItemProps[] => Object.keys(customerItems).map((historyItem) => ({
-        label: historyItem,
+        label: formatDate(historyItem),
         children: <>
+                    <ul>
                     {
                         customerItems[historyItem].map((item: IHistoryItem) => ( 
-                            <p key={item.id}>
+                            <li key={item.id}>
                                 {item.product.sku_name}: <h4>{item.transaction_type === 'in' ? '-':'+'} ({item.quantity_transacted})</h4>
-                            </p>
+                            </li>
                          ))
                     }
+                    </ul>
                     <hr />
                     <h3>Total: {
                         customerItems[historyItem].reduce((acc: number, item: IHistoryItem) => {
