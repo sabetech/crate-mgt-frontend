@@ -102,7 +102,7 @@ const RecordVSESales: React.FC = () => {
             <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridGap: '20px'}}>
                 <div>
                     <Form.Item label="Date" name={"date"}>
-                        <DatePicker />
+                        <DatePicker  />
                         {/* Make the customers searchable... */}
                     </Form.Item>
                     <Form.Item label="Customer" name={"customer_id"}>
@@ -119,7 +119,7 @@ const RecordVSESales: React.FC = () => {
                 </div>
                 <div>
                     <h3> Products Sold </h3>
-                    <Form.List name="product-quanties">
+                    <Form.List name="product_quanties">
                         {(fields, { add, remove }) => (
                             <>
                                 {
@@ -174,7 +174,7 @@ const RecordVSESales: React.FC = () => {
                     </Form.List>
 
                     <h3> Empties Returned </h3>
-                        <Form.List name="empties-returned">
+                        <Form.List name="empties_returned">
                             {(fields, { add, remove }) => (
                                 <>
                                     {
