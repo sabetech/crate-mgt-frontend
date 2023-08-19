@@ -44,7 +44,7 @@ const AddNewCustomers: React.FC = () => {
         mutationFn: (values: any) => addCustomer(values, authHeader()),
         onSuccess: (data) => {
             success(data?.data || "")
-            navigate("/customers/list_all_customers")
+            navigate("/customers")
             form.resetFields();
         },
         onError: (error: AppError) => {
