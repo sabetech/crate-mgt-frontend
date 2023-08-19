@@ -18,3 +18,7 @@ export const addCustomer = async (values: ICustomer, token: string) => {
 export const addCustomerReturnEmpties = async (values: any, token: string) => {
     return (await api.post('/customer_empties_returns', values, {'Authorization': token})).data;
 }
+
+export const getCustomerHistory = async (id: number, token: string) => {
+    return (await api.get(`/customer_history/${id}`, {'Authorization': token})).data;
+}

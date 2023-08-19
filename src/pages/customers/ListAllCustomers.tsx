@@ -5,6 +5,7 @@ import { ICustomer, ICustomerReturnEmpties } from "../../interfaces/Customer";
 import { ServerResponse } from "../../interfaces/Server";
 import { getCustomersWithBalance } from "../../services/CustomersAPI";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 
 const ListCustomers: React.FC = () => {
     const authHeader = useAuthHeader();
@@ -29,7 +30,7 @@ const ListCustomers: React.FC = () => {
     },[data]);
 
     const columms = [
-        { title: 'Name', dataIndex: 'name', key: 'name' },
+        { title: 'Name', dataIndex: 'name', key: 'name', render: (_: any, customer: ICustomer) => <Link to={`${customer.id}/history`}>{customer.name}</Link> },
         { title: 'Phone', dataIndex: 'phone', key: 'phone' },
         { title: 'Type', dataIndex: 'customer_type', key: 'customer_type' },
         {

@@ -72,6 +72,24 @@ const AddPurchaseOrder = () => {
 
     const onFinish = (values: any) => {
         
+        if (!values['product-quanties'] || values['product-quanties'].length === 0) {
+            messageApi.open({
+                type: 'error',
+                content: "Please add products and quantities"
+            });
+            setTimeout(messageApi.destroy, 2500);
+            return;
+        }
+
+        if (!values.image_ref || values.image_ref.length === 0) {
+            messageApi.open({
+                type: 'error',
+                content: "Please upload an image"
+            });
+            setTimeout(messageApi.destroy, 2500);
+            return;
+        }
+
         let formValues = {
             ...values,
             "product-quanties": JSON.stringify(values['product-quanties'].map((item: any) => ({

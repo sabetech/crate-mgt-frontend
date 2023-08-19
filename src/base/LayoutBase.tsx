@@ -16,6 +16,7 @@ import AddReturningEmpties from '../pages/empties/AddReturningEmpties';
 import ReturningEmptiesLog from '../pages/empties/ReturningEmptiesLog';
 import AddNewCustomers from '../pages/customers/AddNewCustomers';
 import ListCustomers from '../pages/customers/ListAllCustomers';
+import RecordVSESales from '../pages/customers/RecordVSESales';
 import Login from '../pages/users/Login';
 import { useAuthUser } from 'react-auth-kit';
 import CustomerReturnEmpties from '../pages/customers/ReturnEmpties';
@@ -24,6 +25,7 @@ import ListInHouseEmpties from '../pages/empties-inhouse/ListInHouseEmpties';
 import ManageUsers from '../pages/users/ManageUsers';
 import LogoutConfirm from '../components/LogoutConfirm';
 import CreateCustomerEmptiesLoan from '../pages/customers/CreateCustomerEmptiesLoan';
+import CustomerHistory from '../pages/customers/CustomerHistory';
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -67,11 +69,12 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem('Dashboard', 'dashboard', <PieChartOutlined />),
-  getItem('Customers', 'customers', <UserOutlined />, [
-    getItem('Add Customer', 'customers/add_customer'),
-    getItem('List All Customers', 'customers/list_all_customers'),
+  getItem('Customers or VSEs', 'customers', <UserOutlined />, [
+    getItem('Add Customer', 'customers/new'),
+    getItem('List All Customers', 'customers'),
     getItem('Return Empties', 'customers/return_empties'),
     getItem('Empties Loan', 'customers/add_empties_loan'),
+    getItem('Record Sales', 'customers/record_sales'),
   ]),
   getItem('Empties with GGBL', 'empties-ggbl', <DesktopOutlined />, [
     getItem('Sales In', 'empties/empties_log'),
@@ -116,7 +119,7 @@ const LayoutBase = () => {
   };
 
   return (<Layout style={{ minHeight: '100vh' }}>
-    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} width={'15%'}>
+    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} width={'20%'}>
       <div style={{ margin: 16, background: 'rgba(255, 255, 255, 0.2)' }} >
         
       </div>
@@ -143,11 +146,16 @@ const LayoutBase = () => {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/customers/add_customer" element={<AddNewCustomers />} />
+            <Route path="/customers" element={<ListCustomers />} >
+              <Route path="new" element={<AddNewCustomers />} />
+            </Route>
+            
             <Route path="/customers/return_empties" element={<CustomerReturnEmpties />} />
-            <Route path="/customers/empties_account_history" element={<></>} />
+            <Route path="/customers/:id/history" element={<CustomerHistory />} />
             <Route path="/customers/list_all_customers" element={<ListCustomers />} />
             <Route path="/customers/add_empties_loan" element={<CreateCustomerEmptiesLoan />} />
+            <Route path="/customers/record_sales" element={<RecordVSESales />} />
+            
             <Route path="/empties/empties_log" element={<EmptiesLog />} />
             <Route path="/empties/empties_returned_log" element={<ReturningEmptiesLog />} />
             <Route path="/empties/add_purchase_order" element={<AddPurchaseOrder />} />

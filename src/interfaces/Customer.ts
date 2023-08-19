@@ -15,3 +15,11 @@ export interface ICustomerReturnEmpties {
     quantity_transacted: number,
     transaction_type: string,
 }
+
+export interface IHistoryItem {
+    id: number,
+    date: string,
+    quantity_transacted: number,
+    transaction_type: string,
+    product: IProduct,
+}
