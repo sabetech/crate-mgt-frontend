@@ -146,16 +146,13 @@ const LayoutBase = () => {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/customers" element={<ListCustomers />} >
-              <Route path="new" element={<AddNewCustomers />} />
-            </Route>
-            
+            <Route path="/customers" element={<ListCustomers />} />
+            <Route path="/customers/new" element={<AddNewCustomers />} />
             <Route path="/customers/return_empties" element={<CustomerReturnEmpties />} />
-            <Route path="/customers/:id/history" element={<CustomerHistory />} />
             <Route path="/customers/list_all_customers" element={<ListCustomers />} />
             <Route path="/customers/add_empties_loan" element={<CreateCustomerEmptiesLoan />} />
             <Route path="/customers/record_sales" element={<RecordVSESales />} />
-            
+            <Route path="/customers/:id/history" element={<CustomerHistory />} />
             <Route path="/empties/empties_log" element={<EmptiesLog />} />
             <Route path="/empties/empties_returned_log" element={<ReturningEmptiesLog />} />
             <Route path="/empties/add_purchase_order" element={<AddPurchaseOrder />} />

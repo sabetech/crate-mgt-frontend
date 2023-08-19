@@ -1,4 +1,4 @@
-import { Timeline, TimelineItemProps } from 'antd';
+import { Timeline, TimelineItemProps, Col, Row, Statistic } from 'antd';
 import { useQuery } from "@tanstack/react-query";
 import { useAuthHeader } from "react-auth-kit";
 import { getCustomerHistory } from '../../services/CustomersAPI';
@@ -50,7 +50,7 @@ const CustomerHistory = () => {
                          ))
                     }
                     <hr />
-                    Total: {
+                    <h3>Total: {
                         customerItems[historyItem].reduce((acc: number, item: IHistoryItem) => {
                             if (item.transaction_type === 'in') {
                                 return acc - item.quantity_transacted;
@@ -58,7 +58,7 @@ const CustomerHistory = () => {
                                 return acc + item.quantity_transacted;
                             }
                         }, 0)   
-                    }
+                    }</h3>
                   </>,
       }))
            
@@ -67,6 +67,19 @@ const CustomerHistory = () => {
     return (
         <div>
         <h1>Customer History</h1>
+        <Row gutter={16}>
+            <Col span={12}>
+                <Statistic title="Total Empties Balance:" value={
+                    customerHistory?.data.reduce((acc: number, item: IHistoryItem) => {
+                        if (item.transaction_type === 'in') {
+                            return acc - item.quantity_transacted;
+                        }else {
+                            return acc + item.quantity_transacted;
+                        }
+                    },0)
+                } />
+            </Col>
+        </Row>
         <>
         <Timeline
             mode={'left'}

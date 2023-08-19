@@ -29,6 +29,8 @@ const ListCustomers: React.FC = () => {
         }
     },[data]);
 
+    console.log("Customer List: ", customerList)
+
     const columms = [
         { title: 'Name', dataIndex: 'name', key: 'name', render: (_: any, customer: ICustomer) => <Link to={`${customer.id}/history`}>{customer.name}</Link> },
         { title: 'Phone', dataIndex: 'phone', key: 'phone' },
@@ -40,7 +42,13 @@ const ListCustomers: React.FC = () => {
             render: (value: ICustomerReturnEmpties[]) => 
                 (
                     value.reduce(
-                        (acc: number, item: ICustomerReturnEmpties) => acc + item.quantity_transacted, 0
+                        (acc: number, item: ICustomerReturnEmpties) => {
+                            if (item.transaction_type === 'in') {
+                                return acc - item.quantity_transacted;
+                            }else {
+                                return acc + item.quantity_transacted;
+                            }
+                        }, 0
                     )
                 )
             }
