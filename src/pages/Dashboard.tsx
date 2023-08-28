@@ -6,6 +6,7 @@ import { useAuthHeader } from 'react-auth-kit';
 import { ServerResponse } from '../interfaces/Server';
 import { ICustomer } from '../interfaces/Customer';
 
+
 const Dashboard = () => {
     const navigate = useNavigate();
     const authHeader = useAuthHeader();
@@ -17,9 +18,12 @@ const Dashboard = () => {
         }
     );
 
-
-
-
+    const { data: totalEmpties } = useQuery(
+        {
+            queryKey: ['totalEmpties'],
+            // queryFn: () => getTotalEmptiesCount(authHeader())
+        }
+    )
     const handleClick = (location: string) => {
         switch (location) {
             case 'customers':

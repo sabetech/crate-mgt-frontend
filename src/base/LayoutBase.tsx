@@ -32,14 +32,6 @@ type MenuItem = Required<MenuProps>['items'][number];
 
 const UserDropdown: MenuProps['items'] = [
   {
-    label: (
-      <a href="/users/manage">
-        Manage Users
-      </a>
-    ),
-    key: 'add_a_user',
-  },
-  {
     type: 'divider',
   },
   {
@@ -69,7 +61,7 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem('Dashboard', 'dashboard', <PieChartOutlined />),
-  getItem('Customers or VSEs', 'customers', <UserOutlined />, [
+  getItem('Customers or VSEs', '_', <UserOutlined />, [
     getItem('Add Customer', 'customers/new'),
     getItem('List All Customers', 'customers'),
     getItem('Return Empties', 'customers/return_empties'),
@@ -102,12 +94,17 @@ const items: MenuItem[] = [
 ];
 const LayoutBase = () => {
   const [collapsed, setCollapsed] = useState(false);
+  
   const authUser = useAuthUser();
   
   const userState = authUser();
   const location  = useLocation();
   
   console.log("PATH name: ", location.pathname)
+  const handleManageUsers = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault();
+    navigate("/users/manage");
+  }
   
   const {
     token: { colorBgContainer },
@@ -128,7 +125,14 @@ const LayoutBase = () => {
     <Layout className="site-layout">
       <Header style={{ padding: 0, background: colorBgContainer, display: 'flex', justifyContent: 'flex-end' }}>
         <Space style={{marginRight: '2em'}}>
-        <Dropdown menu={ {items: UserDropdown} }>
+        <Dropdown menu={ {items: [{
+                              label: (
+                                <a onClick={handleManageUsers}>
+                                  Manage Users
+                                </a>
+                              ),
+                              key: 'manage_users',
+                            }, ...UserDropdown,]} }>
           <a onClick={(e) => e.preventDefault()}>
             <Space>
             <h3>{ userState?.name }({userState?.email})</h3>
