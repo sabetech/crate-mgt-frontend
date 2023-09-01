@@ -69,6 +69,23 @@ const SaveInHouseEmpties = () => {
             values['fulls-quantity'] = [];
         } 
 
+        if (!values['date']) {
+            messageApi.open({
+                type: 'error',
+                content: 'Please select a date'
+            });
+            return;
+        }
+
+        if (values['product-quanties'].length === 0 && values['fulls-quantity'].length === 0) {
+            messageApi.open({
+                type: 'error',
+                content: 'Please add at least one product and quantity'
+            });
+            return;
+        }
+
+
         let formValues: IEmptiesInHouseCount = {
             date: values.date.format('YYYY-MM-DD'),
             quantity: values['product-quanties']?.reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0) || 0 
@@ -80,7 +97,7 @@ const SaveInHouseEmpties = () => {
                 product_id: item.product, // product id
                 quantity: parseInt(item.quantity),
                 is_empty: true
-            })) ,
+            })),
             ...values['fulls-quantity']?.map((item: any) => ({
                 product_id: item.product, // product id
                 quantity: parseInt(item.quantity),
