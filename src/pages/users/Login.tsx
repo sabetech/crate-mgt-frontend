@@ -1,9 +1,14 @@
 import React from 'react';
-import { Button, message, Form, Input } from 'antd';
+import { Button, message, Form, Input, Carousel } from 'antd';
 import { useSignIn } from 'react-auth-kit'
 import { signIn as login} from '../../services/AuthAPI';
 import { IUser } from '../../interfaces/User';
 import { AxiosError } from 'axios';
+import opk_img from '../../assets/opk_img.jpeg';
+import opk_img2 from '../../assets/opk_img2.jpeg';
+import opk_img3 from '../../assets/opk_img3.jpeg';
+import opk_img4 from '../../assets/opk_img4.jpeg';
+import opk_logo from '../../assets/opk_logo.png';
 
 
 
@@ -21,7 +26,6 @@ const Login: React.FC = () => {
         try {
             const response = await login({email:values.email, password: values.password});
             showSuccess('Login successful');
-            console.log(response);
             if (response.status === 201){
                 signIn({
                     token: response.data.token,
@@ -53,40 +57,62 @@ const Login: React.FC = () => {
       };
 
     return (
-        <div style={{marginTop: '20%', }}>
+        <div style={{ display: 'flex' }}>
             {contextHolder}
-            <Form
-                name="basic"
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 16 }}
-                style={{ maxWidth: 600 }}
-                initialValues={{ remember: true }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-                autoComplete="off"
-            >
-                <Form.Item
-                label="Username"
-                name="email"
-                rules={[{ required: true, message: 'Please input your email!' }]}
+            <div style={{width: "50%"}}>
+                <div >
+                    <img src={opk_logo} alt="opk_logo" style={{ display: "block", marginTop:"10%", height:"auto", width: "50%", marginLeft: "auto", marginRight: "auto" }}/>
+                </div>
+                <Form
+                    name="basic"
+                    labelCol={{ span: 8 }}
+                    wrapperCol={{ span: 16 }}
+                    style={{ maxWidth: 600, marginTop: "5%" }}
+                    initialValues={{ remember: true }}
+                    onFinish={onFinish}
+                    onFinishFailed={onFinishFailed}
+                    autoComplete="off"
                 >
-                    <Input />
-                </Form.Item>
+                    {/* <h1 style={{textAlign: "center"}}>Login</h1> */}
+                    <Form.Item
+                    label="Username"
+                    name="email"
+                    rules={[{ required: true, message: 'Please input your email!' }]}
+                    >
+                        <Input />
+                    </Form.Item>
 
-                <Form.Item
-                label="Password"
-                name="password"
-                rules={[{ required: true, message: 'Please input your password!' }]}
-                >
-                <Input.Password />
-                </Form.Item>
+                    <Form.Item
+                    label="Password"
+                    name="password"
+                    rules={[{ required: true, message: 'Please input your password!' }]}
+                    >
+                    <Input.Password />
+                    </Form.Item>
 
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button type="primary" htmlType="submit">
-                    Submit
-                </Button>
-                </Form.Item>
-            </Form>
+                    <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                    <Button type="primary" htmlType="submit">
+                        Submit
+                    </Button>
+                    </Form.Item>
+                </Form>
+            </div>
+            <div style={{width: "50%"}}>
+                <Carousel autoplay>
+                    <div>
+                        <img src={opk_img} alt="opk" style={{ height: "100%", width: "100%" }}/>
+                    </div>
+                    <div>
+                        <img src={opk_img2} alt="opk2" style={{ height: "100%", width: "100%" }}/>
+                    </div>
+                    <div>
+                        <img src={opk_img3} alt="opk3" style={{ height: "100%", width: "100%" }}/>
+                    </div>
+                    <div>
+                        <img src={opk_img4} alt="opk4" style={{ height: "100%", width: "100%"}}/>
+                    </div>
+                </Carousel>
+            </div>
     </div>
 )
 };
