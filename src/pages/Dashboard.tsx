@@ -37,7 +37,7 @@ const Dashboard = () => {
         <Col >
             <Card title="Total Empties" bordered={false} style={{cursor: 'pointer'}}>
             <Statistic
-                title="Empties Ground + Empties with Customers"
+                title="Empties Ground as at"
                 value={11.28}
                 precision={2}
                 valueStyle={{ color: '#3f8600' }}
