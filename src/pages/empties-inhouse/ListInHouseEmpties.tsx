@@ -30,12 +30,8 @@ const ListInHouseEmpties = () => {
     }, [inHouseEmpties]);
 
     const dateRangeOnChange = (date: any, dateString: string[]) => {
-        console.log(date, dateString);
         setDateRange(dateString);
     }
-
-    console.log("In House Empties Data ", inHouseEmptiesData);
-    console.log("In House Empties Data ", inHouseEmptiesData?.reduce((acc: number, item: IEmptiesInHouseCount) => acc + ((item.empties_on_ground_products !== undefined) ? 1:0), 0));
 
     const columns: ColumnsType<IEmptiesInHouseCount> = [
         {

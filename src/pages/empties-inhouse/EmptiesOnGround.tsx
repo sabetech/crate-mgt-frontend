@@ -18,6 +18,7 @@ const SaveInHouseEmpties = () => {
     const authHeader = useAuthHeader();
     const [form] = Form.useForm();
     const [messageApi, contextHolder ] = message.useMessage();
+    const [selectedProducts, setSelectedProducts] = React.useState<IProduct[] | undefined>(undefined);
 
     const { data: productsData } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
@@ -50,6 +51,33 @@ const SaveInHouseEmpties = () => {
         }
     },[productsData]);
 
+    const updateProductList = (value: number ) => {
+        
+        if (productList) {
+            // setProductList( (prev) => prev?.filter(item => item.id !== value))
+            setSelectedProducts((prev) => {
+                if (prev) {
+                    const product = prev.find(item => item.id === value);
+                    if (product) {
+                        return prev.filter(item => item.id !== value);
+                    } else {
+                        return [...prev, productList.find(item => item.id === value)!];
+                    }
+                } else {
+                    return [productList.find(item => item.id === value)!];
+                }
+            });
+        }
+    }
+
+    const handleOnChange = (test: any) => {
+        console.log("Value passed::", test);
+    }
+
+    useEffect(() => {
+        console.log("SELECTED PRODUCTS", selectedProducts);
+    }, [selectedProducts])
+    
     const success = (msg: string) => {
         messageApi.open({
             type: 'success',
@@ -84,7 +112,6 @@ const SaveInHouseEmpties = () => {
             });
             return;
         }
-
 
         let formValues: IEmptiesInHouseCount = {
             date: values.date.format('YYYY-MM-DD'),
@@ -155,15 +182,18 @@ const SaveInHouseEmpties = () => {
                                                             name={[field.name, 'product']}
                                                             rules={[{ required: true, message: 'Product missing'}]}
                                                         >
-                                                            <Select disabled={!productList || productList.length === 0} style={{ width: 130 }}>
-                                                               {
-                                                                productList && productList.map((item) => (
-                                                                    <Option key={item.key} value={item.id}>
-                                                                        {item.sku_code}
-                                                                    </Option>
+                                                            <Select 
+                                                                disabled={!productList || productList.length === 0} 
+                                                                style={{ width: 130 }} onChange={updateProductList}
+                                                                options={ productList && productList.map((item) => (
+                                                                    {
+                                                                        value: item.id,
+                                                                        label: item.sku_code,
+                                                                        disabled: false
+                                                                    }
                                                                 ))
                                                                 }
-                                                            </Select>
+                                                            />
                                                         </Form.Item>
                                                     )
                                                 }
