@@ -76,6 +76,8 @@ const SaveInHouseEmpties = () => {
 
     useEffect(() => {
         console.log("SELECTED PRODUCTS", selectedProducts);
+        
+
     }, [selectedProducts])
     
     const success = (msg: string) => {

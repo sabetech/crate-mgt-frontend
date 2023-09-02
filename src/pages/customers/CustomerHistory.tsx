@@ -1,6 +1,7 @@
-import { Timeline, TimelineItemProps, Col, Row, Statistic } from 'antd';
+import { Timeline, TimelineItemProps, Col, Row, Statistic, Button, Modal, Form } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 import { useQuery } from "@tanstack/react-query";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthHeader, useAuthUser } from "react-auth-kit";
 import { getCustomerHistory } from '../../services/CustomersAPI';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -9,9 +10,13 @@ import { formatDate } from '../../utils/helpers';
 
 const CustomerHistory = () => {
     const authHeader = useAuthHeader();
+    const user = useAuthUser();
+    const loggedInUser = user();
     const [customerItems, setCustomerHistory] = useState({}) as any
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [selectedDate, setSelectedDate] = useState<string | undefined>(undefined);
     const { id } = useParams();
-
+    console.log(loggedInUser)
     const customerID  = id ? parseInt(id) : 0;
 
     const { data: customerHistory } = useQuery(
@@ -40,8 +45,19 @@ const CustomerHistory = () => {
 
     }, [customerHistory])
 
+    const handleEditHistory = (date: string) => {
+        setSelectedDate(date);
+        setModalOpen(true);
+    }
+
     const items = () : TimelineItemProps[] => Object.keys(customerItems).map((historyItem) => ({
-        label: formatDate(historyItem),
+        label: <>
+                <div>{formatDate(historyItem)}</div>
+                {
+                loggedInUser?.role === 'admin' &&
+                <Button type="primary" shape="circle" icon={<EditOutlined />} onClick={() => handleEditHistory(historyItem)}/>
+                }
+                </>,
         children: <>
                     <ul>
                     {
@@ -69,26 +85,37 @@ const CustomerHistory = () => {
 
     return (
         <div>
-        <h1>Customer History</h1>
-        <Row gutter={16}>
-            <Col span={12}>
-                <Statistic title="Total Empties Balance:" value={
-                    customerHistory?.data.reduce((acc: number, item: IHistoryItem) => {
-                        if (item.transaction_type === 'in') {
-                            return acc - item.quantity_transacted;
-                        }else {
-                            return acc + item.quantity_transacted;
-                        }
-                    },0)
-                } />
-            </Col>
-        </Row>
-        <>
-        <Timeline
-            mode={'left'}
-            items={ items() }
-        />
-        </>
+            <h1>Customer History</h1>
+            <Row gutter={16}>
+                <Col span={12}>
+                    <Statistic title="Total Empties Balance:" value={
+                        customerHistory?.data.reduce((acc: number, item: IHistoryItem) => {
+                            if (item.transaction_type === 'in') {
+                                return acc - item.quantity_transacted;
+                            }else {
+                                return acc + item.quantity_transacted;
+                            }
+                        },0)
+                    } />
+                </Col>
+            </Row>
+            <>
+                <Timeline
+                    mode={'left'}
+                    items={ items() }
+                />
+            </>
+            <Modal
+                title="Edit History"
+                open={modalOpen}
+                onCancel={() => setModalOpen(false)}
+                onOk={() => {}}
+            >
+                Date: { selectedDate }
+                <Form>
+
+                </Form>
+            </Modal>
         </div>
     )
 }
