@@ -37,7 +37,6 @@ const CustomerHistory = () => {
                 }else {
                     historyObjectArray[customerHistory.data[i].date] = [customerHistory.data[i]]
                 }
-
             }
             
             setCustomerHistory(historyObjectArray)
