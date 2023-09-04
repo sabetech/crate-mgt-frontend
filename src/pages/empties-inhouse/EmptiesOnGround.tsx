@@ -70,9 +70,9 @@ const SaveInHouseEmpties = () => {
         }
     }
 
-    const handleOnChange = (test: any) => {
-        console.log("Value passed::", test);
-    }
+    // const handleOnChange = (test: any) => {
+    //     console.log("Value passed::", test);
+    // }
 
     useEffect(() => {
         console.log("SELECTED PRODUCTS", selectedProducts);

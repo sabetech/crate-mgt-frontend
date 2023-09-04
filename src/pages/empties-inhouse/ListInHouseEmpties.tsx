@@ -29,7 +29,7 @@ const ListInHouseEmpties = () => {
         }
     }, [inHouseEmpties]);
 
-    const dateRangeOnChange = (date: any, dateString: string[]) => {
+    const dateRangeOnChange = (_: any, dateString: string[]) => {
         setDateRange(dateString);
     }
 
