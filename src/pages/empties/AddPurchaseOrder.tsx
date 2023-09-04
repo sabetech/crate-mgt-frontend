@@ -28,21 +28,18 @@ const AddPurchaseOrder = () => {
     
 
     const [messageApi, contextHolder ] = message.useMessage();
-    const { data } = useQuery<ServerResponse<IProduct[]>, Error>(
+    const { data, isError } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
         () => getProducts(authHeader()),
-        {
-            onError: (error: AppError) => {
-                messageApi.open({
-                    type: 'error',
-                    content: error.message + ". Please Check your internet connection and refresh the page."
-                });
-                setTimeout(messageApi.destroy, 2500);
-            }
-        } 
     );
-        
-    
+
+    if (isError) {
+        messageApi.open({
+            type: 'error',
+            content: "Error fetching products. Please Check your internet connection and refresh the page."
+        });
+        setTimeout(messageApi.destroy, 2500);
+    }
     
     const { isLoading: isSubmitting, mutate } = useMutation({
         mutationFn: (values: IEmptyLog) => addEmptiesLog(values, authHeader()),

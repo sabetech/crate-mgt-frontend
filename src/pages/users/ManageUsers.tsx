@@ -29,7 +29,7 @@ const ManageUsers = () => {
                 else
                     if (currentUserId)
                         return editUser(currentUserId, values, authHeader())
-                    else return new Promise((resolve, reject) => reject(new Error('User Id is not valid')))
+                    else return new Promise((_, reject) => reject(new Error('User Id is not valid')))
             },
             onSuccess: () => {
                 queryClient.invalidateQueries({queryKey: ['users']});

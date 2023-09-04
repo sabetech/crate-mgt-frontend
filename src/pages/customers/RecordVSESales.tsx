@@ -25,19 +25,18 @@ const RecordVSESales: React.FC = () => {
         () => getCustomers(authHeader())
     );
 
-    const { data } = useQuery<ServerResponse<IProduct[]>, Error>(
-        ['products'],
-        () => getProducts(authHeader()),
-        {
-            onError: (error: AppError) => {
-                messageApi.open({
-                    type: 'error',
-                    content: error.message + ". Please Check your internet connection and refresh the page."
-                });
-                setTimeout(messageApi.destroy, 2500);
-            }
-        } 
-    );
+    const { data, isError } = useQuery<ServerResponse<IProduct[]>, Error>({
+        queryKey: ['products'],
+        queryFn: () => getProducts(authHeader()),
+    });
+    
+    if (isError) {
+        messageApi.open({
+            type: 'error',
+            content: "Error Fetching Products. Please Check your internet connection and refresh the page."
+        });
+        setTimeout(messageApi.destroy, 2500);
+    }
 
     const { mutate } = useMutation({
         mutationFn: (values: any) => recordVSESales(values.customer_id, values, authHeader()),

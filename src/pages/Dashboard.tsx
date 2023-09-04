@@ -18,12 +18,13 @@ const Dashboard = () => {
         }
     );
 
-    const { data: totalEmpties } = useQuery(
-        {
-            queryKey: ['totalEmpties'],
-            // queryFn: () => getTotalEmptiesCount(authHeader())
-        }
-    )
+    // const { data: totalEmpties } = useQuery(
+    //     {
+    //         queryKey: ['totalEmpties'],
+    //         // queryFn: () => getTotalEmptiesCount(authHeader())
+    //     }
+    // )
+
     const handleClick = (location: string) => {
         switch (location) {
             case 'customers':
