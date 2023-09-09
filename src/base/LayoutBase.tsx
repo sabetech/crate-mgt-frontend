@@ -10,6 +10,9 @@ import {
   UserOutlined,
   FileTextOutlined,
   DownOutlined,
+  InboxOutlined,
+  AppstoreOutlined,
+  CalculatorOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import AddReturningEmpties from '../pages/empties/AddReturningEmpties';
@@ -74,16 +77,16 @@ const items: MenuItem[] = [
     getItem('Add Purchase Order', 'empties/add_purchase_order'),
     getItem('Add Returning Empties', 'empties/add_returning_empties'),
   ]),
-  getItem('Empties Inhouse Mgt', 'empties-inhouse', <DesktopOutlined />, [
+  getItem('Empties Inhouse Mgt', 'empties-inhouse', <InboxOutlined />, [
     getItem('Add Empties on Ground', 'empties/on-ground'),
     getItem('List Empties on Ground', 'empties/list-on-ground'),
   ]),
-  getItem('Warehouse', 'warehouse', <DesktopOutlined />, [
+  getItem('Warehouse', 'warehouse', <AppstoreOutlined />, [
     getItem('Receivables', 'warehouse/receivables'),
     getItem('List Inventory', 'warehouse/inventory'),
     getItem('TBD', 'warehouse/tbd'),
   ]),
-  getItem('POS', 'pos', <DesktopOutlined />, [
+  getItem('POS', 'pos', <CalculatorOutlined />, [
     getItem('Sales', 'POS/sales'),
     getItem('TBDD', 'POS/inventory')
   ]),

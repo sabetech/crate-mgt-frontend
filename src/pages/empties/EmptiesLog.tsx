@@ -8,6 +8,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { Table, Image, DatePicker, Spin, Row, Col, Statistic, Card, Tag, Button, message, Tooltip} from 'antd';
 import { useAuthHeader } from 'react-auth-kit';
 import { CheckOutlined, UndoOutlined, DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
+import { formatDate } from '../../utils/helpers';
 const { RangePicker } = DatePicker;
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />
 
@@ -68,7 +69,9 @@ const EmptiesLog: React.FC = () => {
             );
         }
         if (returnedEmpties) {
-            setEmptiesReturnedLog(returnedEmpties.data?.map((item) => ({
+            setEmptiesReturnedLog(returnedEmpties.data
+                ?.sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf())
+                ?.map((item) => ({
                 ...item,
                 key: item.id})
             ));
@@ -78,8 +81,7 @@ const EmptiesLog: React.FC = () => {
 
     useEffect(() => {
 
-        if (dateRange) {
-            console.log(dateRange);
+        if (dateRange) {            
             let [start, end] = dateRange;
             let filteredData = receivedEmpties?.data?.filter((item) => {
                 let date = new Date(item.date);
@@ -87,7 +89,9 @@ const EmptiesLog: React.FC = () => {
                 let endDate = new Date(end);
                 return date >= startDate && date <= endDate;
             });
-            setEmptiesLog(filteredData?.map((item) => ({
+            setEmptiesLog(filteredData
+                ?.sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf())
+                .map((item) => ({
                     ...item,
                     key: item.id})
                 )
@@ -115,7 +119,9 @@ const EmptiesLog: React.FC = () => {
     }
 
     const columns: ColumnsType<IEmptyLog> = [
-        { title: 'Date', dataIndex: 'date', key: 'date' },
+        { title: 'Date', dataIndex: 'date', key: 'date',
+            render: (value: string) => formatDate(value)
+    }   ,
         Table.EXPAND_COLUMN,
         { title: 'Quanity Received', dataIndex: 'quantity_received', key: 'quantity_received' },
         { title: 'Vehicle Number', dataIndex: 'vehicle_number', key: 'vehicle_number' },

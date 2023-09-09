@@ -34,7 +34,9 @@ const ReturningEmptiesLog: React.FC = () => {
 
     useEffect(() => {
         if (returnedEmpties) {
-            setEmptiesReturnedLog(returnedEmpties.data?.map((item) => ({
+            setEmptiesReturnedLog(returnedEmpties.data
+                ?.sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf())
+                ?.map((item) => ({
                     ...item,
                     key: item.id})
                 )
@@ -42,7 +44,9 @@ const ReturningEmptiesLog: React.FC = () => {
         }
 
         if (receivedEmpties) {
-            setEmptiesReceivedLog(receivedEmpties.data?.map((item) => ({
+            setEmptiesReceivedLog(receivedEmpties.data
+                ?.sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf())
+            ?.map((item) => ({
                     ...item,
                     key: item.id})
                 )
@@ -53,7 +57,7 @@ const ReturningEmptiesLog: React.FC = () => {
     useEffect(() => {
 
         if (dateRange) {
-            console.log(dateRange);
+            
             let [start, end] = dateRange;
             let filteredData = returnedEmpties?.data?.filter((item) => {
                 let date = new Date(item.date);
@@ -71,7 +75,6 @@ const ReturningEmptiesLog: React.FC = () => {
     }, [dateRange])
 
     const dateRangeOnChange = (date: any, dateString: string[]) => {
-        console.log(date, dateString);
         setDateRange(dateString);
     }
 

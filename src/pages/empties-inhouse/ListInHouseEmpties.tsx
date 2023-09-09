@@ -7,6 +7,7 @@ import { getInHouseEmpties } from "../../services/EmptiesAPI";
 import type { ColumnsType } from 'antd/es/table';
 import TableEmptiesOnGround from "../../components/TableEmptiesOnGround";
 import { Table, DatePicker, Row, Col, Statistic, Card } from 'antd';
+import { formatDate } from "../../utils/helpers";
 
 const ListInHouseEmpties = () => {
     const { RangePicker } = DatePicker;
@@ -22,7 +23,7 @@ const ListInHouseEmpties = () => {
 
     React.useEffect(() => {
         if (inHouseEmpties) {
-            setInHouseEmptiesData(inHouseEmpties.data?.map((item) => ({
+            setInHouseEmptiesData(inHouseEmpties.data?.sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf()).map((item) => ({
                 ...item,
                 key: item.id
             })))
@@ -38,6 +39,7 @@ const ListInHouseEmpties = () => {
             title: 'Date',
             dataIndex: 'date',
             key: 'date',
+            render: (value: string) => formatDate(value)
         },
         Table.EXPAND_COLUMN,
         {

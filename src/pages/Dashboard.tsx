@@ -1,15 +1,20 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, Col, Row, Statistic } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { getCustomersWithBalance } from '../services/CustomersAPI';
+import { getInHouseEmpties } from '../services/EmptiesAPI';
 import { useAuthHeader } from 'react-auth-kit';
 import { ServerResponse } from '../interfaces/Server';
 import { ICustomer } from '../interfaces/Customer';
+import { useEffect } from 'react';
+import { IEmptiesInHouseCount } from '../interfaces/Empties';
 
 
 const Dashboard = () => {
     const navigate = useNavigate();
     const authHeader = useAuthHeader();
+    const [currentEmptiesOnGround, setCurrentEmtpiesOnGround] = useState<IEmptiesInHouseCount>();
     
     const { data:customers} = useQuery<ServerResponse<ICustomer[]>, Error>(
         {
@@ -18,17 +23,29 @@ const Dashboard = () => {
         }
     );
 
-    // const { data: totalEmpties } = useQuery(
-    //     {
-    //         queryKey: ['totalEmpties'],
-    //         // queryFn: () => getTotalEmptiesCount(authHeader())
-    //     }
-    // )
+    const { data: totalEmpties } = useQuery(
+        {
+            queryKey: ['totalEmpties'],
+            queryFn: () => getInHouseEmpties(authHeader())
+        }
+    )
+
+    useEffect(() => {   
+        
+        if (totalEmpties) {
+            let latestEmptiesCount = totalEmpties.data[totalEmpties.data.length - 1];
+            setCurrentEmtpiesOnGround(latestEmptiesCount)
+        }
+
+    }, [totalEmpties]);
 
     const handleClick = (location: string) => {
         switch (location) {
             case 'customers':
                 navigate('/customers');
+            break;
+            case 'emptiesOnGround':
+                navigate('/empties/list-on-ground');
             break;
         }
     }
@@ -36,11 +53,11 @@ const Dashboard = () => {
     return (
     <Row gutter={16}>
         <Col >
-            <Card title="Total Empties" bordered={false} style={{cursor: 'pointer'}}>
+            <Card title="Total Empties" bordered={false} style={{cursor: 'pointer'}} onClick={() => handleClick('emptiesOnGround')}>
             <Statistic
-                title="Empties Ground as at"
-                value={11.28}
-                precision={2}
+                title={"Empties Ground as at " + currentEmptiesOnGround?.date}
+                value={currentEmptiesOnGround?.quantity}
+                precision={0}
                 valueStyle={{ color: '#3f8600' }}
                 
                 />

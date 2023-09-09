@@ -57,7 +57,7 @@ const Login: React.FC = () => {
       };
 
     return (
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', height: '100vh' }}>
             {contextHolder}
             <div style={{width: "50%"}}>
                 <div >
@@ -97,9 +97,13 @@ const Login: React.FC = () => {
                     </Form.Item>
                 </Form>
             </div>
-            <div style={{width: "50%"}}>
-                <Carousel autoplay>
-                    <div>
+            <div style={{
+                            width: "50%", 
+                            backgroundImage: "url('../src/assets/opk_img4.jpeg')",
+                            
+                        }}>
+                {/* <Carousel autoplay> */}
+                    {/* <div>
                         <img src={opk_img} alt="opk" style={{ height: "100%", width: "100%" }}/>
                     </div>
                     <div>
@@ -110,8 +114,8 @@ const Login: React.FC = () => {
                     </div>
                     <div>
                         <img src={opk_img4} alt="opk4" style={{ height: "100%", width: "100%"}}/>
-                    </div>
-                </Carousel>
+                    </div> */}
+                {/* </Carousel> */}
             </div>
     </div>
 )
