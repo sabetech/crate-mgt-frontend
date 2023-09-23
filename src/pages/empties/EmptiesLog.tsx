@@ -62,11 +62,13 @@ const EmptiesLog: React.FC = () => {
 
     useEffect(() => {
         if (receivedEmpties) {
-            setEmptiesLog(receivedEmpties.data?.map((item) => ({
-                    ...item,
-                    key: item.id})
-                )
-            );
+            setEmptiesLog(receivedEmpties.data
+                ?.sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf())
+                ?.map((item) => ({
+                        ...item,
+                        key: item.id})
+                    )
+                );
         }
         if (returnedEmpties) {
             setEmptiesReturnedLog(returnedEmpties.data

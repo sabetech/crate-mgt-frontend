@@ -29,6 +29,8 @@ import ManageUsers from '../pages/users/ManageUsers';
 import LogoutConfirm from '../components/LogoutConfirm';
 import CreateCustomerEmptiesLoan from '../pages/customers/CreateCustomerEmptiesLoan';
 import CustomerHistory from '../pages/customers/CustomerHistory';
+import Inventory from '../pages/inventory/Inventory';
+import PendingOrders from '../pages/inventory/PendingOrders';
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -82,13 +84,13 @@ const items: MenuItem[] = [
     getItem('List Empties on Ground', 'empties/list-on-ground'),
   ]),
   getItem('Warehouse', 'warehouse', <AppstoreOutlined />, [
-    getItem('Receivables', 'warehouse/receivables'),
     getItem('List Inventory', 'warehouse/inventory'),
-    getItem('TBD', 'warehouse/tbd'),
+    getItem('Pending Orders', 'warehouse/pending-orders'),
+    getItem('Receivables', 'warehouse/new')
   ]),
   getItem('POS', 'pos', <CalculatorOutlined />, [
     getItem('Sales', 'POS/sales'),
-    getItem('TBDD', 'POS/inventory')
+    getItem('Orders', 'POS/orders')
   ]),
   getItem('Reports', 'reports', <FileTextOutlined />, [
     getItem('Balances', 'reports/balances'),
@@ -103,7 +105,6 @@ const LayoutBase = () => {
   const userState = authUser();
   const location  = useLocation();
   
-  console.log("PATH name: ", location.pathname)
   const handleManageUsers = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
     navigate("/users/manage");
@@ -166,6 +167,9 @@ const LayoutBase = () => {
             <Route path="/empties/add_returning_empties" element={<AddReturningEmpties />} />
             <Route path="/empties/on-ground" element={<SaveInHouseEmpties />} />
             <Route path="/empties/list-on-ground" element={<ListInHouseEmpties />} />
+
+            <Route path="/warehouse/inventory" element={<Inventory />} />
+            <Route path="/warehouse/pending-orders" element={<PendingOrders />} />
             
             <Route path="/users/manage" element={<ManageUsers />} />
             <Route path="/users/logout" element={<LogoutConfirm />} />

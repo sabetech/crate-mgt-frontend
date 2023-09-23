@@ -67,6 +67,9 @@ const CustomerReturnEmpties = () => {
         setTimeout(messageApi.destroy, 2500);
     }
 
+    const filterOption = (input: string, option: { label: string; value: string }) =>
+  (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
+
     const onFinish = (values: any) => {
         
         let formValues: ICustomerReturnEmpties = {
@@ -103,7 +106,11 @@ const CustomerReturnEmpties = () => {
                         
                         {/* Make the customers searchable... */}
                         <Form.Item label="Customer" name={"customer_name"}>
-                            <Select style={{ width: 400 }}>
+                            <Select 
+                                style={{ width: 400 }}
+                                showSearch
+                                placeholder="Select a Customer"
+                            >
                                 {
                                     customerList && customerList.map((item) => (
                                         <Option key={ item.key } value={ item.id }>
