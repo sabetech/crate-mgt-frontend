@@ -122,7 +122,7 @@ const LayoutBase = () => {
   };
 
   return (<Layout style={{ minHeight: '100vh' }}>
-    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} width={'20%'}>
+    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} width={'15%'}>
       <div style={{ margin: 16, background: 'rgba(255, 255, 255, 0.2)' }} >
         
       </div>
