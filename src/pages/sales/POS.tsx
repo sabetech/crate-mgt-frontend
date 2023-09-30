@@ -1,17 +1,18 @@
-import { Col, Row, List, Typography, Select, Form, Input, Divider, Button, Table } from 'antd'
+import { Col, Row, List, Typography, InputNumber, Form, Input, Divider, Button, Table, AutoComplete } from 'antd'
 import { useQuery } from '@tanstack/react-query'
 import { getAllProducts } from '../../services/ProductsAPI'
 import { getCustomers } from '../../services/CustomersAPI'
 import { useAuthHeader } from 'react-auth-kit'
 import { ServerResponse } from '../../interfaces/Server'
-import { IProduct } from '../../interfaces/Empties'
+import { IProduct } from '../../interfaces/Product'
 import { useEffect, useState } from 'react'
 import { ICustomer } from '../../interfaces/Customer'
-import FormItemLabel from 'antd/es/form/FormItemLabel'
 
 const POS = () => {
     const authHeader = useAuthHeader();
     const [products, setProducts] = useState<IProduct[]>([]);
+    const [unitPrice, setUnitPrice] = useState<number>(0);
+    const [quantity, setQuantity] = useState<number>(1);
     const [form] = Form.useForm();
 
     const { data: productsData } = useQuery<ServerResponse<IProduct[]>, Error>(
@@ -19,7 +20,7 @@ const POS = () => {
         () => getAllProducts(authHeader())
     )
 
-    const { data: customers } = useQuery<ServerResponse<ICustomer[]>, Error>(
+    const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
         ['customers'],
         () => getCustomers(authHeader())
     )
@@ -27,18 +28,30 @@ const POS = () => {
     useEffect(() => {
 
         if (productsData) {
-            console.log(productsData);
             setProducts(productsData.data)
         }
 
     },[productsData]);
 
-    const onChange = (value: string) => {
-        console.log(`selected ${value}`);
+    useEffect(() => {
+
+
+
+    },[unitPrice, quantity])
+
+    const onCustomerChange = (value: string, option: ICustomer) => {
+        console.log(`selected Customer ${value}:::`, option);
+
+    }
+
+    const onProductChange = (value: string, option: IProduct) => {
+        console.log(`selected Product ${value}:::`, option);
+        form.setFieldValue("unit_price", option.retail_price);
+        setUnitPrice(typeof option.retail_price === 'undefined' ? 0:option.retail_price);
     };
       
     const onSearch = (value: string) => {
-        console.log('search:', value);
+        console.log('searching ...:', value);
     };
 
     const posTableColumns = [
@@ -85,7 +98,7 @@ const POS = () => {
                     />
                 </Col>
 
-                <Col style={{marginLeft: "2rem"}}>
+                <Col style={{marginLeft: "1rem"}}>
                     <div style={{
                         borderStyle: "solid",
                         borderWidth: "1px",
@@ -102,24 +115,35 @@ const POS = () => {
                             labelAlign="left"
                             labelWrap
                             wrapperCol={{ flex: 1 }}
+                            initialValues={{
+                                'quantity': 1
+                            }}
 
                         >
-                            <Form.Item label="Choose Customer" name="product" style={{ marginBottom: "10px" }}>
-                                <Select
-                                    showSearch
-                                    placeholder="Select a person"
-                                    optionFilterProp="children"
-                                    onChange={onChange}
+                            <Form.Item label="Choose Customer" name="customer" style={{ marginBottom: "10px" }}>
+                                <AutoComplete 
+                                    allowClear={true}
+                                    bordered={false}
                                     onSearch={onSearch}
-                                    options={ [] }
-                                    style={{width: "50%"}}
+                                    onChange={(text: string, option: any) => onCustomerChange(text, option)}
+                                    placeholder="Search for Customer"
+                                    options={ customersResponse?.data.map(custmr => ({...custmr, value: `${custmr.name} (${custmr.customer_type.toUpperCase()})`})) }
+                                    filterOption={(inputValue, option) =>
+                                        option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                      }
                                 />
                             </Form.Item>
                             <Form.Item label="Select Product" name="product" style={{ marginBottom: "10px" }}>
-                                <Select 
-                                    showSearch
-                                    placeholder="Find a Product"
-                                    
+                                <AutoComplete 
+                                    allowClear={true}
+                                    bordered={false}
+                                    onSearch={onSearch}
+                                    onChange={(text: string, option: any) => onProductChange(text, option)}
+                                    placeholder="Search for Product"
+                                    options={productsData?.data.map(prdt => ({...prdt, value: prdt.sku_name}))}
+                                    filterOption={(inputValue, option) =>
+                                        option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                      }
                                 />
                             </Form.Item>
                             <Divider></Divider>
@@ -129,14 +153,14 @@ const POS = () => {
                                     justifyContent: "space-between"
                                 }}
                             >
-                                <Form.Item label="Unit Price:" name="unit_price">
-                                    <Input placeholder="Unit Price" />
+                                <Form.Item label={`Unit Price: ${typeof unitPrice === 'undefined'? "0.00" : unitPrice} GHC`} name="unit_price">
+                                    <Input placeholder="Unit Price" onChange={(val) => setUnitPrice(val)}/>
                                 </Form.Item>
-                                <Form.Item label="Quantity Sold:" name="quantity">
-                                    <Input placeholder="Quantity" />
+                                <Form.Item label="Quantity:" name="quantity">
+                                    <InputNumber min={1} onChange={(val) => setQuantity( val === null ? 1 : val  )}/>
                                 </Form.Item>
                                 <Form.Item label="Price">
-                                    <Typography className="ant-form-text">0.00</Typography>
+                                    <Typography className="ant-form-text">{unitPrice * quantity} GHC</Typography>
                                 </Form.Item>
                             </div>
                             <Form.Item>
