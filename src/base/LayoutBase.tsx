@@ -31,6 +31,7 @@ import CreateCustomerEmptiesLoan from '../pages/customers/CreateCustomerEmptiesL
 import CustomerHistory from '../pages/customers/CustomerHistory';
 import Inventory from '../pages/inventory/Inventory';
 import PendingOrders from '../pages/inventory/PendingOrders';
+import POS from '../pages/sales/POS';
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -86,7 +87,8 @@ const items: MenuItem[] = [
   getItem('Warehouse', 'warehouse', <AppstoreOutlined />, [
     getItem('List Inventory', 'warehouse/inventory'),
     getItem('Pending Orders', 'warehouse/pending-orders'),
-    getItem('Receivables', 'warehouse/new')
+    getItem('Receivables', 'warehouse/new'),
+    getItem('Inventory History', 'warehouse/history')
   ]),
   getItem('POS', 'pos', <CalculatorOutlined />, [
     getItem('Sales', 'POS/sales'),
@@ -170,6 +172,9 @@ const LayoutBase = () => {
 
             <Route path="/warehouse/inventory" element={<Inventory />} />
             <Route path="/warehouse/pending-orders" element={<PendingOrders />} />
+            <Route path="/warehouse/receivables" element={<PendingOrders />} />
+
+            <Route path="POS/sales" element={<POS />} />
             
             <Route path="/users/manage" element={<ManageUsers />} />
             <Route path="/users/logout" element={<LogoutConfirm />} />
