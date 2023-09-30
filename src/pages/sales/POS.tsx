@@ -91,6 +91,7 @@ const POS = () => {
                         borderWidth: "1px",
                         borderRadius: 10,
                         borderColor: "#D9D9D9",
+                        backgroundColor: "#f3f1f1",
                         width: "45vw",
                     }}>
                         <Form
@@ -101,6 +102,7 @@ const POS = () => {
                             labelAlign="left"
                             labelWrap
                             wrapperCol={{ flex: 1 }}
+
                         >
                             <Form.Item label="Choose Customer" name="product" style={{ marginBottom: "10px" }}>
                                 <Select
@@ -120,6 +122,7 @@ const POS = () => {
                                     
                                 />
                             </Form.Item>
+                            <Divider></Divider>
                             <div
                                 style={{
                                     display: "flex",
@@ -136,7 +139,10 @@ const POS = () => {
                                     <Typography className="ant-form-text">0.00</Typography>
                                 </Form.Item>
                             </div>
-
+                            <Form.Item>
+                                <Button>Save</Button>
+                                <Button>Clear</Button>
+                            </Form.Item>
                         </Form>
                     </div>
                     <div style={{
@@ -162,8 +168,9 @@ const POS = () => {
                         borderWidth: "1px",
                         borderRadius: 10,
                         borderColor: "#D9D9D9",
-                        marginLeft: 10,
-                        height: "61vh",
+                        backgroundColor: "#BCBBBB",
+                        marginLeft: 5,
+                        height: "56vh",
                         width: "100%"
                     }}
                     >
