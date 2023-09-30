@@ -7,6 +7,7 @@ import { ServerResponse } from '../../interfaces/Server'
 import { IProduct } from '../../interfaces/Empties'
 import { useEffect, useState } from 'react'
 import { ICustomer } from '../../interfaces/Customer'
+import FormItemLabel from 'antd/es/form/FormItemLabel'
 
 const POS = () => {
     const authHeader = useAuthHeader();
@@ -90,7 +91,7 @@ const POS = () => {
                         borderWidth: "1px",
                         borderRadius: 10,
                         borderColor: "#D9D9D9",
-                        width: "40vw",
+                        width: "45vw",
                     }}>
                         <Form
                             layout={'horizontal'}
@@ -101,7 +102,7 @@ const POS = () => {
                             labelWrap
                             wrapperCol={{ flex: 1 }}
                         >
-                            <Form.Item label="Choose Customer" name="product">
+                            <Form.Item label="Choose Customer" name="product" style={{ marginBottom: "10px" }}>
                                 <Select
                                     showSearch
                                     placeholder="Select a person"
@@ -112,19 +113,29 @@ const POS = () => {
                                     style={{width: "50%"}}
                                 />
                             </Form.Item>
-                            <Form.Item label="Select Product" name="product">
+                            <Form.Item label="Select Product" name="product" style={{ marginBottom: "10px" }}>
                                 <Select 
                                     showSearch
                                     placeholder="Find a Product"
                                     
                                 />
                             </Form.Item>
-                            <Form.Item label="Quantity Sold:" name="quantity">
-                                <Input placeholder="Quantity" />
-                            </Form.Item>
-                            <Form.Item label="Unit Price:" name="unit_price">
-                                <Input placeholder="Unit Price" />
-                            </Form.Item>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between"
+                                }}
+                            >
+                                <Form.Item label="Unit Price:" name="unit_price">
+                                    <Input placeholder="Unit Price" />
+                                </Form.Item>
+                                <Form.Item label="Quantity Sold:" name="quantity">
+                                    <Input placeholder="Quantity" />
+                                </Form.Item>
+                                <Form.Item label="Price">
+                                    <Typography className="ant-form-text">0.00</Typography>
+                                </Form.Item>
+                            </div>
 
                         </Form>
                     </div>
@@ -145,7 +156,7 @@ const POS = () => {
 
                     </div>
                 </Col>
-                <Col span={4}>
+                <Col span={5}>
                     <div style={{
                         borderStyle: "solid",
                         borderWidth: "1px",
