@@ -1,4 +1,5 @@
-import { Col, Row, List, Typography, InputNumber, Form, Input, Divider, Button, Table, AutoComplete } from 'antd'
+import { Space, Col, Row, List, Typography, InputNumber, Form, Input, Divider, Button, Table, AutoComplete, Select } from 'antd'
+import { DeleteFilled } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query'
 import { getAllProducts } from '../../services/ProductsAPI'
 import { getCustomers } from '../../services/CustomersAPI'
@@ -13,7 +14,8 @@ const POS = () => {
     const [products, setProducts] = useState<IProduct[]>([]);
     const [unitPrice, setUnitPrice] = useState<number>(0);
     const [quantity, setQuantity] = useState<number>(1);
-    const [tableContent, setTableContent] = useState<IProduct[]>([]); // [{sku_code: "sku_code", product: "product", quantity: 1, price: 0.00}]
+    const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
+    const [tableContent, setTableContent] = useState<any[]>([]); // [{sku_code: "sku_code", product: "product", quantity: 1, price: 0.00}]
     const [form] = Form.useForm();
 
     const { data: productsData } = useQuery<ServerResponse<IProduct[]>, Error>(
@@ -46,18 +48,16 @@ const POS = () => {
     }
 
     const onProductChange = (value: string, option: IProduct) => {
+        if (typeof option === 'undefined') {
+            return;
+        }
+        
+        setSelectedProduct(option);
+
         console.log(`selected Product ${value}:::`, option);
         form.setFieldValue("unit_price", option.retail_price);
         setUnitPrice(typeof option.retail_price === 'undefined' ? 0:option.retail_price);
     };
-
-    const onUnitPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newNumber = parseFloat(e.target.value || '0');
-        if (Number.isNaN(newNumber)) {
-            return;
-        }
-        setUnitPrice(newNumber)
-      };
       
     const onSearch = (value: string) => {
         console.log('searching ...:', value);
@@ -65,9 +65,25 @@ const POS = () => {
 
     const savePurchase = () => {
         console.log("saving purchase ...");
-        const product = form.getFieldValue("")
+        const product = selectedProduct;
+        const quantity = form.getFieldValue("quantity");
+        const unitPrice = form.getFieldValue("unit_price");
+        const price = quantity * unitPrice;
 
+        console.log("product: ", product);
+        console.log("quantity: ", quantity);
+        console.log("unitPrice: ", unitPrice);
+        console.log("price: ", price);
 
+        setTableContent([{sku_code: product?.sku_code, product: product?.sku_name, quantity: quantity, price: price}, ...tableContent]);
+
+        form.resetFields();
+        (unitPrice || unitPrice > 0) && setUnitPrice(0);
+
+    }
+
+    const removePOSItem = (record) => {
+        
     }
 
     const posTableColumns = [
@@ -87,10 +103,19 @@ const POS = () => {
           key: 'quantity',
         },
         {
-            title: 'Price',
+            title: 'Price (GHC)',
             dataIndex: 'price',
             key: 'price',
-          },
+        },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (_: any , record) => (
+            <Space size="middle">     
+                <Button shape="circle" danger icon={<DeleteFilled />} onClick={() => removePOSItem(record)}/>
+            </Space>
+    ),
+        }
       ];
 
 
@@ -134,7 +159,6 @@ const POS = () => {
                             initialValues={{
                                 'quantity': 1
                             }}
-
                         >
                             <Form.Item label="Choose Customer" name="customer" style={{ marginBottom: "10px" }}>
                                 <AutoComplete 
@@ -170,7 +194,7 @@ const POS = () => {
                                 }}
                             >
                                 <Form.Item label={`Unit Price: ${typeof unitPrice === 'undefined'? "0.00" : unitPrice} GHC`} name="unit_price">
-                                    <Input placeholder="Unit Price" onChange={(val) => onUnitPriceChange(val)} value={unitPrice}/>
+                                    <Input placeholder="Unit Price" value={unitPrice} readOnly/>
                                 </Form.Item>
                                 <Form.Item label="Quantity:" name="quantity">
                                     <InputNumber min={1} onChange={(val) => setQuantity( val === null ? 1 : val  )}/>
@@ -179,10 +203,10 @@ const POS = () => {
                                     <Typography className="ant-form-text">{unitPrice * quantity} GHC</Typography>
                                 </Form.Item>
                             </div>
-                            <Form.Item>
-                                <Button type="primary" ghost onClick={savePurchase}>Save</Button>
-                                <Button >Clear</Button>
-                            </Form.Item>
+                            <Space wrap>
+                                <Button size={"large"} type="primary" onClick={savePurchase}>Save</Button>
+                                <Button size={"large"} onClick={() => form.resetFields()}>Clear</Button>
+                            </Space>
                         </Form>
                     </div>
                     <div style={{
@@ -191,11 +215,15 @@ const POS = () => {
                         borderRadius: 10,
                         borderColor: "#D9D9D9",
                         height: "30vh",
-                        marginTop: 10
+                        marginTop: 10,
+                        width: "45vw",
                     }}>
 
                         <Table
                             columns={posTableColumns}
+                            dataSource={tableContent}
+                            scroll={{ y: 250 }}
+                            pagination={false}
                         >
 
                         </Table>
@@ -211,7 +239,6 @@ const POS = () => {
                         backgroundColor: "#F5F5F5FF",
                         marginLeft: 5,
                         paddingBottom: 35,
-                        // height: "56vh",
                         width: "100%",
                     }}
                     >
@@ -232,12 +259,12 @@ const POS = () => {
                                 <Typography.Text strong style={{ fontSize: '1.5rem' }}>0.00 GHC</Typography.Text>
                             </div>
                             <Divider></Divider>
-                            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
+                            <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
                                 <Typography.Text strong style={{ fontSize: '1em'}}>Payment Type </Typography.Text>
-                                <Typography.Text strong style={{ fontSize: '1em' }}>Cash</Typography.Text>
+                                <Select size={"large"} dropdownMatchSelectWidth={false} placement={'bottomRight'} defaultValue="Cash" options={[{value:"Cash", label: 'Cash'}, {value:"Mobile Money", label: 'Mobile Money'} ]} />
                             </div>
-                            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
-                                <Typography.Text strong style={{ fontSize: '1em', marginTop: 10}}>Amount Tendered </Typography.Text>
+                            <div style={{display: 'flex', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem", marginTop: 10}}>
+                                <Typography.Text strong style={{ fontSize: '1em'}}>Amount Tendered </Typography.Text>
                                 <InputNumber size="large" style={{width: '50%'}} placeholder='0.00' addonAfter="GHC" />
                             </div>
                             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem", marginTop: 10}}>
