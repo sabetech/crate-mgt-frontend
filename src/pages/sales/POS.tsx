@@ -13,6 +13,7 @@ const POS = () => {
     const [products, setProducts] = useState<IProduct[]>([]);
     const [unitPrice, setUnitPrice] = useState<number>(0);
     const [quantity, setQuantity] = useState<number>(1);
+    const [tableContent, setTableContent] = useState<IProduct[]>([]); // [{sku_code: "sku_code", product: "product", quantity: 1, price: 0.00}]
     const [form] = Form.useForm();
 
     const { data: productsData } = useQuery<ServerResponse<IProduct[]>, Error>(
@@ -49,10 +50,25 @@ const POS = () => {
         form.setFieldValue("unit_price", option.retail_price);
         setUnitPrice(typeof option.retail_price === 'undefined' ? 0:option.retail_price);
     };
+
+    const onUnitPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newNumber = parseFloat(e.target.value || '0');
+        if (Number.isNaN(newNumber)) {
+            return;
+        }
+        setUnitPrice(newNumber)
+      };
       
     const onSearch = (value: string) => {
         console.log('searching ...:', value);
     };
+
+    const savePurchase = () => {
+        console.log("saving purchase ...");
+        const product = form.getFieldValue("")
+
+
+    }
 
     const posTableColumns = [
         {
@@ -154,7 +170,7 @@ const POS = () => {
                                 }}
                             >
                                 <Form.Item label={`Unit Price: ${typeof unitPrice === 'undefined'? "0.00" : unitPrice} GHC`} name="unit_price">
-                                    <Input placeholder="Unit Price" onChange={(val) => setUnitPrice(val)}/>
+                                    <Input placeholder="Unit Price" onChange={(val) => onUnitPriceChange(val)} value={unitPrice}/>
                                 </Form.Item>
                                 <Form.Item label="Quantity:" name="quantity">
                                     <InputNumber min={1} onChange={(val) => setQuantity( val === null ? 1 : val  )}/>
@@ -164,8 +180,8 @@ const POS = () => {
                                 </Form.Item>
                             </div>
                             <Form.Item>
-                                <Button>Save</Button>
-                                <Button>Clear</Button>
+                                <Button type="primary" ghost onClick={savePurchase}>Save</Button>
+                                <Button >Clear</Button>
                             </Form.Item>
                         </Form>
                     </div>
@@ -192,13 +208,47 @@ const POS = () => {
                         borderWidth: "1px",
                         borderRadius: 10,
                         borderColor: "#D9D9D9",
-                        backgroundColor: "#BCBBBB",
+                        backgroundColor: "#F5F5F5FF",
                         marginLeft: 5,
-                        height: "56vh",
-                        width: "100%"
+                        paddingBottom: 35,
+                        // height: "56vh",
+                        width: "100%",
                     }}
                     >
+                        <div style={{display: 'flex', flexDirection: 'column', marginTop: "1rem"}}>
+                            <Divider orientation="left" >Purchase Summary</Divider>
+                            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
+                                <Typography.Text strong style={{marginRight: 10}}>Quantity: </Typography.Text>
+                                <Typography.Text strong >0</Typography.Text>
+                            </div>
 
+                            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
+                                <Typography.Text strong style={{marginRight: 10}}>Subtotal: </Typography.Text>
+                                <Typography.Text strong>0.00 GHC</Typography.Text>
+                            </div>
+
+                            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
+                                <Typography.Text strong style={{ fontSize: '1.5rem'}}>Total: </Typography.Text>
+                                <Typography.Text strong style={{ fontSize: '1.5rem' }}>0.00 GHC</Typography.Text>
+                            </div>
+                            <Divider></Divider>
+                            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
+                                <Typography.Text strong style={{ fontSize: '1em'}}>Payment Type </Typography.Text>
+                                <Typography.Text strong style={{ fontSize: '1em' }}>Cash</Typography.Text>
+                            </div>
+                            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
+                                <Typography.Text strong style={{ fontSize: '1em', marginTop: 10}}>Amount Tendered </Typography.Text>
+                                <InputNumber size="large" style={{width: '50%'}} placeholder='0.00' addonAfter="GHC" />
+                            </div>
+                            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem", marginTop: 10}}>
+                                <Typography.Text strong style={{ fontSize: '1em'}}>Balance </Typography.Text>
+                                <Typography.Text strong style={{ fontSize: '1em' }}>0.00</Typography.Text>
+                            </div>
+
+                            <div style={{display: 'flex', justifyContent:'center'}}>
+                                <Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}}>Pay</Button>
+                            </div>
+                        </div>
                     </div>
                 </Col>
             </Row>
