@@ -9,13 +9,21 @@ import { IProduct } from '../../interfaces/Product'
 import { useEffect, useState } from 'react'
 import { ICustomer } from '../../interfaces/Customer'
 
+interface IPOSItem {
+    id: number | undefined;
+    sku_code: string;
+    product: string;
+    quantity: number;
+    price: number;
+}
+
 const POS = () => {
     const authHeader = useAuthHeader();
     const [products, setProducts] = useState<IProduct[]>([]);
     const [unitPrice, setUnitPrice] = useState<number>(0);
     const [quantity, setQuantity] = useState<number>(1);
-    const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null);
-    const [tableContent, setTableContent] = useState<any[]>([]); // [{sku_code: "sku_code", product: "product", quantity: 1, price: 0.00}]
+    const [selectedProduct, setSelectedProduct] = useState<IProduct>();
+    const [tableContent, setTableContent] = useState<IPOSItem[]>([]); // [{sku_code: "sku_code", product: "product", quantity: 1, price: 0.00}]
     const [form] = Form.useForm();
 
     const { data: productsData } = useQuery<ServerResponse<IProduct[]>, Error>(
@@ -56,7 +64,7 @@ const POS = () => {
 
         console.log(`selected Product ${value}:::`, option);
         form.setFieldValue("unit_price", option.retail_price);
-        setUnitPrice(typeof option.retail_price === 'undefined' ? 0:option.retail_price);
+        setUnitPrice(typeof option.retail_price === 'undefined' ? 0 : option.retail_price);
     };
       
     const onSearch = (value: string) => {
@@ -75,22 +83,37 @@ const POS = () => {
         console.log("unitPrice: ", unitPrice);
         console.log("price: ", price);
 
-        setTableContent([{sku_code: product?.sku_code, product: product?.sku_name, quantity: quantity, price: price}, ...tableContent]);
+        if (typeof product !== 'undefined') {
+            setTableContent([{id: product.id, sku_code: product.sku_code, product: product.sku_name, quantity: quantity, price: price}, ...tableContent]);
+        }
 
         form.resetFields();
         (unitPrice || unitPrice > 0) && setUnitPrice(0);
 
     }
 
-    const removePOSItem = (record) => {
-        
+    const removePOSItem = (record: any) => {
+        console.log(record);
+        setTableContent( (prev) => prev.filter((item) => item.id !== record.id) )
     }
 
     const posTableColumns = [
         {
+            title: '# ('+(tableContent).length+')',
+            dataIndex: 'index',
+            key: 'index',
+            render: (_: any , record: any) => (
+                <Space size="middle" key={record.id}>     
+                    <Typography.Text>{tableContent.indexOf(record) + 1}</Typography.Text>
+                </Space>
+            ),
+            width: 80
+          },
+        {
           title: 'SKU Code',
           dataIndex: 'sku_code',
           key: 'sku_code',
+          width: 100
         },
         {
           title: 'Product',
@@ -110,7 +133,7 @@ const POS = () => {
         {
             title: 'Action',
             key: 'action',
-            render: (_: any , record) => (
+            render: (_: any , record: any) => (
             <Space size="middle">     
                 <Button shape="circle" danger icon={<DeleteFilled />} onClick={() => removePOSItem(record)}/>
             </Space>
@@ -186,7 +209,7 @@ const POS = () => {
                                       }
                                 />
                             </Form.Item>
-                            <Divider></Divider>
+                            <hr />
                             <div
                                 style={{
                                     display: "flex",
@@ -224,6 +247,15 @@ const POS = () => {
                             dataSource={tableContent}
                             scroll={{ y: 250 }}
                             pagination={false}
+                            onRow={(record, rowIndex) => {
+                                return {
+                                    onClick: (event) => {
+                                        console.log("clicked row: ", record);
+                                    }, // click row
+                                    onMouseEnter: (event) => {}, // mouse enter row
+                                    onMouseLeave: (event) => {}, // mouse leave row
+                                  };
+                            }}
                         >
 
                         </Table>
