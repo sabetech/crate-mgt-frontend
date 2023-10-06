@@ -29,9 +29,12 @@ import ManageUsers from '../pages/users/ManageUsers';
 import LogoutConfirm from '../components/LogoutConfirm';
 import CreateCustomerEmptiesLoan from '../pages/customers/CreateCustomerEmptiesLoan';
 import CustomerHistory from '../pages/customers/CustomerHistory';
+import ProductManagement from '../pages/inventory/ProductManagement';
+import Receivables from '../pages/inventory/Receivables';
 import Inventory from '../pages/inventory/Inventory';
 import PendingOrders from '../pages/inventory/PendingOrders';
 import POS from '../pages/sales/POS';
+import Loadouts from '../pages/inventory/Loadouts';
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -85,9 +88,11 @@ const items: MenuItem[] = [
     getItem('List Empties on Ground', 'empties/list-on-ground'),
   ]),
   getItem('Warehouse', 'warehouse', <AppstoreOutlined />, [
-    getItem('List Inventory', 'warehouse/inventory'),
+    getItem('Products', 'warehouse/products'),
+    getItem('Inventory', 'warehouse/inventory'),
     getItem('Pending Orders', 'warehouse/pending-orders'),
-    getItem('Receivables', 'warehouse/new'),
+    getItem('Receivables', 'warehouse/receivables'),
+    getItem('Loadouts', 'warehouse/loadout'),
     getItem('Inventory History', 'warehouse/history')
   ]),
   getItem('POS', 'pos', <CalculatorOutlined />, [
@@ -169,10 +174,12 @@ const LayoutBase = () => {
             <Route path="/empties/add_returning_empties" element={<AddReturningEmpties />} />
             <Route path="/empties/on-ground" element={<SaveInHouseEmpties />} />
             <Route path="/empties/list-on-ground" element={<ListInHouseEmpties />} />
-
+            
+            <Route path="/warehouse/products" element={<ProductManagement />} />
             <Route path="/warehouse/inventory" element={<Inventory />} />
             <Route path="/warehouse/pending-orders" element={<PendingOrders />} />
-            <Route path="/warehouse/receivables" element={<PendingOrders />} />
+            <Route path="/warehouse/receivables" element={<Receivables />} />
+            <Route path="/warehouse/loadout" element={<Loadouts />} />
 
             <Route path="POS/sales" element={<POS />} />
             

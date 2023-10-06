@@ -1,4 +1,4 @@
-import { Card, Statistic, Table } from "antd";
+import { Card, Statistic, Table, DatePicker, Space, Typography } from "antd";
 
 const Inventory = () => {
 
@@ -14,19 +14,34 @@ const Inventory = () => {
           key: 'opening_stock',
         },
         {
-          title: 'Orders',
-          dataIndex: 'orders',
-          key: 'orders',
-        },
-        {
-            title: 'Pending Orders',
+            title: 'Pending Orders (office)',
             dataIndex: 'pending_orders',
             key: 'pending_orders',
         },
         {
-            title: 'Received',
+          title: 'Orders (Office)',
+          dataIndex: 'orders',
+          key: 'orders',
+        },
+        {
+            title: 'Received from GGBL',
             dataIndex: 'received',
             key: 'received',
+        },
+        {
+            title: 'Loadouts',
+            dataIndex: 'loadouts',
+            key: 'loadouts',
+        },
+        {
+            title: 'Returns by VSEs',
+            dataIndex: 'returns',
+            key: 'returns',
+        },
+        {
+            title: 'Breakages',
+            dataIndex: 'breakages',
+            key: 'breakages',
         },
         {
             title: 'Balance',
@@ -35,9 +50,16 @@ const Inventory = () => {
         },
       ];
 
+    function onChange(date: any, dateString: any) {
+        console.log(date, dateString);
+    }
+
     return (
         <>
-            <h1>Current Stock Balances</h1>
+            <h1>Stock Balances</h1>
+            <Space direction={"horizontal"}>
+                <Typography.Text>Select Date</Typography.Text> <DatePicker onChange={onChange} />
+            </Space>
             <Card title="Opening Stock as at {{ date }}" bordered={false}>
                 <Statistic 
                     value={1230}

@@ -29,6 +29,11 @@ const PendingOrders = () => {
             key: 'current_balance',
         },
         {
+          title: 'Final Balance',
+          dataIndex: 'final_balance',
+          key: 'final_balance',
+      },
+        {
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
