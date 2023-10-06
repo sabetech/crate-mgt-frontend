@@ -22,6 +22,7 @@ const POS = () => {
     const [products, setProducts] = useState<IProduct[]>([]);
     const [unitPrice, setUnitPrice] = useState<number>(0);
     const [quantity, setQuantity] = useState<number>(1);
+    const [total, setTotal] = useState<number>(0);
     const [selectedProduct, setSelectedProduct] = useState<IProduct>();
     const [tableContent, setTableContent] = useState<IPOSItem[]>([]); // [{sku_code: "sku_code", product: "product", quantity: 1, price: 0.00}]
     const [form] = Form.useForm();
@@ -46,9 +47,11 @@ const POS = () => {
 
     useEffect(() => {
 
+        if (tableContent) {
+            setTotal(tableContent.reduce((acc, item) => acc + (item.quantity * item.price), 0));
+        }
 
-
-    },[unitPrice, quantity])
+    },[tableContent])
 
     const onCustomerChange = (value: string, option: ICustomer) => {
         console.log(`selected Customer ${value}:::`, option);
@@ -278,7 +281,7 @@ const POS = () => {
                             <Divider orientation="left" >Purchase Summary</Divider>
                             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
                                 <Typography.Text strong style={{marginRight: 10}}>Quantity: </Typography.Text>
-                                <Typography.Text strong >0</Typography.Text>
+                                <Typography.Text strong >{ tableContent.reduce((acc, item) => (acc + item.quantity), 0) }</Typography.Text>
                             </div>
 
                             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
@@ -288,7 +291,7 @@ const POS = () => {
 
                             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
                                 <Typography.Text strong style={{ fontSize: '1.5rem'}}>Total: </Typography.Text>
-                                <Typography.Text strong style={{ fontSize: '1.5rem' }}>0.00 GHC</Typography.Text>
+                                <Typography.Text strong style={{ fontSize: '1.5rem' }}>{ total.toFixed(2) } GHC</Typography.Text>
                             </div>
                             <Divider></Divider>
                             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
