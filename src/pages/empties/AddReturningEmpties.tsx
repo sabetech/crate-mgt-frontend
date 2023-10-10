@@ -20,7 +20,7 @@ const AddReturningEmpties = () => {
 
     const { data } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
-        () => getProducts(authHeader())
+        () => getProducts(authHeader(), { is_returnable: true })
     );
 
     const { isLoading: isSubmitting, mutate } = useMutation({

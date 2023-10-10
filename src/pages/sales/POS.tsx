@@ -1,7 +1,7 @@
 import { Space, Col, Row, List, Typography, InputNumber, Form, Input, Divider, Button, Table, AutoComplete, Select } from 'antd'
 import { DeleteFilled } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query'
-import { getAllProducts } from '../../services/ProductsAPI'
+import { getProducts } from '../../services/ProductsAPI'
 import { getCustomers } from '../../services/CustomersAPI'
 import { useAuthHeader } from 'react-auth-kit'
 import { ServerResponse } from '../../interfaces/Server'
@@ -29,7 +29,7 @@ const POS = () => {
 
     const { data: productsData } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products_all'],
-        () => getAllProducts(authHeader())
+        () => getProducts(authHeader(), { is_returnable: false })
     )
 
     const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(

@@ -30,7 +30,7 @@ const AddPurchaseOrder = () => {
     const [messageApi, contextHolder ] = message.useMessage();
     const { data, isError } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
-        () => getProducts(authHeader()),
+        () => getProducts(authHeader(), {is_returnable: true} ),
     );
 
     if (isError) {
