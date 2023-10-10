@@ -1,11 +1,9 @@
-import { Button, Form } from "antd";
+import { Form, DatePicker, Input, Space, Button } from "antd";
 import type { DatePickerProps } from 'antd';
-import { DatePicker, Space, Input } from 'antd';
 import AddProductQuantityFields from "./AddProductQuantityFields";
 
-const AddInventoryReceivableFromGGBL = () => {
+const ReturnFromVSEs = () => {
     const [form] = Form.useForm();
-
     const onChange: DatePickerProps['onChange'] = (date, dateString) => {
         console.log(date, dateString);
     };
@@ -38,9 +36,9 @@ const AddInventoryReceivableFromGGBL = () => {
                         </Form.Item>
                 
                         <Form.Item 
-                            label={"Purchase Order Number"} 
-                            name={"po_number"}
-                            rules={[{required: true, message: 'Please Enter Purchase Order Number'}]}
+                            label={"VSE"} 
+                            name={"vse"}
+                            rules={[{required: true, message: 'Please Enter VSE'}]}
                             >
                             <Input />
                         </Form.Item>
@@ -54,9 +52,10 @@ const AddInventoryReceivableFromGGBL = () => {
                         Submit
                     </Button>
                 </Form.Item>
+            
             </Form>
         </>
     )
 }
 
-export default AddInventoryReceivableFromGGBL;
+export default ReturnFromVSEs;

@@ -1,7 +1,7 @@
 import { Tabs } from 'antd';
-import { Space, Button, Typography } from "antd";
 import { UndoOutlined, AppstoreAddOutlined } from "@ant-design/icons";
 import AddInventoryReceivableFromGGBL from "../../components/AddInventoryReceivableFromGGBL";
+import ReturnFromVSEs from "../../components/ReturnFromVSEs";
 
 const Receivables = () => {
 
@@ -16,7 +16,7 @@ const Receivables = () => {
             title: 'Returns from VSEs',
             key: 'vse_returns',
             icon: <UndoOutlined />,
-            content: 'Return from VSEs',
+            content: <ReturnFromVSEs />
         }
     ]
 

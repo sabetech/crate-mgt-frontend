@@ -3,8 +3,10 @@ import * as api from './API';
 import { ICustomer } from '../interfaces/Customer'
 import { ServerResponse } from '../interfaces/Server';
 
-export const getCustomers = async (token: string): Promise<ServerResponse<ICustomer[]>> => {
-    return (await api.get('/customers', {'Authorization': token})).data;
+export const getCustomers = async (token: string, {customer_type}: {customer_type?: string} = {}): Promise<ServerResponse<ICustomer[]>> => {
+    if (customer_type === 'all')
+        return (await api.get('/customers', {'Authorization': token})).data;
+    return (await api.get(`/customers?customer_type=${customer_type}`, {'Authorization': token})).data;
 }
 
 export const getCustomersWithBalance = async (token: string): Promise<ServerResponse<ICustomer[]>> => {

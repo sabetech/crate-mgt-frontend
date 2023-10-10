@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Space, Select, Button, Input } from 'antd';
+import { Form, Space, Select, Button, Input, Typography } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { IProduct } from '../interfaces/Product';
@@ -35,6 +35,7 @@ const AddProductQuantityFields = ({ is_returnable }: AddProductQuantityFieldsPro
     return (
         <>
         <div>
+        <Typography.Title level={4}>Product Quantities</Typography.Title>
             <Form.List name="product-quanties">
                 {(fields, { add, remove }) => (
                     <>
@@ -55,11 +56,16 @@ const AddProductQuantityFields = ({ is_returnable }: AddProductQuantityFieldsPro
                                                 name={[field.name, 'product']}
                                                 rules={[{ required: true, message: 'Product missing'}]}
                                             >
-                                                <Select disabled={!productList || productList.length === 0} style={{ width: 130 }}>
+                                                <Select disabled={!productList || productList.length === 0} style={{ width: 350 }} 
+                                                showSearch
+                                                filterOption={(input, option:any) =>
+                                                    option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                                  }
+                                                >
                                                     {
                                                     productList && productList.map((item) => (
                                                         <Option key={item.key} value={item.id}>
-                                                            {item.sku_code}
+                                                            {item.sku_name}
                                                         </Option>
                                                     ))
                                                     }
@@ -72,9 +78,10 @@ const AddProductQuantityFields = ({ is_returnable }: AddProductQuantityFieldsPro
                                     {...field}
                                     label="Quantity"
                                     name={[field.name, 'quantity']}
+                                    
                                     rules={[{ required: true, message: 'Missing Qty' }]}
                                     >
-                                    <Input />
+                                    <Input placeholder={"Quantity"} />
                                 </Form.Item>
                                 <MinusCircleOutlined onClick={() => remove(field.name)} />
                             </Space>

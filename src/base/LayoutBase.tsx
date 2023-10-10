@@ -35,6 +35,7 @@ import Inventory from '../pages/inventory/Inventory';
 import PendingOrders from '../pages/inventory/PendingOrders';
 import POS from '../pages/sales/POS';
 import Loadouts from '../pages/inventory/Loadouts';
+import TakeStock from '../pages/inventory/TakeStock';
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -93,7 +94,7 @@ const items: MenuItem[] = [
     getItem('Pending Orders', 'warehouse/pending-orders'),
     getItem('Receivables', 'warehouse/receivables'),
     getItem('Loadouts', 'warehouse/loadout'),
-    getItem('Inventory History', 'warehouse/history')
+    getItem('Take Stock', 'warehouse/takestock')
   ]),
   getItem('POS', 'pos', <CalculatorOutlined />, [
     getItem('Sales', 'POS/sales'),
@@ -180,6 +181,7 @@ const LayoutBase = () => {
             <Route path="/warehouse/pending-orders" element={<PendingOrders />} />
             <Route path="/warehouse/receivables" element={<Receivables />} />
             <Route path="/warehouse/loadout" element={<Loadouts />} />
+            <Route path="/warehouse/takestock" element={<TakeStock />} />
 
             <Route path="POS/sales" element={<POS />} />
             
