@@ -12,3 +12,8 @@ export const getProducts = async (token: string, option: {is_returnable: boolean
 export const takeStock = async (token: string, values: IStock): Promise<ServerResponse<string>> => {
     return (await api.post('/stocks/take-stock', values, {'Authorization': token})).data;
 }
+
+export const getStock = async (token: string, date: string) => {
+    console.log(date);
+    return (await api.get('/stocks/get-stock?date='+date, {'Authorization': token})).data
+}

@@ -27,3 +27,11 @@ export interface IStock {
     products: IStockProduct[];
     breakages: IStockProduct[];
 }
+
+export interface IStockReport {
+    id?: number;
+    date: string;
+    product: IProduct;
+    quantity: number;
+    breakages: number;
+}
