@@ -17,9 +17,10 @@ const TakeStock = () => {
     const { mutate, isLoading: isSubmitting } = useMutation({
         mutationFn: (values: any) => takeStock( authHeader(), values),
         onSuccess: (data) => {
+            console.log(data);
             success(data?.data || "")
-            navigate("/warehouse/stockinfo")
             form.resetFields();
+            navigate("/warehouse/stockinfo")
         },
         onError: (error: AppError) => {
             messageApi.open({
