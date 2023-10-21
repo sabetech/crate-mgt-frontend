@@ -83,6 +83,15 @@ const Dashboard = () => {
                     />
             </Card>
         </Col>
+        <Col >
+            <Card title="Opening Stock" bordered={false} style={{cursor: 'pointer'}}>
+                <Statistic
+                    title="Date: 12/12/2020"
+                    value={11}
+                    valueStyle={{ color: '#3f8600' }}
+                    />
+            </Card>
+        </Col>
     </Row>
     );
 }

@@ -25,7 +25,7 @@ const AddInventoryReceivableFromGGBL = () => {
                 onFinish={onFinish}
                 onFinishFailed={onFinishedFailed}
                 layout={'vertical'}
-                style={{ maxWidth: '70%' }}
+                style={{ maxWidth: '90%' }}
                 size="large"
             
             >

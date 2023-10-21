@@ -10,10 +10,11 @@ import { useAuthHeader } from 'react-auth-kit';
 
 const { Option } = Select;
 interface AddProductQuantityFieldsProps {
+    name: string;
     is_returnable: boolean;
 }
 
-const AddProductQuantityFields = ({ is_returnable }: AddProductQuantityFieldsProps) => {
+const AddProductQuantityFields = ({ name, is_returnable }: AddProductQuantityFieldsProps) => {
 
     const authHeader = useAuthHeader();
     const { data } = useQuery<ServerResponse<IProduct[]>, Error>(
@@ -35,8 +36,8 @@ const AddProductQuantityFields = ({ is_returnable }: AddProductQuantityFieldsPro
     return (
         <>
         <div>
-        <Typography.Title level={4}>Product Quantities</Typography.Title>
-            <Form.List name="product-quanties">
+        <Typography.Title level={5}>Product Quantities</Typography.Title>
+            <Form.List name={name}>
                 {(fields, { add, remove }) => (
                     <>
                         {
@@ -55,6 +56,7 @@ const AddProductQuantityFields = ({ is_returnable }: AddProductQuantityFieldsPro
                                                 label="Product"
                                                 name={[field.name, 'product']}
                                                 rules={[{ required: true, message: 'Product missing'}]}
+                                                style={{ width: 400 }}
                                             >
                                                 <Select disabled={!productList || productList.length === 0} style={{ width: 350 }} 
                                                 showSearch
@@ -80,6 +82,7 @@ const AddProductQuantityFields = ({ is_returnable }: AddProductQuantityFieldsPro
                                     name={[field.name, 'quantity']}
                                     
                                     rules={[{ required: true, message: 'Missing Qty' }]}
+                                    style={{ width: 400 }}
                                     >
                                     <Input placeholder={"Quantity"} />
                                 </Form.Item>

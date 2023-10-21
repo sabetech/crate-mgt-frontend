@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Form, DatePicker, Select, Input, Space, Button, message } from "antd";
-import { MinusCircleOutlined, PlusOutlined, SendOutlined } from "@ant-design/icons";
+import { Form, DatePicker, AutoComplete, Button, message } from "antd";
+import { SendOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import { getCustomers, recordVSESales } from "../../services/CustomersAPI";
 import { useAuthHeader } from 'react-auth-kit';
@@ -11,32 +11,13 @@ import { AppError } from "../../interfaces/Error";
 import { IProduct } from "../../interfaces/Product";
 import { getProducts } from "../../services/ProductsAPI";
 import { useNavigate } from "react-router-dom";
+import AddProductQuantityFields from "../../components/AddProductQuantityFields";
 
-const { Option } = Select;
 const RecordVSESales: React.FC = () => {
     const [form] = useForm();
-    const [customerList, setCustomerList] = React.useState<ICustomer[] | undefined>([]);
     const navigate = useNavigate();
     const authHeader = useAuthHeader();
     const [messageApi, contextHolder ] = message.useMessage();
-
-    const { data: customers } = useQuery<ServerResponse<ICustomer[]>> (
-        ['customers'],
-        () => getCustomers(authHeader())
-    );
-
-    const { data, isError } = useQuery<ServerResponse<IProduct[]>, Error>({
-        queryKey: ['products'],
-        queryFn: () => getProducts(authHeader()),
-    });
-    
-    if (isError) {
-        messageApi.open({
-            type: 'error',
-            content: "Error Fetching Products. Please Check your internet connection and refresh the page."
-        });
-        setTimeout(messageApi.destroy, 2500);
-    }
 
     const { mutate } = useMutation({
         mutationFn: (values: any) => recordVSESales(values.customer_id, values, authHeader()),
@@ -53,27 +34,6 @@ const RecordVSESales: React.FC = () => {
             setTimeout(messageApi.destroy, 2500);
         }}
     )
-    
-    useEffect(() => {
-        
-        if (customers) {
-            setCustomerList(customers.data.map(item => ({
-                ...item,
-                key: item.id
-            })));
-        }
-    },[customers]);
-
-    const [productList, setProductList] = React.useState<IProduct[] | undefined>([]);
-    
-    useEffect(() => {
-        if (data) {
-            setProductList(data.data?.map(item => ({
-                ...item, 
-                key: item.id
-            })));
-        }
-    },[data]);
 
     const success = (msg: string) => {
         messageApi.open({
@@ -84,6 +44,19 @@ const RecordVSESales: React.FC = () => {
         setTimeout(messageApi.destroy, 2500);
     }
 
+    const onCustomerChange = (value: string, option: ICustomer) => {
+        console.log(`selected Customer ${value}:::`, option);
+    }
+
+    const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
+        ['customers'],
+        () => getCustomers(authHeader(), {customer_type: 'retailer-vse'})
+    )
+
+    const onSearch = (value: string) => {
+        console.log('searching ...:', value);
+    };
+
     const onFinish = (_values: any) => {
         console.log(_values);
         mutate(_values);
@@ -93,144 +66,38 @@ const RecordVSESales: React.FC = () => {
         <h1>Record a Sale</h1>
             <Form 
                 form={form}
-                style={{ maxWidth: '50%' }}
+                style={{ maxWidth: '90%' }}
                 layout={'vertical'}
                 size={'large'}
                 onFinish={onFinish}
             >
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridGap: '20px'}}>
+            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridGap: '80px'}}>
                 <div>
                     <Form.Item label="Date" name={"date"}>
                         <DatePicker  />
-                        {/* Make the customers searchable... */}
                     </Form.Item>
                     <Form.Item label="Customer" name={"customer_id"}>
-                        <Select style={{ width: 400 }}>
-                            {
-                                customerList && customerList.map((item) => (
-                                    <Option key={ item.key } value={ item.id }>
-                                        {item.name}(<em>{item.customer_type}</em>)
-                                    </Option>
-                                ))
-                            }
-                        </Select>
+                        <AutoComplete 
+                                allowClear={true}
+                                onSearch={onSearch}
+                                onChange={(text: string, option: any) => onCustomerChange(text, option)}
+                                placeholder="Search for VSE"
+                                options={ customersResponse?.data.map(custmr => ({...custmr, value: `${custmr.name} (${custmr.customer_type.toUpperCase()})`})) }
+                                filterOption={(inputValue, option) =>
+                                    option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                }
+                            />
                     </Form.Item>
                 </div>
                 <div>
-                    <h3> Products Sold </h3>
-                    <Form.List name="product_quanties">
-                        {(fields, { add, remove }) => (
-                            <>
-                                {
-                                fields.map((field) => (
-                                    <Space key={field.key} align="baseline">
-                                        <Form.Item
-                                            noStyle
-                                            shouldUpdate={(prevValues, curValues) =>
-                                                prevValues.area !== curValues.area || prevValues.sights !== curValues.sights
-                                            }
-                                            >
-                                            {
-                                                () => (
-                                                    <Form.Item
-                                                        {...field}
-                                                        label="Product"
-                                                        name={[field.name, 'product']}
-                                                        rules={[{ required: true, message: 'Product missing'}]}
-                                                    >
-                                                        <Select disabled={!productList || productList.length === 0} style={{ width: 130 }}>
-                                                            {
-                                                            productList && productList.map((item) => (
-                                                                <Option key={item.key} value={item.id}>
-                                                                    {item.sku_code}
-                                                                </Option>
-                                                            ))
-                                                            }
-                                                        </Select>
-                                                    </Form.Item>
-                                                )
-                                            }
-                                        </Form.Item>
-                                        <Form.Item
-                                            {...field}
-                                            label="Quantity"
-                                            name={[field.name, 'quantity']}
-                                            rules={[{ required: true, message: 'Missing Qty' }]}
-                                            >
-                                            <Input />
-                                        </Form.Item>
-                                        <MinusCircleOutlined onClick={() => remove(field.name)} />
-                                    </Space>
-                                ))   
-                            }
-                            <Form.Item>
-                                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                    Add Product and Quantity Fields
-                                </Button>
-                            </Form.Item>
-                            </>
-                        )}
-                    </Form.List>
-
-                    <h3> Empties Returned </h3>
-                        <Form.List name="empties_returned">
-                            {(fields, { add, remove }) => (
-                                <>
-                                    {
-                                    fields.map((field) => (
-                                        <Space key={field.key+"full"} align="baseline">
-                                            <Form.Item
-                                                noStyle
-                                                shouldUpdate={(prevValues, curValues) =>
-                                                    prevValues.area !== curValues.area || prevValues.sights !== curValues.sights
-                                                }
-                                                >
-                                                {
-                                                    () => (
-                                                        <Form.Item
-                                                            {...field}
-                                                            label="Product"
-                                                            name={[field.name, 'product']}
-                                                            rules={[{ required: true, message: 'Product missing'}]}
-                                                        >
-                                                            <Select disabled={!productList || productList.length === 0} style={{ width: 130 }}>
-                                                               {
-                                                                productList && productList.map((item) => (
-                                                                    <Option key={item.key} value={item.id}>
-                                                                        {item.sku_code}
-                                                                    </Option>
-                                                                ))
-                                                                }
-                                                            </Select>
-                                                        </Form.Item>
-                                                    )
-                                                }
-                                            </Form.Item>
-                                            <Form.Item
-                                                {...field}
-                                                label="Quantity"
-                                                name={[field.name, 'quantity']}
-                                                rules={[{ required: true, message: 'Missing Qty' }]}
-                                                >
-                                                <Input />
-                                            </Form.Item>
-                                            <MinusCircleOutlined onClick={() => remove(field.name)} />
-                                        </Space>
-                                    ))   
-                                }
-                                <Form.Item>
-                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                        Add Product and Quantity Fields
-                                    </Button>
-                                </Form.Item>
-                                </>
-                            )}
-                        </Form.List>
+                    
+                    <h2> Empties Returned </h2>
+                    <AddProductQuantityFields is_returnable={false} />
                 </div>
-                <Button type="primary" htmlType="submit" icon={<SendOutlined />} size={"large"} loading={false}>
-                    Submit
-                </Button>
             </div>
+            <Button type="primary" htmlType="submit" icon={<SendOutlined />} size={"large"} loading={false}>
+                Submit
+            </Button>
         </Form>
     </>)
 }

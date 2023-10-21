@@ -12,11 +12,17 @@ const post = (url: string, data: any, headers: object) => {
     const formData = new FormData();
     
     Object.keys(data).forEach(key => {
-        if ((key === "products") || (key === "product_quanties") || (key === "empties_returned") || (key === "empties_on_ground_products")){
-            formData.append(key, JSON.stringify(data[key]));
-        }
-        else{
-            formData.append(key, data[key]);
+        switch(key) {
+            case "products":
+            case "product_quanties":
+            case "empties_returned":
+            case "empties_on_ground_products":
+            case "breakages":
+                formData.append(key, JSON.stringify(data[key]));
+                break;
+            default:
+                formData.append(key, data[key]);
+
         }
     });
     

@@ -20,7 +20,7 @@ const CustomerReturnEmpties = () => {
 
     const { data: productsData } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
-        () => getProducts(authHeader())
+        () => getProducts(authHeader(), {is_returnable: true})
     );
 
     const { data: customers } = useQuery<ServerResponse<ICustomer[]>> (

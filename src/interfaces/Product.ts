@@ -14,5 +14,16 @@ export interface IEmptyOnGroundProducts {
     product: IProduct;
     quantity: number;
     is_empty: boolean;
+}
 
+export interface IStockProduct {
+    id?: number;
+    product: IProduct;
+    quantity: number;
+}
+
+export interface IStock {
+    date: string;
+    products: IStockProduct[];
+    breakages: IStockProduct[];
 }

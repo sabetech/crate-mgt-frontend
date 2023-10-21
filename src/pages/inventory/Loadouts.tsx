@@ -1,5 +1,6 @@
 import type { DatePickerProps } from 'antd';
 import { Form, DatePicker, Input, Button, AutoComplete } from "antd";
+import { SendOutlined } from '@ant-design/icons';
 import AddProductQuantityFields from '../../components/AddProductQuantityFields';
 import { getCustomers } from '../../services/CustomersAPI'
 import { ICustomer } from '../../interfaces/Customer'
@@ -34,7 +35,7 @@ const Loadouts = () => {
             <Form
                 form={form}
                 layout={'vertical'}
-                style={{ maxWidth: '70%' }}
+                style={{ maxWidth: '90%' }}
                 size={'large'}
             >
                 <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridGap: '80px'}}>
@@ -70,7 +71,7 @@ const Loadouts = () => {
                 </div>
 
                 <Form.Item >
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" icon={<SendOutlined />}>
                         Submit
                     </Button>
                 </Form.Item>

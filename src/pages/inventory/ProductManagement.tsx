@@ -14,9 +14,24 @@ const ProductManagement = () => {
             key: 'sku_code',
         },
         {
+            title: 'Wholesale Price',
+            dataIndex: 'wholesale_price',
+            key: 'wholesale_price',
+        },
+        {
+            title: 'Retail Price',
+            dataIndex: 'retail_price',
+            key: 'retail_price',
+        },
+        {
             title: 'Balance',
             dataIndex: 'balance',
             key: 'balance',
+        },
+        {
+            title: 'Action',
+            dataIndex: 'action',
+            key: 'action',
         },
     ]
 
