@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Space, Card, Typography, Statistic, Table, DatePicker } from "antd";
+import { Space, Card, Typography, Statistic, Table, DatePicker, Skeleton } from "antd";
 import { getStock } from "../../services/ProductsAPI";
 import dayjs from 'dayjs';
 import { useAuthHeader } from "react-auth-kit";
@@ -14,11 +14,12 @@ const StockInfo = () => {
     const authHeader = useAuthHeader();
     const queryClient = useQueryClient()
 
-    const { data: stockInfo } = useQuery(
+    const { data: stockInfo, isLoading } = useQuery(
         {
-            queryKey: ['stock_info'],
+            queryKey: ['stock_info', date],
             queryFn: () => getStock(authHeader(), date)
-        }
+        },
+
     );
 
     useEffect(() => {
@@ -54,40 +55,47 @@ const StockInfo = () => {
           }
     ];
 
-
-
     const onDateChange = (_: any, dateStr: string) => {
         setDate(dateStr)
-        queryClient.invalidateQueries(['stock_info']);
+        // refetch();
+        // queryClient.invalidateQueries(['stock_info']);
+        queryClient.invalidateQueries();
     }
 
     return  (
     <>
         <h1>Stock Info</h1>
-        <Space direction={"vertical"}>
-            <Space direction={"horizontal"}>
-                <Typography.Text>Select Date</Typography.Text> <DatePicker defaultValue={dayjs(date)} onChange={onDateChange} />
+        
+        {
+        isLoading && <Skeleton active /> ||
+        <>
+            <Space direction={"vertical"}>
+                <Space direction={"horizontal"}>
+                    <Typography.Text>Select Date</Typography.Text> <DatePicker defaultValue={dayjs(date)} onChange={onDateChange} />
+                </Space>
+                <Space direction={"horizontal"}>
+                    <Card title={`Closing Stock as at ${dayjs(date, { format: 'YYYY-MM-DD' }).format('D MMM YYYY')}`} >
+                        <Statistic 
+                            value={ stockInfo && stockInfo.data.reduce((acc: number, item: IStockReport) => acc + item.quantity, 0) || 0 }
+                            valueStyle={{ color: '#3f8600' }}
+                        />
+                    </Card>
+                    <Card title={`Closing Breakages as at ${dayjs(date, { format: 'YYYY-MM-DD' }).format('D MMM YYYY')}`} >
+                        <Statistic 
+                            value={ stockInfo && stockInfo.data.reduce((acc: number, item: IStockReport) => acc + item.breakages, 0) || 0 }
+                            valueStyle={{ color: '#3f8600' }}
+                        />
+                    </Card>
+                </Space>
             </Space>
-            <Space direction={"horizontal"}>
-                <Card title={`Closing Stock as at ${dayjs(date, { format: 'YYYY-MM-DD' }).format('D MMM YYYY')}`} >
-                    <Statistic 
-                        value={ stockInfo && stockInfo.data.reduce((acc: number, item: IStockReport) => acc + item.quantity, 0) || 0 }
-                        valueStyle={{ color: '#3f8600' }}
-                    />
-                </Card>
-                <Card title={`Closing Breakages as at ${dayjs(date, { format: 'YYYY-MM-DD' }).format('D MMM YYYY')}`} >
-                    <Statistic 
-                        value={ stockInfo && stockInfo.data.reduce((acc: number, item: IStockReport) => acc + item.breakages, 0) || 0 }
-                        valueStyle={{ color: '#3f8600' }}
-                    />
-                </Card>
-            </Space>
-        </Space>
-        <Table 
-            columns={columns}
-            dataSource={tableData}
-        />
-    </>)
+            <Table 
+                columns={columns}
+                dataSource={tableData}
+            />
+        </>
+        }
+    </>
+    );
 }
 
 export default StockInfo;
