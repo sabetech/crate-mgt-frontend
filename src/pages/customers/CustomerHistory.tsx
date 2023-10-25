@@ -1,4 +1,4 @@
-import { Timeline, TimelineItemProps, Col, Row, Statistic, Button, Modal, Form } from 'antd';
+import { Timeline, TimelineItemProps, Col, Row, Statistic, Button, Modal, Form, Skeleton } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { useQuery } from "@tanstack/react-query";
 import { useAuthHeader, useAuthUser } from "react-auth-kit";
@@ -16,17 +16,18 @@ const CustomerHistory = () => {
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useState<string | undefined>(undefined);
     const { id } = useParams();
-    console.log(loggedInUser)
+    
     const customerID  = id ? parseInt(id) : 0;
 
-    const { data: customerHistory } = useQuery(
+    const { data: customerHistory, isLoading } = useQuery(
         {
-            queryKey: ['customer_history'],
+            queryKey: ['customer_history', customerID],
             queryFn: () => getCustomerHistory(customerID, authHeader())
         }
     );
 
-    console.log("Customer Hsoty: ", customerHistory)
+    console.log("loading::",isLoading);
+
     useEffect(() => {
 
         if (customerHistory) {
@@ -85,25 +86,30 @@ const CustomerHistory = () => {
     return (
         <div>
             <h1>Customer History</h1>
-            <Row gutter={16}>
-                <Col span={12}>
-                    <Statistic title="Total Empties Balance:" value={
-                        customerHistory?.data.reduce((acc: number, item: IHistoryItem) => {
-                            if (item.transaction_type === 'in') {
-                                return acc - item.quantity_transacted;
-                            }else {
-                                return acc + item.quantity_transacted;
-                            }
-                        },0)
-                    } />
-                </Col>
-            </Row>
+            {
+                isLoading ? <Skeleton active /> :
             <>
-                <Timeline
-                    mode={'left'}
-                    items={ items() }
-                />
+                <Row gutter={16}>
+                    <Col span={12}>
+                        <Statistic title="Total Empties Balance:" value={
+                            customerHistory?.data.reduce((acc: number, item: IHistoryItem) => {
+                                if (item.transaction_type === 'in') {
+                                    return acc - item.quantity_transacted;
+                                }else {
+                                    return acc + item.quantity_transacted;
+                                }
+                            },0)
+                        } />
+                    </Col>
+                </Row>
+                <>
+                    <Timeline
+                        mode={'left'}
+                        items={ items() }
+                    />
+                </>
             </>
+            }
             <Modal
                 title="Edit History"
                 open={modalOpen}

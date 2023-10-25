@@ -34,7 +34,8 @@ import Receivables from '../pages/inventory/Receivables';
 import Inventory from '../pages/inventory/Inventory';
 import PendingOrders from '../pages/inventory/PendingOrders';
 import POS from '../pages/sales/POS';
-import Loadouts from '../pages/inventory/Loadouts';
+import AddLoadouts from '../pages/inventory/AddLoadouts';
+import LoadoutList from '../pages/inventory/LoadoutList';
 import TakeStock from '../pages/inventory/TakeStock';
 import StockInfo from '../pages/inventory/StockInfo';
 
@@ -94,7 +95,8 @@ const items: MenuItem[] = [
     getItem('Inventory', 'warehouse/inventory'),
     getItem('Pending Orders', 'warehouse/pending-orders'),
     getItem('Receivables', 'warehouse/receivables'),
-    getItem('Loadouts', 'warehouse/loadout'),
+    getItem('Add Loadout', 'warehouse/addloadout'),
+    getItem('Loadouts', 'warehouse/listloadouts'),
     getItem('Take Stock', 'warehouse/takestock'),
     getItem('Stock Info', 'warehouse/stockinfo')
   ]),
@@ -182,7 +184,8 @@ const LayoutBase = () => {
             <Route path="/warehouse/inventory" element={<Inventory />} />
             <Route path="/warehouse/pending-orders" element={<PendingOrders />} />
             <Route path="/warehouse/receivables" element={<Receivables />} />
-            <Route path="/warehouse/loadout" element={<Loadouts />} />
+            <Route path="/warehouse/addloadout" element={<AddLoadouts />} />
+            <Route path="/warehouse/listloadouts" element={<LoadoutList />} />
             <Route path="/warehouse/takestock" element={<TakeStock />} />
             <Route path="/warehouse/stockinfo" element={<StockInfo />} />
 

@@ -21,7 +21,7 @@ interface ILoadOutFormValues {
     }[]
 }
 
-const Loadouts = () => {
+const AddLoadouts = () => {
     const [form] = Form.useForm();
     const [date, setDate] = useState("");
     const [vse, setVse] = useState<ICustomer>();
@@ -167,4 +167,4 @@ const Loadouts = () => {
     )
 }
 
-export default Loadouts;
+export default AddLoadouts;
