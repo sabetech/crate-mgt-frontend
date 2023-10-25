@@ -17,3 +17,7 @@ export const getStock = async (token: string, date: string) => {
     console.log(date);
     return (await api.get('/stocks/get-stock?date='+date, {'Authorization': token})).data
 }
+
+export const addLoadoutInfo = async (token: string, values: any): Promise<ServerResponse<string>> => {
+    return (await api.post('/stocks/loadout', values, {'Authorization': token})).data;
+}

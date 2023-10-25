@@ -5,6 +5,7 @@ import { getStock } from "../../services/ProductsAPI";
 import dayjs from 'dayjs';
 import { useAuthHeader } from "react-auth-kit";
 import { IStockReport } from "../../interfaces/Product";
+import { CreditCardOutlined } from "@ant-design/icons";
 
 
 const StockInfo = () => {
@@ -64,36 +65,47 @@ const StockInfo = () => {
 
     return  (
     <>
-        <h1>Stock Info</h1>
+        <Typography.Title level={2}>Stock Info</Typography.Title>
+       
         
-        {
-        isLoading && <Skeleton active /> ||
-        <>
             <Space direction={"vertical"}>
                 <Space direction={"horizontal"}>
                     <Typography.Text>Select Date</Typography.Text> <DatePicker defaultValue={dayjs(date)} onChange={onDateChange} />
                 </Space>
                 <Space direction={"horizontal"}>
-                    <Card title={`Closing Stock as at ${dayjs(date, { format: 'YYYY-MM-DD' }).format('D MMM YYYY')}`} >
-                        <Statistic 
-                            value={ stockInfo && stockInfo.data.reduce((acc: number, item: IStockReport) => acc + item.quantity, 0) || 0 }
-                            valueStyle={{ color: '#3f8600' }}
-                        />
-                    </Card>
-                    <Card title={`Closing Breakages as at ${dayjs(date, { format: 'YYYY-MM-DD' }).format('D MMM YYYY')}`} >
-                        <Statistic 
-                            value={ stockInfo && stockInfo.data.reduce((acc: number, item: IStockReport) => acc + item.breakages, 0) || 0 }
-                            valueStyle={{ color: '#3f8600' }}
-                        />
-                    </Card>
+                {
+                    isLoading &&
+                                <>
+                                    <Skeleton.Node active={true} style={{width: 300, height: 140}}>
+                                        <CreditCardOutlined style={{ fontSize: 60, color: '#bfbfbf' }} />
+                                    </Skeleton.Node>
+                                    <Skeleton.Node active={true} style={{width: 300, height: 140}}>
+                                        <CreditCardOutlined style={{ fontSize: 60, color: '#bfbfbf' }} />
+                                    </Skeleton.Node>
+                                </>  ||
+                                <>
+                        <Card title={`Closing Stock as at ${dayjs(date, { format: 'YYYY-MM-DD' }).format('D MMM YYYY')}`} >
+                            <Statistic 
+                                value={ stockInfo && stockInfo.data.reduce((acc: number, item: IStockReport) => acc + item.quantity, 0) || 0 }
+                                valueStyle={{ color: '#3f8600' }}
+                            />
+                        </Card>
+                        <Card title={`Closing Breakages as at ${dayjs(date, { format: 'YYYY-MM-DD' }).format('D MMM YYYY')}`} >
+                            <Statistic 
+                                value={ stockInfo && stockInfo.data.reduce((acc: number, item: IStockReport) => acc + item.breakages, 0) || 0 }
+                                valueStyle={{ color: '#3f8600' }}
+                            />
+                        </Card>
+                        </>
+                }
                 </Space>
             </Space>
             <Table 
+                style={{ marginTop: 20 }}
                 columns={columns}
                 dataSource={tableData}
+                loading={isLoading}
             />
-        </>
-        }
     </>
     );
 }
