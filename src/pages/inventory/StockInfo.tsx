@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Space, Card, Typography, Statistic, Table, DatePicker, Skeleton } from "antd";
-import { getStock } from "../../services/ProductsAPI";
+import { getStock } from "../../services/InventoryAPI";
 import dayjs from 'dayjs';
 import { useAuthHeader } from "react-auth-kit";
 import { IStockReport } from "../../interfaces/Product";

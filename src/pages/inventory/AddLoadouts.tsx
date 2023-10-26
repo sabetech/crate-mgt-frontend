@@ -8,7 +8,7 @@ import { ICustomer } from '../../interfaces/Customer'
 import { ServerResponse } from '../../interfaces/Server';
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { useAuthHeader } from 'react-auth-kit'
-import { addLoadoutInfo } from '../../services/ProductsAPI';
+import { addLoadoutInfo } from '../../services/InventoryAPI';
 import { useNavigate } from "react-router-dom";
 import { AppError } from '../../interfaces/Error';
 

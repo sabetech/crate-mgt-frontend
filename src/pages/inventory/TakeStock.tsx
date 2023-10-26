@@ -2,7 +2,7 @@ import { DatePicker, Form, Button, Typography,message } from "antd";
 import AddProductQuantityFields from "../../components/AddProductQuantityFields";
 import { useForm } from "antd/es/form/Form";
 import { useMutation } from "@tanstack/react-query";
-import { takeStock } from "../../services/ProductsAPI";
+import { takeStock } from "../../services/InventoryAPI";
 import { useAuthHeader } from "react-auth-kit";
 import { useNavigate } from "react-router-dom";
 import { AppError } from "../../interfaces/Error";
