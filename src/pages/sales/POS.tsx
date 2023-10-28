@@ -1,4 +1,4 @@
-import { Space, Col, Row, List, Typography, InputNumber, Form, Input, Divider, Button, Table, AutoComplete, Select } from 'antd'
+import { message, Space, Col, Row, List, Typography, InputNumber, Form, Input, Divider, Button, Table, AutoComplete, Select } from 'antd'
 import { DeleteFilled } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query'
 import { getProducts } from '../../services/ProductsAPI'
@@ -24,6 +24,8 @@ const POS = () => {
     const [unitPrice, setUnitPrice] = useState<number>(0);
     const [quantity, setQuantity] = useState<number>(1);
     const [total, setTotal] = useState<number>(0);
+    const [amountTendered, setAmountTendered] = useState<number>(0);
+    const [messageApi, contextHolder] = message.useMessage();
     const [selectedProduct, setSelectedProduct] = useState<IProduct>();
     const [tableContent, setTableContent] = useState<IPOSItem[]>([]); // [{sku_code: "sku_code", product: "product", quantity: 1, price: 0.00}]
     const [form] = Form.useForm();
@@ -93,13 +95,23 @@ const POS = () => {
 
         form.resetFields();
         (unitPrice || unitPrice > 0) && setUnitPrice(0);
-        form.setFieldValue("customer", customer?.name);
+        form.setFieldValue("customer", `${customer?.name} (${customer?.customer_type.toUpperCase()})`);
 
     }
 
     const removePOSItem = (record: any) => {
         console.log(record);
         setTableContent( (prev) => prev.filter((item) => item.id !== record.id) )
+    }
+
+    const handlePay = () => {
+        if (amountTendered < total) {
+            messageApi.open({
+                type: 'error',
+                content: "Amount tendered is less than total"
+            });
+            return;
+        }
     }
 
     const posTableColumns = [
@@ -149,6 +161,7 @@ const POS = () => {
 
     return (
         <>
+            {contextHolder}
             <h1>Point of Sale</h1>
 
             <Row>
@@ -303,7 +316,7 @@ const POS = () => {
                             </div>
                             <div style={{display: 'flex', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem", marginTop: 10}}>
                                 <Typography.Text strong style={{ fontSize: '1em'}}>Amount Tendered </Typography.Text>
-                                <InputNumber size="large" style={{width: '50%'}} placeholder='0.00' addonAfter="GHC" />
+                                <InputNumber size="large" style={{width: '50%'}} placeholder='0.00' addonAfter="GHC" value={amountTendered} onChange={(val) => val && setAmountTendered(val)}/>
                             </div>
                             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem", marginTop: 10}}>
                                 <Typography.Text strong style={{ fontSize: '1em'}}>Balance </Typography.Text>
@@ -311,7 +324,7 @@ const POS = () => {
                             </div>
 
                             <div style={{display: 'flex', justifyContent:'center'}}>
-                                <Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}}>Pay</Button>
+                                <Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={handlePay}>Pay</Button>
                             </div>
                         </div>
                     </div>
