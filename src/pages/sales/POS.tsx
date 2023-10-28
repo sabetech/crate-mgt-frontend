@@ -20,6 +20,7 @@ interface IPOSItem {
 const POS = () => {
     const authHeader = useAuthHeader();
     const [products, setProducts] = useState<IProduct[]>([]);
+    const [customer, setCustomer] = useState<ICustomer>();
     const [unitPrice, setUnitPrice] = useState<number>(0);
     const [quantity, setQuantity] = useState<number>(1);
     const [total, setTotal] = useState<number>(0);
@@ -34,7 +35,7 @@ const POS = () => {
 
     const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
         ['customers'],
-        () => getCustomers(authHeader())
+        () => getCustomers(authHeader(),{customer_type: 'all'})
     )
 
     useEffect(() => {
@@ -55,7 +56,7 @@ const POS = () => {
 
     const onCustomerChange = (value: string, option: ICustomer) => {
         console.log(`selected Customer ${value}:::`, option);
-
+        setCustomer(option)
     }
 
     const onProductChange = (value: string, option: IProduct) => {
@@ -92,6 +93,7 @@ const POS = () => {
 
         form.resetFields();
         (unitPrice || unitPrice > 0) && setUnitPrice(0);
+        form.setFieldValue("customer", customer?.name);
 
     }
 
@@ -197,6 +199,7 @@ const POS = () => {
                                     filterOption={(inputValue, option) =>
                                         option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
                                       }
+                                    value={`${customer?.name} (${customer?.customer_type.toUpperCase()})`}
                                 />
                             </Form.Item>
                             <Form.Item label="Select Product" name="product" style={{ marginBottom: "10px" }}>
