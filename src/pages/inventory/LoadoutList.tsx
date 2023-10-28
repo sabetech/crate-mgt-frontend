@@ -1,35 +1,84 @@
-import { Typography, DatePicker, Space, Skeleton, Statistic, Card } from 'antd';
+import { Typography, DatePicker, Space, Skeleton, Statistic, Card, Table } from 'antd';
 import { CreditCardOutlined } from '@ant-design/icons';
-import React, {useState} from 'react';
-import { ILoadout } from '../../interfaces/Inventory'
+import React, {useEffect, useState} from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getLoadouts } from '../../services/InventoryAPI';
+import { getLoadoutByVSE } from '../../services/InventoryAPI';
 import { useAuthHeader } from 'react-auth-kit';
 import dayjs from 'dayjs';
+import { ILoadoutInfo } from '../../interfaces/Inventory';
 
 const LoadoutList: React.FC = () => {
     const authHeader = useAuthHeader();
     const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
-    const queryClient = useQueryClient()
+    const queryClient = useQueryClient();
+    const [vseLoadoutData, setVseLoadoutData] = useState();
 
-    const { data, isLoading } = useQuery(
+    const { data:vseCustomers, isLoading } = useQuery(
         {
             queryKey: ['loadouts'],
-            queryFn: () => getLoadouts(authHeader()),
+            queryFn: () => getLoadoutByVSE(authHeader(), date),
             onError: (error: Error) => {
                 console.log(error);
             }
         }
     );
 
+    console.log("Date:::", date);
+
+    useEffect(() => {
+
+        if (vseCustomers) {
+            console.log(vseCustomers.data);
+            // let vseData = 
+
+
+            // setVseLoadoutData(loadouts.map((loadout: any) => 
+            //     ({
+            //         key: loadout.id,
+            //         vse: loadout.vse.name,
+            //         quantity: loadout.quantity,
+            //         quantity_sold: loadout.quantity_sold,
+            //         quantity_returned: loadout.quantity_returned,
+            //         outstanding_balance: loadout.outstanding_balance
+            //     })
+            // ))
+        }
+
+    },[vseCustomers]);
+
     const onDateChange = (_: any, dateStr: string) => {
         setDate(dateStr)
-        // refetch();
-        // queryClient.invalidateQueries(['stock_info']);
         queryClient.invalidateQueries();
     }
 
-    const [loadouts, setLoadouts] = React.useState<ILoadout[] | undefined>([]);
+    // console.log(loadouts);
+    const columns = [
+        {
+            title: 'VSE',
+            dataIndex: 'vse',
+            key: 'vse',
+        },
+        {
+            title: 'Quantity Given',
+            dataIndex: 'quantity',
+            key: 'quantity'
+        },
+        {
+            title: 'Quantity Sold',
+            dataIndex: 'quantity_sold',
+            key: 'quantity_sold'
+        },
+        {
+            title: 'Quantity Returned',
+            dataIndex: 'quantity_returned',
+            key: 'quantity_returned'
+        },
+        {
+            title: 'Outstanding Balance',
+            dataIndex: 'outstanding_balance',
+            key: 'outstanding_balance'
+        }
+    ]
 
 
     return (
@@ -53,19 +102,48 @@ const LoadoutList: React.FC = () => {
                                 <>
                         <Card title={`Closing Stock as at ${dayjs(date, { format: 'YYYY-MM-DD' }).format('D MMM YYYY')}`} >
                             <Statistic 
-                                value={ stockInfo && stockInfo.data.reduce((acc: number, item: IStockReport) => acc + item.quantity, 0) || 0 }
+                                value={  0 }
                                 valueStyle={{ color: '#3f8600' }}
                             />
                         </Card>
                         <Card title={`Closing Breakages as at ${dayjs(date, { format: 'YYYY-MM-DD' }).format('D MMM YYYY')}`} >
                             <Statistic 
-                                value={ stockInfo && stockInfo.data.reduce((acc: number, item: IStockReport) => acc + item.breakages, 0) || 0 }
+                                value={  0 }
                                 valueStyle={{ color: '#3f8600' }}
                             />
                         </Card>
                         </>
                 }
                 </Space>
+
+                <Table 
+                    style={{ marginTop: 20 }}
+                    expandable=
+                    {{
+                        expandedRowRender: (record) => <Table columns={[
+                            { title: 'SKU', dataIndex: 'sku_name', key: 'sku' },
+                            { title: 'Quantity', dataIndex: 'quantity', key: 'quantity' },
+                            { title: 'Quantity Sold', dataIndex: 'quantity_sold', key: 'quantity_sold' },
+                            { title: 'Quantity Returned', dataIndex: 'quantity_returned', key: 'quantity_returned' },
+                            { title: 'Outstanding Balance', dataIndex: 'outstanding_balance', key: 'outstanding_balance' },
+                        ]}
+
+                        />,
+                    }}
+                    columns={columns}
+                    dataSource={vseCustomers?.data.map(vseCustomer => ({
+                        key: vseCustomer.id,
+                        vse: vseCustomer.name,
+                        quantity: vseCustomer.vse_loadout.reduce((acc: number, item: ILoadoutInfo) => acc + item.quantity, 0),
+                        quantity_sold: vseCustomer.vse_loadout.reduce((acc: number, item: ILoadoutInfo) => acc + (item.quantity_sold ?? 0) , 0),
+                        quantity_returned: vseCustomer.vse_loadout.reduce((acc: number, item: ILoadoutInfo) => acc + (item.quanty_returned ?? 0) , 0),
+                        outstanding_balance: vseCustomer.vse_loadout.reduce((acc: number, item: ILoadoutInfo) => acc + (item.vse_outstandingbalance ?? 0) , 0),
+                    })
+                    )}
+                    loading={isLoading}
+                    pagination={false}
+                />
+
             </Space>
         </div>
     );

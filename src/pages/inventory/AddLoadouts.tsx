@@ -11,15 +11,7 @@ import { useAuthHeader } from 'react-auth-kit'
 import { addLoadoutInfo } from '../../services/InventoryAPI';
 import { useNavigate } from "react-router-dom";
 import { AppError } from '../../interfaces/Error';
-
-interface ILoadOutFormValues {
-    date: string;
-    vse: ICustomer;
-    products: {
-        product: number;
-        quantity: number;
-    }[]
-}
+import { ILoadout } from '../../interfaces/Inventory';
 
 const AddLoadouts = () => {
     const [form] = Form.useForm();
@@ -47,7 +39,7 @@ const AddLoadouts = () => {
     };
 
     const { mutate, isLoading: isSubmitting } = useMutation({
-        mutationFn: (values: ILoadOutFormValues) => addLoadoutInfo(authHeader(), values),
+        mutationFn: (values: ILoadout) => addLoadoutInfo(authHeader(), values),
         onSuccess: (data) => {
             success(data?.data || "")
             navigate("/customers")
@@ -64,7 +56,6 @@ const AddLoadouts = () => {
 
     const onSubmit = () => {
 
-        //validate form fields
         if (!date) {
             messageApi.open({
                 type: 'error',
@@ -94,9 +85,9 @@ const AddLoadouts = () => {
 
        const formValues = {
         date: date,
-        vse: form.getFieldValue('vse'),
+        vse: vse,
         products: form.getFieldValue('products')
-       } as ILoadOutFormValues
+       } as ILoadout
 
        mutate(formValues)
 
@@ -113,7 +104,7 @@ const AddLoadouts = () => {
     return (
         <>
         { contextHolder }
-            <Typography.Title level={2}>Loadouts</Typography.Title>
+            <Typography.Title level={2}>Add Loadouts</Typography.Title>
             <Form
                 form={form}
                 layout={'vertical'}

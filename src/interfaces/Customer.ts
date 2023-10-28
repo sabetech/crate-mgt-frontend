@@ -1,4 +1,5 @@
 import { IProduct } from "./Empties";
+import { ILoadoutInfo } from "./Inventory";
 export interface ICustomer {
     id?: number;
     key?: number;
@@ -22,4 +23,12 @@ export interface IHistoryItem {
     quantity_transacted: number,
     transaction_type: string,
     product: IProduct,
+}
+
+export interface IVSECustomer {
+    id: number,
+    name: string,
+    phone: string,
+    date: string,
+    vse_loadout: ILoadoutInfo[],
 }
