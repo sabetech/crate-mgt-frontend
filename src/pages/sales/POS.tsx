@@ -1,6 +1,6 @@
 import { message, Space, Col, Row, List, Typography, InputNumber, Form, Input, Divider, Button, Table, AutoComplete, Select } from 'antd'
 import { DeleteFilled } from '@ant-design/icons';
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { getProducts } from '../../services/ProductsAPI'
 import { getCustomers } from '../../services/CustomersAPI'
 import { useAuthHeader } from 'react-auth-kit'
@@ -8,14 +8,9 @@ import { ServerResponse } from '../../interfaces/Server'
 import { IProduct } from '../../interfaces/Product'
 import { useEffect, useState } from 'react'
 import { ICustomer } from '../../interfaces/Customer'
-
-interface IPOSItem {
-    id: number | undefined;
-    sku_code: string;
-    product: string;
-    quantity: number;
-    price: number;
-}
+import { pay } from '../../services/SalesAPI'
+import { IOrder, ISaleItem } from '../../interfaces/Sale';
+import dayjs from 'dayjs';
 
 const POS = () => {
     const authHeader = useAuthHeader();
@@ -25,9 +20,10 @@ const POS = () => {
     const [quantity, setQuantity] = useState<number>(1);
     const [total, setTotal] = useState<number>(0);
     const [amountTendered, setAmountTendered] = useState<number>(0);
+    const [paymentType, setPaymentType] = useState<string>("Cash");
     const [messageApi, contextHolder] = message.useMessage();
     const [selectedProduct, setSelectedProduct] = useState<IProduct>();
-    const [tableContent, setTableContent] = useState<IPOSItem[]>([]); // [{sku_code: "sku_code", product: "product", quantity: 1, price: 0.00}]
+    const [tableContent, setTableContent] = useState<ISaleItem[]>([]); // [{sku_code: "sku_code", product: "product", quantity: 1, price: 0.00}]
     const [form] = Form.useForm();
 
     const { data: productsData } = useQuery<ServerResponse<IProduct[]>, Error>(
@@ -40,6 +36,28 @@ const POS = () => {
         () => getCustomers(authHeader(),{customer_type: 'all'})
     )
 
+    const { mutate } = useMutation({
+        mutationFn: (values: IOrder) => {
+            console.log("values: ", values);
+            return pay(authHeader(), values)
+        },
+        onSuccess: (data) => {
+            console.log("data: ", data);
+            // success(data?.data || "")
+            // navigate("/customers")
+            // form.resetFields();
+        },
+        onError: (error: Error) => {
+            console.log("error: ", error);
+            // messageApi.open({
+            //     type: 'error',
+            //     content: error.message + ". Please Check your internet connection and refresh the page."
+            // });
+            // setTimeout(messageApi.destroy, 2500);
+        }
+    });
+
+
     useEffect(() => {
 
         if (productsData) {
@@ -51,7 +69,7 @@ const POS = () => {
     useEffect(() => {
 
         if (tableContent) {
-            setTotal(tableContent.reduce((acc, item) => acc + (item.quantity * item.price), 0));
+            setTotal(tableContent.reduce((acc, item) => acc + (item.quantity * (item.product.retail_price ?? 0)), 0));
         }
 
     },[tableContent])
@@ -78,19 +96,12 @@ const POS = () => {
     };
 
     const savePurchase = () => {
-        console.log("saving purchase ...");
         const product = selectedProduct;
         const quantity = form.getFieldValue("quantity");
         const unitPrice = form.getFieldValue("unit_price");
-        const price = quantity * unitPrice;
-
-        console.log("product: ", product);
-        console.log("quantity: ", quantity);
-        console.log("unitPrice: ", unitPrice);
-        console.log("price: ", price);
 
         if (typeof product !== 'undefined') {
-            setTableContent([{id: product.id, sku_code: product.sku_code, product: product.sku_name, quantity: quantity, price: price}, ...tableContent]);
+            setTableContent([{id: product.id, product: product, quantity: quantity} as ISaleItem, ...tableContent]);
         }
 
         form.resetFields();
@@ -99,8 +110,7 @@ const POS = () => {
 
     }
 
-    const removePOSItem = (record: any) => {
-        console.log(record);
+    const removePOSItem = (record: ISaleItem) => {
         setTableContent( (prev) => prev.filter((item) => item.id !== record.id) )
     }
 
@@ -112,6 +122,37 @@ const POS = () => {
             });
             return;
         }
+
+        const saleItems = tableContent.map((item) => ({
+            key: item.id,
+            product: item.product,
+            quantity: item.quantity,
+        } as ISaleItem));
+
+        const order = {
+            paymentType: paymentType,
+            customer: customer,
+            saleItems: saleItems,
+            total: total,
+            amountTendered: amountTendered,
+            balance: amountTendered - total,
+            date: dayjs().format('YYYY-MM-DD')
+        } as IOrder;
+
+        mutate(order);
+
+        messageApi.open({
+            type: 'success',
+            content: "Payment successful"
+        });
+
+        resetStates();
+
+    }
+
+    const resetStates = () => {
+        setTableContent([]);
+        setAmountTendered(0);
     }
 
     const posTableColumns = [
@@ -130,12 +171,14 @@ const POS = () => {
           title: 'SKU Code',
           dataIndex: 'sku_code',
           key: 'sku_code',
-          width: 100
+          width: 100,
+          render: (_: any , record: ISaleItem) => record.product.sku_code.toUpperCase(),
         },
         {
           title: 'Product',
           dataIndex: 'product',
           key: 'product',
+          render: (_: any , record: ISaleItem) => record.product.sku_name,
         },
         {
           title: 'Quantity',
@@ -146,18 +189,20 @@ const POS = () => {
             title: 'Price (GHC)',
             dataIndex: 'price',
             key: 'price',
+            render: (_: any , record: ISaleItem) => record.product.retail_price && record.product.retail_price,
         },
         {
             title: 'Action',
             key: 'action',
-            render: (_: any , record: any) => (
+            render: (_: any , record: ISaleItem) => (
             <Space size="middle">     
                 <Button shape="circle" danger icon={<DeleteFilled />} onClick={() => removePOSItem(record)}/>
             </Space>
     ),
         }
-      ];
+    ];
 
+    
 
     return (
         <>
@@ -246,7 +291,7 @@ const POS = () => {
                                 </Form.Item>
                             </div>
                             <Space wrap>
-                                <Button size={"large"} type="primary" onClick={savePurchase}>Save</Button>
+                                <Button size={"large"} type="primary" onClick={savePurchase} disabled={!form.isFieldTouched("product")} >Save</Button>
                                 <Button size={"large"} onClick={() => form.resetFields()}>Clear</Button>
                             </Space>
                         </Form>
@@ -271,8 +316,8 @@ const POS = () => {
                                     onClick: (event) => {
                                         console.log("clicked row: ", record);
                                     }, // click row
-                                    onMouseEnter: (event) => {}, // mouse enter row
-                                    onMouseLeave: (event) => {}, // mouse leave row
+                                    // onMouseEnter: (event) => {}, // mouse enter row
+                                    // onMouseLeave: (event) => {}, // mouse leave row
                                   };
                             }}
                         >
@@ -312,19 +357,19 @@ const POS = () => {
                             <Divider></Divider>
                             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
                                 <Typography.Text strong style={{ fontSize: '1em'}}>Payment Type </Typography.Text>
-                                <Select size={"large"} dropdownMatchSelectWidth={false} placement={'bottomRight'} defaultValue="Cash" options={[{value:"Cash", label: 'Cash'}, {value:"Mobile Money", label: 'Mobile Money'} ]} />
+                                <Select size={"large"} dropdownMatchSelectWidth={false} placement={'bottomRight'} defaultValue={paymentType} options={[{value:"Cash", label: 'Cash'}, {value:"Mobile Money", label: 'Mobile Money'} ]} onChange={(value) =>setPaymentType(value)}/>
                             </div>
                             <div style={{display: 'flex', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem", marginTop: 10}}>
                                 <Typography.Text strong style={{ fontSize: '1em'}}>Amount Tendered </Typography.Text>
-                                <InputNumber size="large" style={{width: '50%'}} placeholder='0.00' addonAfter="GHC" value={amountTendered} onChange={(val) => val && setAmountTendered(val)}/>
+                                <InputNumber size="large" style={{width: '50%'}} placeholder='0.00' addonAfter="GHs" value={amountTendered} onChange={(val) => val && setAmountTendered(val)}/>
                             </div>
                             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem", marginTop: 10}}>
                                 <Typography.Text strong style={{ fontSize: '1em'}}>Balance </Typography.Text>
-                                <Typography.Text strong style={{ fontSize: '1em' }}>0.00</Typography.Text>
+                                <Typography.Text strong style={{ fontSize: '1em' }}>{ amountTendered - total } GHs</Typography.Text>
                             </div>
 
                             <div style={{display: 'flex', justifyContent:'center'}}>
-                                <Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={handlePay}>Pay</Button>
+                                <Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={handlePay} disabled={amountTendered < total}>Pay</Button>
                             </div>
                         </div>
                     </div>

@@ -18,6 +18,7 @@ const post = (url: string, data: any, headers: object) => {
             case "empties_returned":
             case "empties_on_ground_products":
             case "breakages":
+            case "saleItems":
                 formData.append(key, JSON.stringify(data[key]));
                 break;
             default:
