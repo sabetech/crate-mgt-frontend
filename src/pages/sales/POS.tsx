@@ -11,6 +11,7 @@ import { ICustomer } from '../../interfaces/Customer'
 import { pay } from '../../services/SalesAPI'
 import { IOrder, ISaleItem } from '../../interfaces/Sale';
 import dayjs from 'dayjs';
+import "./sales.css";
 
 const POS = () => {
     const authHeader = useAuthHeader();
@@ -22,7 +23,7 @@ const POS = () => {
     const [amountTendered, setAmountTendered] = useState<number>(0);
     const [paymentType, setPaymentType] = useState<string>("Cash");
     const [messageApi, contextHolder] = message.useMessage();
-    const [selectedProduct, setSelectedProduct] = useState<IProduct>();
+    const [selectedProduct, setSelectedProduct] = useState<IProduct | undefined>();
     const [tableContent, setTableContent] = useState<ISaleItem[]>([]); // [{sku_code: "sku_code", product: "product", quantity: 1, price: 0.00}]
     const [form] = Form.useForm();
 
@@ -77,6 +78,14 @@ const POS = () => {
     const onCustomerChange = (value: string, option: ICustomer) => {
         console.log(`selected Customer ${value}:::`, option);
         setCustomer(option)
+
+        if (option.customer_type === 'wholesaler') {
+            form.setFieldValue("unit_price", selectedProduct?.wholesale_price);
+            setUnitPrice(typeof selectedProduct?.wholesale_price === 'undefined' ? 0 : selectedProduct?.wholesale_price);
+        }else {
+            form.setFieldValue("unit_price", selectedProduct?.retail_price);
+            setUnitPrice(typeof selectedProduct?.retail_price === 'undefined' ? 0 : selectedProduct?.retail_price);
+        }
     }
 
     const onProductChange = (value: string, option: IProduct) => {
@@ -87,15 +96,44 @@ const POS = () => {
         setSelectedProduct(option);
 
         console.log(`selected Product ${value}:::`, option);
-        form.setFieldValue("unit_price", option.retail_price);
-        setUnitPrice(typeof option.retail_price === 'undefined' ? 0 : option.retail_price);
+        
+        if (customer && customer.customer_type === 'wholesaler') {
+            form.setFieldValue("unit_price", option.wholesale_price);
+            setUnitPrice(typeof option.wholesale_price === 'undefined' ? 0 : option.wholesale_price);
+        }else{
+            form.setFieldValue("unit_price", option.retail_price);
+            setUnitPrice(typeof option.retail_price === 'undefined' ? 0 : option.retail_price);
+        }
+        
     };
       
     const onSearch = (value: string) => {
         console.log('searching ...:', value);
     };
 
+    const formClear = () => {
+        form.resetFields();
+        setUnitPrice(0);
+        setQuantity(1);
+        setSelectedProduct(undefined);
+
+        console.log("should disable save button")
+    }
+
     const savePurchase = () => {
+
+        console.log("WHAT IS HERE!!", typeof selectedProduct);
+        console.log("FORM VALU::", form.getFieldValue("product"));
+
+        if (!selectedProduct || typeof selectedProduct === 'undefined' || typeof form.getFieldValue("product") === 'undefined') {
+            messageApi.open({
+                type: 'error',
+                content: "Please select a product"
+            });
+            return;
+        }
+            
+
         const product = selectedProduct;
         const quantity = form.getFieldValue("quantity");
         const unitPrice = form.getFieldValue("unit_price");
@@ -155,6 +193,10 @@ const POS = () => {
         setAmountTendered(0);
     }
 
+    const onProductClicked = (product: IProduct) => {
+        onProductChange(product.sku_name, product);
+    }
+
     const posTableColumns = [
         {
             title: '# ('+(tableContent).length+')',
@@ -202,23 +244,30 @@ const POS = () => {
         }
     ];
 
-    
+    useEffect(() => {
+
+        form.setFieldValue("product", selectedProduct?.sku_name);
+
+    },[selectedProduct])
+
+    console.log("Product value::", form.getFieldValue("product"));
+    console.log("UNDEFINED::",typeof form.getFieldValue("product") === 'undefined')
 
     return (
         <>
             {contextHolder}
-            <h1>Point of Sale</h1>
-
+            <Typography.Title level={2} >Point of Sale</Typography.Title>
+            
             <Row>
                 <Col span={5} style={{border: 1, height: "65vh", overflow: 'scroll'}}>
                     <List
-                        header={<strong>List of Products</strong>}
+                        header={<strong>List of Products ({products.length})</strong>}
                         footer={<strong>Total: {products.length} products</strong>}
                         bordered
                         dataSource={products}
                         size="small"
                         renderItem={(item: IProduct, index: number) => (
-                            <List.Item>
+                            <List.Item style={{cursor: 'pointer' }} onClick={() => onProductClicked(item)}>
                                 <Typography.Text>{index}</Typography.Text> {item.sku_name}
                             </List.Item>
                         )}
@@ -260,9 +309,10 @@ const POS = () => {
                                     value={`${customer?.name} (${customer?.customer_type.toUpperCase()})`}
                                 />
                             </Form.Item>
-                            <Form.Item label="Select Product" name="product" style={{ marginBottom: "10px" }}>
+                            <Form.Item label="Select Product" name="product" style={{ marginBottom: "10px" }} >
                                 <AutoComplete 
                                     allowClear={true}
+                                    onClear={() => formClear()}
                                     bordered={false}
                                     onSearch={onSearch}
                                     onChange={(text: string, option: any) => onProductChange(text, option)}
@@ -271,6 +321,7 @@ const POS = () => {
                                     filterOption={(inputValue, option) =>
                                         option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
                                       }
+                                    
                                 />
                             </Form.Item>
                             <hr />
@@ -291,8 +342,8 @@ const POS = () => {
                                 </Form.Item>
                             </div>
                             <Space wrap>
-                                <Button size={"large"} type="primary" onClick={savePurchase} disabled={!form.isFieldTouched("product")} >Save</Button>
-                                <Button size={"large"} onClick={() => form.resetFields()}>Clear</Button>
+                                <Button size={"large"} type="primary" onClick={savePurchase} disabled={(typeof selectedProduct === 'undefined') } >Save</Button>
+                                <Button size={"large"} onClick={() => formClear()}>Clear</Button>
                             </Space>
                         </Form>
                     </div>
@@ -369,7 +420,7 @@ const POS = () => {
                             </div>
 
                             <div style={{display: 'flex', justifyContent:'center'}}>
-                                <Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={handlePay} disabled={amountTendered < total}>Pay</Button>
+                                <Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={handlePay} disabled={amountTendered < total || total === 0}>Pay</Button>
                             </div>
                         </div>
                     </div>
