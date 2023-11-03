@@ -39,7 +39,6 @@ const POS = () => {
 
     const { mutate } = useMutation({
         mutationFn: (values: IOrder) => {
-            console.log("values: ", values);
             return pay(authHeader(), values)
         },
         onSuccess: (data) => {
@@ -75,8 +74,7 @@ const POS = () => {
 
     },[tableContent])
 
-    const onCustomerChange = (value: string, option: ICustomer) => {
-        console.log(`selected Customer ${value}:::`, option);
+    const onCustomerChange = (_: string, option: ICustomer) => {
         setCustomer(option)
 
         if (option.customer_type === 'wholesaler') {
@@ -88,14 +86,12 @@ const POS = () => {
         }
     }
 
-    const onProductChange = (value: string, option: IProduct) => {
+    const onProductChange = (_: string, option: IProduct) => {
         if (typeof option === 'undefined') {
             return;
         }
         
         setSelectedProduct(option);
-
-        console.log(`selected Product ${value}:::`, option);
         
         if (customer && customer.customer_type === 'wholesaler') {
             form.setFieldValue("unit_price", option.wholesale_price);
@@ -108,7 +104,7 @@ const POS = () => {
     };
       
     const onSearch = (value: string) => {
-        console.log('searching ...:', value);
+        // console.log('searching ...:', value);
     };
 
     const formClear = () => {
@@ -117,13 +113,10 @@ const POS = () => {
         setQuantity(1);
         setSelectedProduct(undefined);
 
-        console.log("should disable save button")
+        
     }
 
     const savePurchase = () => {
-
-        console.log("WHAT IS HERE!!", typeof selectedProduct);
-        console.log("FORM VALU::", form.getFieldValue("product"));
 
         if (!selectedProduct || typeof selectedProduct === 'undefined' || typeof form.getFieldValue("product") === 'undefined') {
             messageApi.open({
@@ -249,9 +242,6 @@ const POS = () => {
         form.setFieldValue("product", selectedProduct?.sku_name);
 
     },[selectedProduct])
-
-    console.log("Product value::", form.getFieldValue("product"));
-    console.log("UNDEFINED::",typeof form.getFieldValue("product") === 'undefined')
 
     return (
         <>
