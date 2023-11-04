@@ -11,7 +11,6 @@ const LoadoutList: React.FC = () => {
     const authHeader = useAuthHeader();
     const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
     const queryClient = useQueryClient();
-    const [vseLoadoutData, setVseLoadoutData] = useState();
 
     const { data:vseCustomers, isLoading } = useQuery(
         {
@@ -120,7 +119,7 @@ const LoadoutList: React.FC = () => {
                     style={{ marginTop: 20 }}
                     expandable=
                     {{
-                        expandedRowRender: (record) => <Table columns={[
+                        expandedRowRender: (_) => <Table columns={[
                             { title: 'SKU', dataIndex: 'sku_name', key: 'sku' },
                             { title: 'Quantity', dataIndex: 'quantity', key: 'quantity' },
                             { title: 'Quantity Sold', dataIndex: 'quantity_sold', key: 'quantity_sold' },

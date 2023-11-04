@@ -104,7 +104,7 @@ const POS = () => {
     };
       
     const onSearch = (value: string) => {
-        // console.log('searching ...:', value);
+        console.log('searching ...:', value);
     };
 
     const formClear = () => {
@@ -358,11 +358,11 @@ const POS = () => {
                             dataSource={tableContent}
                             scroll={{ y: 250 }}
                             pagination={false}
-                            onRow={(record, rowIndex) => {
+                            onRow={(record, _) => {
                                 return {
-                                    onClick: (event) => {
+                                    onClick: () => {
                                         console.log("clicked row: ", record);
-                                    }, // click row
+                                    }, // click rowon
                                     // onMouseEnter: (event) => {}, // mouse enter row
                                     // onMouseLeave: (event) => {}, // mouse leave row
                                   };

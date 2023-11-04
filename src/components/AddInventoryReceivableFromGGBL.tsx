@@ -10,11 +10,11 @@ const AddInventoryReceivableFromGGBL = () => {
         console.log(date, dateString);
     };
 
-    const onFinish = (values: any) => {
+    const onFinish = (_: any) => {
 
     }
 
-    const onFinishedFailed = (errorInfo: any) => {
+    const onFinishedFailed = (_: any) => {
 
     }
 
@@ -46,7 +46,7 @@ const AddInventoryReceivableFromGGBL = () => {
                         </Form.Item>
                     </div>
                     <div>
-                        <AddProductQuantityFields is_returnable={false} />
+                        <AddProductQuantityFields name={"products"}  is_returnable={false} />
                     </div>
                 </div>
                 <Form.Item >

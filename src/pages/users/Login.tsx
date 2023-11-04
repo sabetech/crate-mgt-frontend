@@ -1,13 +1,13 @@
 import React from 'react';
-import { Button, message, Form, Input, Carousel } from 'antd';
+import { Button, message, Form, Input } from 'antd';
 import { useSignIn } from 'react-auth-kit'
 import { signIn as login} from '../../services/AuthAPI';
 import { IUser } from '../../interfaces/User';
 import { AxiosError } from 'axios';
-import opk_img from '../../assets/opk_img.jpeg';
-import opk_img2 from '../../assets/opk_img2.jpeg';
-import opk_img3 from '../../assets/opk_img3.jpeg';
-import opk_img4 from '../../assets/opk_img4.jpeg';
+// import opk_img from '../../assets/opk_img.jpeg';
+// import opk_img2 from '../../assets/opk_img2.jpeg';
+// import opk_img3 from '../../assets/opk_img3.jpeg';
+// import opk_img4 from '../../assets/opk_img4.jpeg';
 import opk_logo from '../../assets/opk_logo.png';
 
 

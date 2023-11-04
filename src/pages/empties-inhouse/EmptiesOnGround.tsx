@@ -11,7 +11,6 @@ import { useAuthHeader } from 'react-auth-kit';
 import { AppError } from '../../interfaces/Error';
 import { IEmptiesInHouseCount } from '../../interfaces/Empties';
 
-const { Option } = Select;
 const antIcon = <Loading3QuartersOutlined style={{ fontSize: 24, marginRight: 10 }} spin />;
 
 const SaveInHouseEmpties = () => {

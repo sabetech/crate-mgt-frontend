@@ -74,7 +74,7 @@ const ReturningEmptiesLog: React.FC = () => {
 
     }, [dateRange])
 
-    const dateRangeOnChange = (date: any, dateString: string[]) => {
+    const dateRangeOnChange = (_: any, dateString: string[]) => {
         setDateRange(dateString);
     }
 

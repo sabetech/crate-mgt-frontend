@@ -1,6 +1,7 @@
 import * as api from './API';
 import { IProductWithBalance } from '../interfaces/Product';
 import { ServerResponse  } from '../interfaces/Server'
+import { IProduct } from '../interfaces/Product';
 
 export const getProducts = async (token: string, option: {is_returnable: boolean}): Promise<ServerResponse<IProduct[]>> => {
    if (option.is_returnable) 

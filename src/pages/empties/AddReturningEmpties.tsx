@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Form, Input, DatePicker, Space, Select, message, Spin } from 'antd';
-import { MinusCircleOutlined, PlusOutlined, Loading3QuartersOutlined } from '@ant-design/icons'
+import { Button, Form, Input, DatePicker, message, Spin } from 'antd';
+import { Loading3QuartersOutlined } from '@ant-design/icons'
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { IProduct } from '../../interfaces/Product';
 import { IEmptyReturnedLog } from '../../interfaces/Empties';
@@ -11,7 +11,6 @@ import { useEffect } from 'react';
 import { useAuthHeader } from 'react-auth-kit';
 import AddProductQuantityFields from '../../components/AddProductQuantityFields';
 
-const { Option } = Select;
 const antIcon = <Loading3QuartersOutlined style={{ fontSize: 24, marginRight: 10 }} spin />;
 
 const AddReturningEmpties = () => {
@@ -32,7 +31,7 @@ const AddReturningEmpties = () => {
         }
     });
 
-    const [productList, setProductList] = React.useState<IProduct[] | undefined>([]);
+    const [_, setProductList] = React.useState<IProduct[] | undefined>([]);
     
     useEffect(() => {
         if (data) {
