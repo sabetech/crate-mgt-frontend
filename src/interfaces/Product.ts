@@ -8,6 +8,16 @@ export interface IProduct {
     empty_returnable?: boolean;
 }
 
+export interface IProductWithBalance {
+    id?: number;
+    key?: number;
+    sku_name: string;
+    sku_code: string;
+    retail_price?: number;
+    wholesale_price?: number;
+    stock: IStockProduct;
+}
+
 export interface IEmptyOnGroundProducts {
     id?: number;
     key?: number;
