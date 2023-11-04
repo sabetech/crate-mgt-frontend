@@ -57,7 +57,7 @@ const ListCustomers: React.FC = () => {
     }
     
     const onSearch = (value: string) => {
-        console.log("searching .. ");
+        
         setCustomerList((prev) => prev?.filter(customer => customer.name.indexOf(value) === -1));
         if (value.length === 0) {
             if (data) {
@@ -68,7 +68,7 @@ const ListCustomers: React.FC = () => {
             }
         }else {
             if (data) {
-                setCustomerList(customerList?.filter((customer) => customer.name.indexOf(value) !== -1 ));
+                setCustomerList(customerList?.filter((customer) => customer.name.toLowerCase().indexOf(value.toLowerCase()) !== -1 ));
             }
         }
     }
