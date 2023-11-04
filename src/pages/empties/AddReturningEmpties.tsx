@@ -9,6 +9,7 @@ import { addEmptiesReturnedLog } from '../../services/EmptiesAPI';
 import { getProducts } from '../../services/ProductsAPI';
 import { useEffect } from 'react';
 import { useAuthHeader } from 'react-auth-kit';
+import AddProductQuantityFields from '../../components/AddProductQuantityFields';
 
 const { Option } = Select;
 const antIcon = <Loading3QuartersOutlined style={{ fontSize: 24, marginRight: 10 }} spin />;
@@ -103,59 +104,7 @@ const AddReturningEmpties = () => {
                     </div>
             
                     <div>
-                        <Form.List name="product-quanties">
-                            {(fields, { add, remove }) => (
-                                <>
-                                    {
-                                    fields.map((field) => (
-                                        <Space key={field.key} align="baseline">
-                                            <Form.Item
-                                                noStyle
-                                                shouldUpdate={(prevValues, curValues) =>
-                                                    prevValues.area !== curValues.area || prevValues.sights !== curValues.sights
-                                                }
-                                                >
-                                                {
-                                                    () => (
-                                                        <Form.Item
-                                                            {...field}
-                                                            label="Product"
-                                                            name={[field.name, 'product']}
-                                                            rules={[{ required: true, message: 'Product missing'}]}
-                                                        >
-                                                            <Select disabled={!productList || productList.length === 0} style={{ width: 130 }}>
-                                                               {
-                                                                productList && productList.map((item) => (
-                                                                    <Option key={item.key} value={item.id}>
-                                                                        {item.sku_code}
-                                                                    </Option>
-                                                                ))
-                                                                }
-                                                            </Select>
-                                                        </Form.Item>
-                                                    )
-                                                }
-                                            </Form.Item>
-                                            <Form.Item
-                                                {...field}
-                                                label="Quantity"
-                                                name={[field.name, 'quantity']}
-                                                rules={[{ required: true, message: 'Missing Qty' }]}
-                                                >
-                                                <Input />
-                                            </Form.Item>
-                                            <MinusCircleOutlined onClick={() => remove(field.name)} />
-                                        </Space>
-                                    ))   
-                                }
-                                <Form.Item>
-                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                        Add Product and Quantity Fields
-                                    </Button>
-                                </Form.Item>
-                                </>
-                            )}
-                        </Form.List>
+                        <AddProductQuantityFields name={"products"} is_returnable={true} />
                     </div>
                 </div>
                 <Form.Item>

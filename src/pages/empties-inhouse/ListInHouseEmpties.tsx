@@ -14,6 +14,8 @@ const ListInHouseEmpties = () => {
     const authHeader = useAuthHeader();
     const [inHouseEmptiesData, setInHouseEmptiesData] = React.useState<IEmptiesInHouseCount[] | undefined>(undefined);
 
+    console.log("EMPTIES IN HOSUE LOGS::", inHouseEmptiesData);
+
     const { data: inHouseEmpties, isLoading } = useQuery<ServerResponse<IEmptiesInHouseCount[]>, Error>({
         queryKey: ['in-house-empties'],
         queryFn: () => getInHouseEmpties(authHeader()),
@@ -73,10 +75,8 @@ const ListInHouseEmpties = () => {
                 <Col span={12}>
                     <Card bordered={true}>
                         <Statistic
-                            title="Total Fulls On Ground"
-                            value={inHouseEmptiesData
-                                ?.reduce(
-                                    (acc: number, item: IEmptiesInHouseCount) => acc + ((item.empties_on_ground_products !== undefined) ? item.empties_on_ground_products.filter(p => !p.is_empty).reduce((acc: number, p) => acc + p.quantity, 0):0), 0)}
+                            title="Total Empty Plastic Containers (EPCs)"
+                            value={0}
                             suffix="empties"
                         />
                     </Card>

@@ -63,7 +63,7 @@ const CustomerHistory = () => {
                     {
                         customerItems[historyItem].map((item: IHistoryItem) => ( 
                             <li key={item.id}>
-                                {item.product.sku_name}: <h4>{item.transaction_type === 'in' ? '-':'+'} ({item.quantity_transacted})</h4>
+                                {item.product.sku_name}: <h4>{item.transaction_type === 'in' ? '- (Empties)':'+ (Sale)'} ({item.quantity_transacted})</h4>
                             </li>
                          ))
                     }

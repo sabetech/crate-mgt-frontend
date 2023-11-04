@@ -87,7 +87,7 @@ const items: MenuItem[] = [
     getItem('Add Returning Empties', 'empties/add_returning_empties'),
   ]),
   getItem('Empties Inhouse Mgt', 'empties-inhouse', <InboxOutlined />, [
-    getItem('Add Empties on Ground', 'empties/on-ground'),
+    getItem('Count Empties on Ground', 'empties/on-ground'),
     getItem('List Empties on Ground', 'empties/list-on-ground'),
   ]),
   getItem('Warehouse', 'warehouse', <AppstoreOutlined />, [
