@@ -2,7 +2,7 @@ import { message, Space, Col, Row, List, Typography, InputNumber, Form, Input, D
 import { DeleteFilled } from '@ant-design/icons';
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { getProducts } from '../../services/ProductsAPI'
-import { getCustomers } from '../../services/CustomersAPI'
+import { getCustomersWithBalance } from '../../services/CustomersAPI'
 import { useAuthHeader } from 'react-auth-kit'
 import { ServerResponse } from '../../interfaces/Server'
 import { IProduct } from '../../interfaces/Product'
@@ -34,7 +34,7 @@ const POS = () => {
 
     const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
         ['customers'],
-        () => getCustomers(authHeader(),{customer_type: 'all'})
+        () => getCustomersWithBalance(authHeader(), { customer_type: 'all'} )
     )
 
     const { mutate } = useMutation({
