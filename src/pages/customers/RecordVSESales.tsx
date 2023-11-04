@@ -8,8 +8,6 @@ import { useAuthHeader } from 'react-auth-kit';
 import { ICustomer } from "../../interfaces/Customer";
 import { ServerResponse } from "../../interfaces/Server";
 import { AppError } from "../../interfaces/Error";
-import { IProduct } from "../../interfaces/Product";
-import { getProducts } from "../../services/ProductsAPI";
 import { useNavigate } from "react-router-dom";
 import AddProductQuantityFields from "../../components/AddProductQuantityFields";
 
@@ -90,9 +88,8 @@ const RecordVSESales: React.FC = () => {
                     </Form.Item>
                 </div>
                 <div>
-                    
                     <h2> Empties Returned </h2>
-                    <AddProductQuantityFields is_returnable={false} />
+                    <AddProductQuantityFields name={"product_quantities"} is_returnable={true} />
                 </div>
             </div>
             <Button type="primary" htmlType="submit" icon={<SendOutlined />} size={"large"} loading={false}>

@@ -1,4 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Button, Input, Space, Tooltip } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import TableCustomers from "../../components/TableCustomers";
 import { useAuthHeader } from "react-auth-kit";
 import { ICustomer, ICustomerReturnEmpties } from "../../interfaces/Customer";
@@ -7,9 +9,12 @@ import { getCustomersWithBalance } from "../../services/CustomersAPI";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
+const { Search } = Input;
 const ListCustomers: React.FC = () => {
     const authHeader = useAuthHeader();
-    
+    const [filterByVSE, toggleFilterByVSE] = useState<boolean>(false);
+    const [customerList, setCustomerList] = React.useState<ICustomer[] | undefined>(undefined);
+
     const { data, isLoading } = useQuery<ServerResponse<ICustomer[]>, Error>(
         {
             queryKey: ['customer_with_balance'],
@@ -20,8 +25,6 @@ const ListCustomers: React.FC = () => {
         }
     )
      
-    const [customerList, setCustomerList] = React.useState<ICustomer[] | undefined>(undefined);
-
     useEffect(() => {
         if (data) {
             setCustomerList(data.data?.map((item) => ({
@@ -31,6 +34,44 @@ const ListCustomers: React.FC = () => {
             ));
         }
     },[data]);
+
+    useEffect(() => {
+        if (!customerList) return;
+        
+        if (filterByVSE) {
+            setCustomerList(customerList.filter((customer) => customer.customer_type === 'retailer-vse' ));
+        }else{
+            if (data) {
+                setCustomerList(data.data?.map((item) => ({
+                    ...item,
+                    key: item.id
+                })));
+            }
+        }
+
+    },[filterByVSE]);
+
+
+    const handleFilterByVSE = () => {
+        toggleFilterByVSE((prev) => !prev);
+    }
+    
+    const onSearch = (value: string) => {
+        console.log("searching .. ");
+        setCustomerList((prev) => prev?.filter(customer => customer.name.indexOf(value) === -1));
+        if (value.length === 0) {
+            if (data) {
+                setCustomerList(data.data?.map((item) => ({
+                    ...item,
+                    key: item.id
+                })));
+            }
+        }else {
+            if (data) {
+                setCustomerList(customerList?.filter((customer) => customer.name.indexOf(value) !== -1 ));
+            }
+        }
+    }
 
 
     const columms = [
@@ -53,15 +94,42 @@ const ListCustomers: React.FC = () => {
                         }, 0
                     )
                 )
-            }
-        ];
+        },
+        {
+            title: 'Action',
+            dataIndex: 'action',
+            key: 'action', 
+            render: (_: any) => (
+                <Space direction="horizontal">
+                    <Tooltip title="Edit">
+                        <Button shape="circle" icon={<EditOutlined />} />
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                        <Button shape="circle" icon={<DeleteOutlined />} danger/>
+                    </Tooltip>
+                </Space>
+            )
+        }
+    ];
 
     return (
-        <TableCustomers 
-            columns={columms}
-            data={customerList}
-            isLoading={isLoading}
-        />
+        <>
+            <Space direction={"horizontal"} style={{marginBottom: "2rem"}}>
+                <Search
+                    placeholder="Search for customer"
+                    allowClear
+                    enterButton="Search"
+                    size="large"
+                    onSearch={onSearch}
+                />
+                <Button type={filterByVSE ? "primary" : "ghost"} onClick={() => handleFilterByVSE()}>Filter By VSE</Button>
+            </Space>
+            <TableCustomers 
+                columns={columms}
+                data={customerList}
+                isLoading={isLoading}
+            />
+        </>
     );
 }
 

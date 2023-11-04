@@ -45,15 +45,15 @@ const POS = () => {
             console.log("data: ", data);
             // success(data?.data || "")
             // navigate("/customers")
-            // form.resetFields();
+            form.resetFields();
         },
         onError: (error: Error) => {
             console.log("error: ", error);
-            // messageApi.open({
-            //     type: 'error',
-            //     content: error.message + ". Please Check your internet connection and refresh the page."
-            // });
-            // setTimeout(messageApi.destroy, 2500);
+            messageApi.open({
+                type: 'error',
+                content: error.message + ". Please Check your internet connection and refresh the page."
+            });
+            setTimeout(messageApi.destroy, 2500);
         }
     });
 
@@ -177,13 +177,19 @@ const POS = () => {
             content: "Payment successful"
         });
 
-        resetStates();
+        posReset();
 
     }
 
     const resetStates = () => {
         setTableContent([]);
         setAmountTendered(0);
+    }
+
+    const posReset = () => {
+        resetStates();
+        formClear();
+        
     }
 
     const onProductClicked = (product: IProduct) => {
