@@ -15,7 +15,7 @@ export interface IProductWithBalance {
     sku_code: string;
     retail_price?: number;
     wholesale_price?: number;
-    stock: IStockProduct;
+    stocks: IStockProduct;
 }
 
 export interface IEmptyOnGroundProducts {

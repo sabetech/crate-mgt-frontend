@@ -1,11 +1,11 @@
-import { message, Space, Col, Row, List, Typography, InputNumber, Form, Input, Divider, Button, Table, AutoComplete, Select } from 'antd'
+import { message, Space, Col, Row, List, Typography, InputNumber, Form, Input, Divider, Button, Table, AutoComplete, Select, Badge } from 'antd'
 import { DeleteFilled } from '@ant-design/icons';
 import { useQuery, useMutation } from '@tanstack/react-query'
-import { getProducts } from '../../services/ProductsAPI'
+import { getProductsWithStockBalance } from '../../services/ProductsAPI'
 import { getCustomersWithBalance } from '../../services/CustomersAPI'
 import { useAuthHeader } from 'react-auth-kit'
 import { ServerResponse } from '../../interfaces/Server'
-import { IProduct } from '../../interfaces/Product'
+import { IProductWithBalance } from '../../interfaces/Product'
 import { useEffect, useState } from 'react'
 import { ICustomer } from '../../interfaces/Customer'
 import { pay } from '../../services/SalesAPI'
@@ -15,7 +15,7 @@ import "./sales.css";
 
 const POS = () => {
     const authHeader = useAuthHeader();
-    const [products, setProducts] = useState<IProduct[]>([]);
+    const [products, setProducts] = useState<IProductWithBalance[]>([]);
     const [customer, setCustomer] = useState<ICustomer>();
     const [unitPrice, setUnitPrice] = useState<number>(0);
     const [quantity, setQuantity] = useState<number>(1);
@@ -23,13 +23,13 @@ const POS = () => {
     const [amountTendered, setAmountTendered] = useState<number>(0);
     const [paymentType, setPaymentType] = useState<string>("Cash");
     const [messageApi, contextHolder] = message.useMessage();
-    const [selectedProduct, setSelectedProduct] = useState<IProduct | undefined>();
+    const [selectedProduct, setSelectedProduct] = useState<IProductWithBalance | undefined>();
     const [tableContent, setTableContent] = useState<ISaleItem[]>([]); // [{sku_code: "sku_code", product: "product", quantity: 1, price: 0.00}]
     const [form] = Form.useForm();
 
-    const { data: productsData } = useQuery<ServerResponse<IProduct[]>, Error>(
+    const { data: productsData } = useQuery<ServerResponse<IProductWithBalance[]>, Error>(
         ['products_all'],
-        () => getProducts(authHeader(), { is_returnable: false })
+        () => getProductsWithStockBalance(authHeader())
     )
 
     const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
@@ -86,7 +86,7 @@ const POS = () => {
         }
     }
 
-    const onProductChange = (_: string, option: IProduct) => {
+    const onProductChange = (_: string, option: IProductWithBalance) => {
         if (typeof option === 'undefined') {
             return;
         }
@@ -192,7 +192,7 @@ const POS = () => {
         
     }
 
-    const onProductClicked = (product: IProduct) => {
+    const onProductClicked = (product: IProductWithBalance) => {
         onProductChange(product.sku_name, product);
     }
 
@@ -262,10 +262,14 @@ const POS = () => {
                         bordered
                         dataSource={products}
                         size="small"
-                        renderItem={(item: IProduct, index: number) => (
-                            <List.Item style={{cursor: 'pointer' }} onClick={() => onProductClicked(item)}>
-                                <Typography.Text>{index}</Typography.Text> {item.sku_name}
+                        renderItem={(item: IProductWithBalance, index: number) => (
+                            
+                            <List.Item style={{cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }} onClick={() => onProductClicked(item)}>
+                                <Typography.Text>{index} {item.sku_name}</Typography.Text>
+                                <Badge showZero count={(item.stocks != null) ? item.stocks.quantity : 0 } color={(item.stocks != null) ? (item.stocks.quantity > 10) ? "green": (item.stocks.quantity > 7 ? "gold" : "red") : 'red' } />
                             </List.Item>
+
+                            
                         )}
                     />
                 </Col>
@@ -317,7 +321,6 @@ const POS = () => {
                                     filterOption={(inputValue, option) =>
                                         option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
                                       }
-                                    
                                 />
                             </Form.Item>
                             <hr />
