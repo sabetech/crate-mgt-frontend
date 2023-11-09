@@ -16,6 +16,8 @@ export const getCustomersWithBalance = async (token: string, {customer_type}: {c
     return (await api.get(`/customers?with-balance=true&customer_type=${customer_type}`, {'Authorization': token})).data;
 }
 
+
+
 export const addCustomer = async (values: ICustomer, token: string) => {
     return (await api.post('/customers', values, {'Authorization': token})).data;
 }

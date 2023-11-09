@@ -190,6 +190,7 @@ const LayoutBase = () => {
             <Route path="/warehouse/stockinfo" element={<StockInfo />} />
 
             <Route path="POS/sales" element={<POS />} />
+            <Route path="POS/orders" element={<POS />} />
             
             <Route path="/users/manage" element={<ManageUsers />} />
             <Route path="/users/logout" element={<LogoutConfirm />} />

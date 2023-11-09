@@ -1,4 +1,4 @@
-import { message, Space, Col, Row, List, Typography, InputNumber, Form, Input, Divider, Button, Table, AutoComplete, Select, Badge } from 'antd'
+import { message, Space, Col, Row, List, Typography, InputNumber, Form, Input, Divider, Button, Table, AutoComplete, Select, Badge, Tag } from 'antd'
 import { DeleteFilled } from '@ant-design/icons';
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { getProductsWithStockBalance } from '../../services/ProductsAPI'
@@ -7,7 +7,7 @@ import { useAuthHeader } from 'react-auth-kit'
 import { ServerResponse } from '../../interfaces/Server'
 import { IProductWithBalance } from '../../interfaces/Product'
 import { useEffect, useState } from 'react'
-import { ICustomer } from '../../interfaces/Customer'
+import { ICustomer, ICustomerReturnEmpties } from '../../interfaces/Customer'
 import { pay } from '../../services/SalesAPI'
 import { IOrder, ISaleItem } from '../../interfaces/Sale';
 import dayjs from 'dayjs';
@@ -17,6 +17,7 @@ const POS = () => {
     const authHeader = useAuthHeader();
     const [products, setProducts] = useState<IProductWithBalance[]>([]);
     const [customer, setCustomer] = useState<ICustomer>();
+    const [emptiesBalance, setEmptiesBalance] = useState<number>(0);
     const [unitPrice, setUnitPrice] = useState<number>(0);
     const [quantity, setQuantity] = useState<number>(1);
     const [total, setTotal] = useState<number>(0);
@@ -74,6 +75,25 @@ const POS = () => {
 
     },[tableContent])
 
+    useEffect(() => {
+        if (customer) {
+            if (typeof customer.customer_empties_account === 'undefined') {
+                setEmptiesBalance(0);
+                return
+            }
+
+            const emptiesBalance = customer.customer_empties_account.reduce((acc: number, customerEmptiesInfo: ICustomerReturnEmpties) => {
+                if (customerEmptiesInfo.transaction_type === 'in')
+                    return acc + customerEmptiesInfo.quantity_transacted;
+                return acc - customerEmptiesInfo.quantity_transacted;
+            }, 0);
+            
+            setEmptiesBalance(emptiesBalance);
+        }else {
+            setEmptiesBalance(0);
+        }
+    }, [customer])
+
     const onCustomerChange = (_: string, option: ICustomer) => {
         setCustomer(option)
 
@@ -124,8 +144,7 @@ const POS = () => {
                 content: "Please select a product"
             });
             return;
-        }
-            
+        }   
 
         const product = selectedProduct;
         const quantity = form.getFieldValue("quantity");
@@ -306,8 +325,16 @@ const POS = () => {
                                     filterOption={(inputValue, option) =>
                                         option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
                                       }
-                                    value={`${customer?.name} (${customer?.customer_type.toUpperCase()})`}
+                                    value={(typeof customer !== 'undefined') ? `${customer?.name} (${customer?.customer_type.toUpperCase()})` : "" }
                                 />
+                                {
+                                    (typeof customer !== 'undefined') && (
+                                        <Tag color={emptiesBalance > 0 ? "processing" : "error"} >
+                                            Empties Balance: {emptiesBalance}
+                                        </Tag>
+                                    )
+                                }
+                                
                             </Form.Item>
                             <Form.Item label="Select Product" name="product" style={{ marginBottom: "10px" }} >
                                 <AutoComplete 
@@ -337,7 +364,7 @@ const POS = () => {
                                     <InputNumber min={1} onChange={(val) => setQuantity( val === null ? 1 : val  )}/>
                                 </Form.Item>
                                 <Form.Item label="Price">
-                                    <Typography className="ant-form-text">{unitPrice * quantity} GHC</Typography>
+                                    <Typography className="ant-form-text">{(unitPrice * quantity).toFixed(2)} GHC</Typography>
                                 </Form.Item>
                             </div>
                             <Space wrap>
