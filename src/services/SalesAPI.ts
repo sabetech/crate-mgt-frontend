@@ -8,3 +8,7 @@ export const pay = async (token: string, values: IOrder): Promise<ServerResponse
 
     return (await api.post('/sales/pay', serverValues, {'Authorization': token})).data;
 }
+
+export const getOrders = async (token: string): Promise<ServerResponse<IOrder[]>> => {
+    return (await api.get('/sales', {'Authorization': token})).data;
+}

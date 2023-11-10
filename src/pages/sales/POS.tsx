@@ -11,12 +11,18 @@ import { ICustomer, ICustomerReturnEmpties } from '../../interfaces/Customer'
 import { pay } from '../../services/SalesAPI'
 import { IOrder, ISaleItem } from '../../interfaces/Sale';
 import dayjs from 'dayjs';
+import {useLocation} from 'react-router-dom';
 import "./sales.css";
 
 const POS = () => {
     const authHeader = useAuthHeader();
+    const location = useLocation();
+
+    console.log(location.state?.customer);
+
+
     const [products, setProducts] = useState<IProductWithBalance[]>([]);
-    const [customer, setCustomer] = useState<ICustomer>();
+    const [customer, setCustomer] = useState<ICustomer>(location.state?.customer as ICustomer);
     const [emptiesBalance, setEmptiesBalance] = useState<number>(0);
     const [unitPrice, setUnitPrice] = useState<number>(0);
     const [quantity, setQuantity] = useState<number>(1);
@@ -25,7 +31,7 @@ const POS = () => {
     const [paymentType, setPaymentType] = useState<string>("Cash");
     const [messageApi, contextHolder] = message.useMessage();
     const [selectedProduct, setSelectedProduct] = useState<IProductWithBalance | undefined>();
-    const [tableContent, setTableContent] = useState<ISaleItem[]>([]); // [{sku_code: "sku_code", product: "product", quantity: 1, price: 0.00}]
+    const [tableContent, setTableContent] = useState<ISaleItem[]>(location.state?.sales ?? []); // [{sku_code: "sku_code", product: "product", quantity: 1, price: 0.00}]
     const [form] = Form.useForm();
 
     const { data: productsData } = useQuery<ServerResponse<IProductWithBalance[]>, Error>(

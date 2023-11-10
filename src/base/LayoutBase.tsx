@@ -38,6 +38,7 @@ import AddLoadouts from '../pages/inventory/AddLoadouts';
 import LoadoutList from '../pages/inventory/LoadoutList';
 import TakeStock from '../pages/inventory/TakeStock';
 import StockInfo from '../pages/inventory/StockInfo';
+import Orders from '../pages/sales/Orders';
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
@@ -190,7 +191,7 @@ const LayoutBase = () => {
             <Route path="/warehouse/stockinfo" element={<StockInfo />} />
 
             <Route path="POS/sales" element={<POS />} />
-            <Route path="POS/orders" element={<POS />} />
+            <Route path="POS/orders" element={<Orders />} />
             
             <Route path="/users/manage" element={<ManageUsers />} />
             <Route path="/users/logout" element={<LogoutConfirm />} />

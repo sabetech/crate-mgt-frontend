@@ -16,5 +16,6 @@ export interface IOrder {
     balance: number;
     customer: ICustomer;
     date: string;
+    status: string;
     paymentType: string;
 }
