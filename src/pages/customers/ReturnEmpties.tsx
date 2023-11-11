@@ -25,7 +25,7 @@ const CustomerReturnEmpties = () => {
 
     const { data: customers } = useQuery<ServerResponse<ICustomer[]>> (
         ['customers'],
-        () => getCustomers(authHeader())
+        () => getCustomers(authHeader(), {customer_type: 'all'})
     );
 
     const { isLoading: isSubmitting, mutate } = useMutation({

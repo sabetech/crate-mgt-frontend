@@ -1,6 +1,16 @@
+import { useQuery, useMutation } from '@tanstack/react-query'
+import { getPendingOrders } from '../../services/InventoryAPI'
+import { useAuthHeader } from 'react-auth-kit'
 import { Table } from "antd";
 
 const PendingOrders = () => {
+  
+      const authHeader = useAuthHeader();
+
+  const { data: productsData } = useQuery<ServerResponse<IProductWithBalance[]>, Error>(
+    ['products_all'],
+    () => getPendingOrders(authHeader())
+)
 
     const columns = [
         {

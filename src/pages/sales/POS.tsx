@@ -5,7 +5,7 @@ import { getProductsWithStockBalance } from '../../services/ProductsAPI'
 import { getCustomersWithBalance } from '../../services/CustomersAPI'
 import { useAuthHeader } from 'react-auth-kit'
 import { ServerResponse } from '../../interfaces/Server'
-import { IProduct, IProductWithBalance } from '../../interfaces/Product'
+import { IProductWithBalance } from '../../interfaces/Product'
 import { useEffect, useState } from 'react'
 import { ICustomer, ICustomerReturnEmpties } from '../../interfaces/Customer'
 import { pay } from '../../services/SalesAPI'
@@ -17,9 +17,6 @@ import "./sales.css";
 const POS = () => {
     const authHeader = useAuthHeader();
     const location = useLocation();
-
-    console.log(location.state);
-
 
     const [products, setProducts] = useState<IProductWithBalance[]>([]);
     const [customer, setCustomer] = useState<ICustomer>(location.state?.customer as ICustomer);
@@ -98,7 +95,7 @@ const POS = () => {
         }else {
             setEmptiesBalance(0);
         }
-    }, [customer])
+    }, [customer]);
 
     const onCustomerChange = (_: string, option: ICustomer) => {
         setCustomer(option)
@@ -175,6 +172,39 @@ const POS = () => {
         if (record.product.empty_returnable) updateCustomerEmptiesBalance(record.quantity);
     }
 
+    const saveAndPrint = () => {
+        console.log("save and print");
+        const saleItems = tableContent.map((item) => ({
+            key: item.id,
+            product: item.product,
+            quantity: item.quantity,
+        } as ISaleItem));
+
+        console.log("saleItems: ", saleItems)
+
+        const order = {
+            paymentType: paymentType,
+            customer: customer,
+            saleItems: saleItems,
+            total: total,
+            amountTendered: 0,
+            balance: -total,
+            date: dayjs().format('YYYY-MM-DD')
+        } as IOrder;
+
+        messageApi.open({
+            type: 'success',
+            content: "Order successful"
+        });
+        mutate(order);
+        printReceipt();
+        posReset();
+    }
+
+    const printReceipt = () => {
+        console.log("print receipt");
+    }
+
     const handlePay = () => {
         if (amountTendered < total) {
             messageApi.open({
@@ -197,7 +227,8 @@ const POS = () => {
             total: total,
             amountTendered: amountTendered,
             balance: amountTendered - total,
-            date: dayjs().format('YYYY-MM-DD')
+            date: dayjs().format('YYYY-MM-DD'),
+            order_transaction_id: location.state?.transaction_id
         } as IOrder;
 
         mutate(order);
@@ -474,7 +505,7 @@ const POS = () => {
                                     location.state !== null // if location.state is not null, then we are in POS mode because an order has been made
                                     ? (<Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={handlePay} disabled={amountTendered < total || total === 0}>Pay</Button>) 
                                     :
-                                    (<Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={handlePay} >Save and Print</Button>)
+                                    (<Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={saveAndPrint} disabled={total === 0}>Save and Print</Button>)
 
                                 }
                                 

@@ -18,4 +18,5 @@ export interface IOrder {
     date: string;
     status: string;
     paymentType: string;
+    order_transaction_id?: string;
 }
