@@ -1,6 +1,20 @@
-import { Card, Statistic, Table, DatePicker, Space, Typography } from "antd";
+import { useState } from 'react';
+import { Card, Statistic, Table, Space, Typography, Button, Modal, Form, DatePicker } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import AddProductQuantityFields from '../../components/AddProductQuantityFields';
 
 const Inventory = () => {
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [confirmLoading, setConfirmLoading] = useState(false);
+    const [form] = Form.useForm();
+
+    //Handle Modal Okay
+    const handleOk = () => {
+
+    }
+
+    
 
     const columns = [
         {
@@ -56,10 +70,14 @@ const Inventory = () => {
 
     return (
         <>
-            <h1>Stock Balances</h1>
-            <Space direction={"horizontal"}>
-                <Typography.Text>Select Date</Typography.Text> <DatePicker onChange={onChange} />
+            <Typography.Title level={2}>Stock Balances</Typography.Title>
+            <Space direction={"vertical"}>
+            <Button size={"large"} icon={<PlusOutlined />} type={"primary"} onClick={() => setModalOpen(true)}>Sales In</Button>
+                <Space direction={"horizontal"}>
+                    <Typography.Text>Select Date</Typography.Text> <DatePicker onChange={onChange} />
+                </Space>
             </Space>
+            
             <Card title="Opening Stock as at {{ date }}" bordered={false}>
                 <Statistic 
                     value={1230}
@@ -70,6 +88,24 @@ const Inventory = () => {
             <Table 
                 columns={columns}
             />
+            <Modal
+                title="New stock From GGBL"
+                open={modalOpen}
+                onOk={handleOk}
+                confirmLoading={confirmLoading}
+                onCancel={() => setModalOpen(false)}
+                width={800}
+            >
+                <Form
+                    form={form}
+                >
+                    <Form.Item name="date" label="Date" rules={[{ required: true }]}>
+                        <DatePicker size={'large'}/>
+                    </Form.Item>
+                    <AddProductQuantityFields name={"products_from_ggbl"} is_returnable={false} />
+                    <AddProductQuantityFields name={"breakages_from_ggbl"} is_returnable={false} />
+                </Form>
+            </Modal>
         </>
     )
 }

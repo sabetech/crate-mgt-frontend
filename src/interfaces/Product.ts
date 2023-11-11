@@ -15,6 +15,7 @@ export interface IProductWithBalance {
     sku_code: string;
     retail_price?: number;
     wholesale_price?: number;
+    empty_returnable?: boolean;
     stocks: IStockProduct;
 }
 

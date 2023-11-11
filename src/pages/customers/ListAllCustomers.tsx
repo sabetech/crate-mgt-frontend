@@ -18,7 +18,7 @@ const ListCustomers: React.FC = () => {
     const { data, isLoading } = useQuery<ServerResponse<ICustomer[]>, Error>(
         {
             queryKey: ['customer_with_balance'],
-            queryFn: () => getCustomersWithBalance(authHeader()),
+            queryFn: () => getCustomersWithBalance(authHeader(), {customer_type: 'all'}),
             onError: (error: Error) => {
                 console.log(error);
             }

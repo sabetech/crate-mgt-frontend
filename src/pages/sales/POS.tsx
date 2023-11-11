@@ -18,7 +18,7 @@ const POS = () => {
     const authHeader = useAuthHeader();
     const location = useLocation();
 
-    console.log(location.state?.customer);
+    console.log(location.state);
 
 
     const [products, setProducts] = useState<IProductWithBalance[]>([]);
@@ -422,6 +422,10 @@ const POS = () => {
                     }}
                     >
                         <div style={{display: 'flex', flexDirection: 'column', marginTop: "1rem"}}>
+                            <Typography.Title level={5} style={{marginLeft: "1rem"}}>
+                                OrderID: <br />
+                                <Typography.Text strong style={{marginLeft: "1rem"}}>{location.state?.transaction_id}</Typography.Text>
+                            </Typography.Title>
                             <Divider orientation="left" >Purchase Summary</Divider>
                             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
                                 <Typography.Text strong style={{marginRight: 10}}>Quantity: </Typography.Text>
@@ -442,17 +446,29 @@ const POS = () => {
                                 <Typography.Text strong style={{ fontSize: '1em'}}>Payment Type </Typography.Text>
                                 <Select size={"large"} dropdownMatchSelectWidth={false} placement={'bottomRight'} defaultValue={paymentType} options={[{value:"Cash", label: 'Cash'}, {value:"Mobile Money", label: 'Mobile Money'} ]} onChange={(value) =>setPaymentType(value)}/>
                             </div>
-                            <div style={{display: 'flex', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem", marginTop: 10}}>
-                                <Typography.Text strong style={{ fontSize: '1em'}}>Amount Tendered </Typography.Text>
-                                <InputNumber size="large" style={{width: '50%'}} placeholder='0.00' addonAfter="GHs" value={amountTendered} onChange={(val) => val && setAmountTendered(val)}/>
-                            </div>
+
+                            {
+                                location.state !== null &&
+                                <div style={{display: 'flex', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem", marginTop: 10}}>
+                                    <Typography.Text strong style={{ fontSize: '1em'}}>Amount Tendered </Typography.Text>
+                                    <InputNumber size="large" style={{width: '50%'}} placeholder='0.00' addonAfter="GHs" value={amountTendered} onChange={(val) => val && setAmountTendered(val)}/>
+                                </div>
+                            }
                             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem", marginTop: 10}}>
                                 <Typography.Text strong style={{ fontSize: '1em'}}>Balance </Typography.Text>
                                 <Typography.Text strong style={{ fontSize: '1em' }}>{ amountTendered - total } GHs</Typography.Text>
                             </div>
 
                             <div style={{display: 'flex', justifyContent:'center'}}>
-                                <Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={handlePay} disabled={amountTendered < total || total === 0}>Pay</Button>
+                                {
+                                    location.state !== null // if location.state is not null, then we are in POS mode because an order has been made
+                                    ? (<Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={handlePay} disabled={amountTendered < total || total === 0}>Pay</Button>) 
+                                    :
+                                    (<Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={handlePay} >Save and Print</Button>)
+
+                                }
+                                
+
                             </div>
                         </div>
                     </div>

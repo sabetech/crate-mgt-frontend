@@ -56,7 +56,7 @@ const AddProductQuantityFields = ({ name, is_returnable }: AddProductQuantityFie
                                                 label="Product"
                                                 name={[field.name, 'product']}
                                                 rules={[{ required: true, message: 'Product missing'}]}
-                                                style={{ width: 400 }}
+                                                style={{ width: 400, marginRight: 10 }}
                                             >
                                                 <Select disabled={!productList || productList.length === 0} style={{ width: 350 }} 
                                                 showSearch
@@ -82,7 +82,7 @@ const AddProductQuantityFields = ({ name, is_returnable }: AddProductQuantityFie
                                     name={[field.name, 'quantity']}
                                     
                                     rules={[{ required: true, message: 'Missing Qty' }]}
-                                    style={{ width: 400 }}
+                                    style={{ width: 200, marginLeft: 10 }}
                                     >
                                     <Input placeholder={"Quantity"} />
                                 </Form.Item>
