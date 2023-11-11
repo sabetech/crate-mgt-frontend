@@ -5,7 +5,7 @@ import { getProductsWithStockBalance } from '../../services/ProductsAPI'
 import { getCustomersWithBalance } from '../../services/CustomersAPI'
 import { useAuthHeader } from 'react-auth-kit'
 import { ServerResponse } from '../../interfaces/Server'
-import { IProductWithBalance } from '../../interfaces/Product'
+import { IProduct, IProductWithBalance } from '../../interfaces/Product'
 import { useEffect, useState } from 'react'
 import { ICustomer, ICustomerReturnEmpties } from '../../interfaces/Customer'
 import { pay } from '../../services/SalesAPI'
@@ -138,8 +138,6 @@ const POS = () => {
         setUnitPrice(0);
         setQuantity(1);
         setSelectedProduct(undefined);
-
-        
     }
 
     const savePurchase = () => {
@@ -160,14 +158,21 @@ const POS = () => {
             setTableContent([{id: product.id, product: product, quantity: quantity} as ISaleItem, ...tableContent]);
         }
 
+        if (product.empty_returnable) updateCustomerEmptiesBalance(-quantity);
+
         form.resetFields();
         (unitPrice || unitPrice > 0) && setUnitPrice(0);
         form.setFieldValue("customer", `${customer?.name} (${customer?.customer_type.toUpperCase()})`);
 
     }
 
+    const updateCustomerEmptiesBalance = (quantity: number) => {
+        setEmptiesBalance((prev) => prev + quantity)
+    }
+
     const removePOSItem = (record: ISaleItem) => {
         setTableContent( (prev) => prev.filter((item) => item.id !== record.id) )
+        if (record.product.empty_returnable) updateCustomerEmptiesBalance(record.quantity);
     }
 
     const handlePay = () => {
@@ -455,8 +460,13 @@ const POS = () => {
                                 </div>
                             }
                             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem", marginTop: 10}}>
-                                <Typography.Text strong style={{ fontSize: '1em'}}>Balance </Typography.Text>
-                                <Typography.Text strong style={{ fontSize: '1em' }}>{ amountTendered - total } GHs</Typography.Text>
+                                {
+                                    location.state !== null &&
+                                    <>
+                                        <Typography.Text strong style={{ fontSize: '1em'}}>Balance </Typography.Text>
+                                        <Typography.Text strong style={{ fontSize: '1em' }}>{ amountTendered - total } GHs</Typography.Text>
+                                    </>
+                                }
                             </div>
 
                             <div style={{display: 'flex', justifyContent:'center'}}>

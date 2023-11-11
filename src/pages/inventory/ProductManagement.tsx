@@ -21,7 +21,7 @@ const ProductManagement = () => {
     const [checkIsReturnable, setCheckIsReturnable] = useState<boolean>(false);
     const [form] = Form.useForm()
 
-    const { data: products } = useQuery(
+    const { data: products, isLoading } = useQuery(
             ['products_balances'],
             () => getProductsWithStockBalance(authHeader())
     );
@@ -128,6 +128,7 @@ const ProductManagement = () => {
                 <Table 
                     columns={ productColumns }
                     dataSource={ productsWithBalance }
+                    loading={ isLoading }
                 />
             </Space>
             <Modal 
