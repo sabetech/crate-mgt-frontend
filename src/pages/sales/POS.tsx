@@ -12,11 +12,14 @@ import { pay } from '../../services/SalesAPI'
 import { IOrder, ISaleItem } from '../../interfaces/Sale';
 import dayjs from 'dayjs';
 import {useLocation} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import "./sales.css";
+
 
 const POS = () => {
     const authHeader = useAuthHeader();
     const location = useLocation();
+    const navigate = useNavigate();
 
     const [products, setProducts] = useState<IProductWithBalance[]>([]);
     const [customer, setCustomer] = useState<ICustomer>(location.state?.customer as ICustomer);
@@ -47,8 +50,9 @@ const POS = () => {
         },
         onSuccess: (data) => {
             console.log("data: ", data);
-            // success(data?.data || "")
-            // navigate("/customers")
+            
+            navigate("/POS/orders");
+            
             form.resetFields();
         },
         onError: (error: Error) => {
@@ -238,8 +242,6 @@ const POS = () => {
             content: "Payment successful"
         });
 
-        posReset();
-
     }
 
     const resetStates = () => {
@@ -361,7 +363,8 @@ const POS = () => {
                                     allowClear={true}
                                     bordered={false}
                                     onSearch={onSearch}
-                                    onChange={(text: string, option: any) => onCustomerChange(text, option)}
+                                    onSelect={(text: string, option: any) => onCustomerChange(text, option)}
+                                    // onChange={}
                                     placeholder="Search for Customer"
                                     options={ customersResponse?.data.map(custmr => ({...custmr, value: `${custmr.name} (${custmr.customer_type.toUpperCase()})`})) }
                                     filterOption={(inputValue, option) =>

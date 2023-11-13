@@ -1,8 +1,9 @@
 import * as api from './API';
 import { ServerResponse } from '../interfaces/Server';
 import { IStock } from '../interfaces/Product';
-import { ILoadout } from '../interfaces/Inventory';
+import { IInventoryOrder, ILoadout } from '../interfaces/Inventory';
 import { IVSECustomer } from '../interfaces/Customer';
+import { IOrder } from '../interfaces/Sale';
 
 export const getLoadouts = async (token: string, date: string): Promise<ServerResponse<ILoadout[]>> => {
     return (await api.get('/stocks/loadouts?date='+date, {'Authorization': token})).data;
@@ -25,4 +26,8 @@ export const addLoadoutInfo = async (token: string, loadoutInfo: ILoadout): Prom
     let values = Object.assign({}, loadoutInfo, { vse: loadoutInfo.vse.id });
     
     return (await api.post('/stocks/loadout', values, {'Authorization': token})).data;
+}
+
+export const getPendingOrders = async (token: string): Promise<ServerResponse<IInventoryOrder[]>> => {
+    return (await api.get('/stocks/pending-orders', {'Authorization': token})).data;
 }
