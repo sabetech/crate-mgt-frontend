@@ -52,7 +52,7 @@ const POS = () => {
             console.log("data: ", data);
             
             navigate("/POS/orders");
-            
+
             form.resetFields();
         },
         onError: (error: Error) => {
@@ -156,7 +156,7 @@ const POS = () => {
         const unitPrice = form.getFieldValue("unit_price");
 
         if (typeof product !== 'undefined') {
-            setTableContent([{id: product.id, product: product, quantity: quantity} as ISaleItem, ...tableContent]);
+            setTableContent([{id: product.id, product: product, quantity: quantity, key: product.id} as ISaleItem, ...tableContent]);
         }
 
         if (product.empty_returnable) updateCustomerEmptiesBalance(-quantity);
