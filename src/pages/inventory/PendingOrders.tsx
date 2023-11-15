@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { getPendingOrders } from '../../services/InventoryAPI'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { getPendingOrders, approveInventoryOrder } from '../../services/InventoryAPI'
 import { IInventoryOrder } from '../../interfaces/Inventory'
 import { ServerResponse } from '../../interfaces/Server'
+import { AppError } from '../../interfaces/Error'
 import { useAuthHeader } from 'react-auth-kit'
-import { Modal, Table, Tag, Button, Typography, Input, Space } from "antd";
+import { Modal, Table, Tag, Button, Typography, Input, Space, message } from "antd";
 import { useEffect } from 'react'
 import { SyncOutlined } from '@ant-design/icons'
 
@@ -20,13 +21,46 @@ const PendingOrders = () => {
   const [ orderDetailsModal, setOrderDetailsModal ] = useState<boolean>(false)
   const [ selectedOrder, setSelectedOrder ] = useState<IInventoryOrder | null>(null)
   const [ tableInfo, setTableInfo ] = useState<ITableInfo[]>([])
+  const [messageApi, contextHolder] = message.useMessage();
+  const [confirmLoading, setConfirmLoading] = useState(false);
   const authHeader = useAuthHeader();
+  const queryClient = useQueryClient()
 
   const { data, isLoading } = useQuery<ServerResponse<IInventoryOrder[]>, Error>(
     ['pending_orders'],
     () => getPendingOrders(authHeader())
-  )
-    
+  );
+  
+  const { mutate, isLoading: isSubmitting } = useMutation({
+    mutationFn: (inventoryOrder: IInventoryOrder) => {
+      setConfirmLoading(isSubmitting)
+
+      return approveInventoryOrder(authHeader(), inventoryOrder)
+    },
+    onSuccess: (data) => {
+        queryClient.invalidateQueries();
+        success(data?.data || "")
+        setConfirmLoading(false)
+        setOrderDetailsModal(false);
+    },
+    onError: (error: AppError) => {
+        messageApi.open({
+            type: 'error',
+            content: error.message + ". Please Check your internet connection and refresh the page."
+        });
+        setTimeout(messageApi.destroy, 2500);
+    }
+});
+
+  const success = (msg:string) => {
+    messageApi.open({
+      type: 'success',
+      content: msg,
+    });
+    setTimeout(messageApi.destroy, 2500);
+  }
+
+
   console.log(data);
 
   useEffect(() => {
@@ -38,7 +72,7 @@ const PendingOrders = () => {
   },[data]);
 
   const handleSelectOrder = (inventoryOrder: IInventoryOrder) => {
-    console.log("SALES ITEMS::",inventoryOrder);
+    setSelectedOrder(inventoryOrder);
     setTableInfo(inventoryOrder.order.sales.map(item => ({product: item.product.sku_name, quantity: item.quantity})));
     setOrderDetailsModal(true);
   }
@@ -46,9 +80,8 @@ const PendingOrders = () => {
   const handleApprove = () => {
     console.log("APPROVING ORDER::", selectedOrder);
 
+    mutate(selectedOrder as IInventoryOrder)
 
-
-    setOrderDetailsModal(false);
   }
 
   const onSearch = (searchTerm: string) => {
@@ -81,7 +114,7 @@ const PendingOrders = () => {
         dataIndex: 'status',
         key: 'status',
         render: (status: string) => (
-          <Tag color="processing" icon={<SyncOutlined spin />} >{status}</Tag>
+          <Tag color={"processing"} icon={<SyncOutlined />}>{status}</Tag>
         )
       }
   ];
@@ -101,6 +134,7 @@ const PendingOrders = () => {
 
     return (
     <>
+        {contextHolder}
         <Typography.Title level={2}> Pending Orders </Typography.Title>
         <Space>
           <Search
@@ -112,14 +146,17 @@ const PendingOrders = () => {
           />
         </Space>
         <Table 
+            loading={isLoading}
             columns={columns}
             dataSource={pendingOrders}
         />
         <Modal
             title="Order Details"
+            
             open={orderDetailsModal}
             style={{ top: 20 }}
             onOk={() => {}}
+            confirmLoading={confirmLoading}
             onCancel={() => setOrderDetailsModal(false)}
             footer={
               <>

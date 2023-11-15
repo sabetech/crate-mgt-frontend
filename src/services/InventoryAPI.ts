@@ -31,3 +31,7 @@ export const addLoadoutInfo = async (token: string, loadoutInfo: ILoadout): Prom
 export const getPendingOrders = async (token: string): Promise<ServerResponse<IInventoryOrder[]>> => {
     return (await api.get('/stocks/pending-orders', {'Authorization': token})).data;
 }
+
+export const approveInventoryOrder = async (token: string, order: IInventoryOrder): Promise<ServerResponse<string>> => {
+    return (await api.post(`/stocks/approve-order/${order.id}`, order, {'Authorization': token})).data;
+}

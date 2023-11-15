@@ -78,7 +78,7 @@ const items: MenuItem[] = [
     getItem('Add Customer', 'customers/new'),
     getItem('List All Customers', 'customers'),
     getItem('Return Empties', 'customers/return_empties'),
-    getItem('Empties Loan', 'customers/add_empties_loan'),
+    // getItem('Empties Loan', 'customers/add_empties_loan'),
     getItem('Record Sales', 'customers/record_sales'),
   ]),
   getItem('Empties with GGBL', 'empties-ggbl', <DesktopOutlined />, [

@@ -20,7 +20,7 @@ const POS = () => {
     const authHeader = useAuthHeader();
     const location = useLocation();
     const navigate = useNavigate();
-
+    
     const [products, setProducts] = useState<IProductWithBalance[]>([]);
     const [customer, setCustomer] = useState<ICustomer>(location.state?.customer as ICustomer);
     const [emptiesBalance, setEmptiesBalance] = useState<number>(0);
@@ -50,8 +50,7 @@ const POS = () => {
         },
         onSuccess: (data) => {
             console.log("data: ", data);
-            
-            navigate("/POS/orders");
+            if (location.state) navigate("/POS/orders");
 
             form.resetFields();
         },
@@ -338,115 +337,117 @@ const POS = () => {
                 </Col>
 
                 <Col style={{marginLeft: "1rem"}}>
-                    <div style={{
-                        borderStyle: "solid",
-                        borderWidth: "1px",
-                        borderRadius: 10,
-                        borderColor: "#D9D9D9",
-                        backgroundColor: "#f3f1f1",
-                        width: "45vw",
-                    }}>
-                        <Form
-                            layout={'horizontal'}
-                            form={form}
-                            style={{ padding: "2rem"}}
-                            labelCol={{ flex: '200px' }}
-                            labelAlign="left"
-                            labelWrap
-                            wrapperCol={{ flex: 1 }}
-                            initialValues={{
-                                'quantity': 1
-                            }}
-                        >
+                    
+                        
+                        { !location.state &&
+                        <Badge.Ribbon text={`Empties Balance: ${emptiesBalance}`} color={emptiesBalance > 0 ? "green" : "red"}>
+                        <div style={{
+                            borderStyle: "solid",
+                            borderWidth: "1px",
+                            borderRadius: 10,
+                            borderColor: "#D9D9D9",
+                            backgroundColor: "#f3f1f1",
+                            width: "45vw",
+                        }}>
+                            <Form
+                                layout={'horizontal'}
+                                form={form}
+                                style={{ padding: "2rem"}}
+                                labelCol={{ flex: '200px' }}
+                                labelAlign="left"
+                                labelWrap
+                                wrapperCol={{ flex: 1 }}
+                                initialValues={{
+                                    'quantity': 1
+                                }}
+                            >   
+                            
                             <Form.Item label="Choose Customer" name="customer" style={{ marginBottom: "10px" }}>
                                 <AutoComplete 
                                     allowClear={true}
                                     bordered={false}
                                     onSearch={onSearch}
-                                    onSelect={(text: string, option: any) => onCustomerChange(text, option)}
-                                    // onChange={}
+                                    onSelect={(text: string, option: ICustomer) => onCustomerChange(text, option)}
                                     placeholder="Search for Customer"
                                     options={ customersResponse?.data.map(custmr => ({...custmr, value: `${custmr.name} (${custmr.customer_type.toUpperCase()})`})) }
                                     filterOption={(inputValue, option) =>
                                         option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                                      }
-                                    value={(typeof customer !== 'undefined') ? `${customer?.name} (${customer?.customer_type.toUpperCase()})` : "" }
+                                        }
                                 />
-                                {
-                                    (typeof customer !== 'undefined') && (
-                                        <Tag color={emptiesBalance > 0 ? "processing" : "error"} >
-                                            Empties Balance: {emptiesBalance}
-                                        </Tag>
-                                    )
-                                }
+                            </Form.Item>
+                            
                                 
-                            </Form.Item>
-                            <Form.Item label="Select Product" name="product" style={{ marginBottom: "10px" }} >
-                                <AutoComplete 
-                                    allowClear={true}
-                                    onClear={() => formClear()}
-                                    bordered={false}
-                                    onSearch={onSearch}
-                                    onChange={(text: string, option: any) => onProductChange(text, option)}
-                                    placeholder="Search for Product"
-                                    options={productsData?.data.map(prdt => ({...prdt, value: prdt.sku_name}))}
-                                    filterOption={(inputValue, option) =>
-                                        option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                                      }
-                                />
-                            </Form.Item>
-                            <hr />
-                            <div
-                                style={{
-                                    display: "flex",
-                                    justifyContent: "space-between"
+                                <Form.Item label="Select Product" name="product" style={{ marginBottom: "10px" }} >
+                                    <AutoComplete 
+                                        allowClear={true}
+                                        onClear={() => formClear()}
+                                        bordered={false}
+                                        onSearch={onSearch}
+                                        onSelect={(text: string, option: any) => onProductChange(text, option)}
+                                        placeholder="Search for Product"
+                                        options={productsData?.data.map(prdt => ({...prdt, value: prdt.sku_name}))}
+                                        filterOption={(inputValue, option) =>
+                                            option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                        }
+                                    />
+                                </Form.Item>
+                                <hr />
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "space-between"
+                                    }}
+                                >
+                                    <Form.Item label={`Unit Price: ${typeof unitPrice === 'undefined'? "0.00" : unitPrice} GHC`} name="unit_price">
+                                        <Input placeholder="Unit Price" value={unitPrice} readOnly/>
+                                    </Form.Item>
+                                    <Form.Item label="Quantity:" name="quantity">
+                                        <InputNumber min={1} onChange={(val) => setQuantity( val === null ? 1 : val  )}/>
+                                    </Form.Item>
+                                    <Form.Item label="Price">
+                                        <Typography className="ant-form-text">{(unitPrice * quantity).toFixed(2)} GHC</Typography>
+                                    </Form.Item>
+                                </div>
+                                <Space wrap>
+                                    <Button size={"large"} type="primary" onClick={savePurchase} disabled={(typeof selectedProduct === 'undefined') } >Save</Button>
+                                    <Button size={"large"} onClick={() => formClear()}>Clear</Button>
+                                </Space>
+                            </Form>
+                        </div>
+                        </Badge.Ribbon>
+                        }
+                        
+                        <div style={{
+                            borderStyle: "solid",
+                            borderWidth: "1px",
+                            borderRadius: 10,
+                            borderColor: "#D9D9D9",
+                            height: "30vh",
+                            marginTop: 10,
+                            width: "45vw",
+                        }}>
+
+                            <Table
+                                columns={posTableColumns}
+                                dataSource={tableContent}
+                                scroll={{ y: 250 }}
+                                pagination={false}
+                                onRow={(record, _) => {
+                                    return {
+                                        onClick: () => {
+                                            console.log("clicked row: ", record);
+                                        }, // click rowon
+                                        // onMouseEnter: (event) => {}, // mouse enter row
+                                        // onMouseLeave: (event) => {}, // mouse leave row
+                                    };
                                 }}
                             >
-                                <Form.Item label={`Unit Price: ${typeof unitPrice === 'undefined'? "0.00" : unitPrice} GHC`} name="unit_price">
-                                    <Input placeholder="Unit Price" value={unitPrice} readOnly/>
-                                </Form.Item>
-                                <Form.Item label="Quantity:" name="quantity">
-                                    <InputNumber min={1} onChange={(val) => setQuantity( val === null ? 1 : val  )}/>
-                                </Form.Item>
-                                <Form.Item label="Price">
-                                    <Typography className="ant-form-text">{(unitPrice * quantity).toFixed(2)} GHC</Typography>
-                                </Form.Item>
-                            </div>
-                            <Space wrap>
-                                <Button size={"large"} type="primary" onClick={savePurchase} disabled={(typeof selectedProduct === 'undefined') } >Save</Button>
-                                <Button size={"large"} onClick={() => formClear()}>Clear</Button>
-                            </Space>
-                        </Form>
-                    </div>
-                    <div style={{
-                        borderStyle: "solid",
-                        borderWidth: "1px",
-                        borderRadius: 10,
-                        borderColor: "#D9D9D9",
-                        height: "30vh",
-                        marginTop: 10,
-                        width: "45vw",
-                    }}>
 
-                        <Table
-                            columns={posTableColumns}
-                            dataSource={tableContent}
-                            scroll={{ y: 250 }}
-                            pagination={false}
-                            onRow={(record, _) => {
-                                return {
-                                    onClick: () => {
-                                        console.log("clicked row: ", record);
-                                    }, // click rowon
-                                    // onMouseEnter: (event) => {}, // mouse enter row
-                                    // onMouseLeave: (event) => {}, // mouse leave row
-                                  };
-                            }}
-                        >
+                            </Table>
 
-                        </Table>
-
-                    </div>
+                        </div>
+                        
+                    
                 </Col>
                 <Col span={5}>
                     <div style={{
@@ -461,9 +462,15 @@ const POS = () => {
                     }}
                     >
                         <div style={{display: 'flex', flexDirection: 'column', marginTop: "1rem"}}>
+                            {
+                                location.state &&
+                                <Typography.Title level={5} style={{marginLeft: "1rem"}}>
+                                    Customer: {location.state.customer.name}<br />
+                                </Typography.Title>
+                            }
                             <Typography.Title level={5} style={{marginLeft: "1rem"}}>
                                 OrderID: <br />
-                                <Typography.Text strong style={{marginLeft: "1rem"}}>{location.state?.transaction_id}</Typography.Text>
+                            <Typography.Text strong style={{marginLeft: "1rem"}}>{location.state?.transaction_id}</Typography.Text>
                             </Typography.Title>
                             <Divider orientation="left" >Purchase Summary</Divider>
                             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
@@ -483,7 +490,11 @@ const POS = () => {
                             <Divider></Divider>
                             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
                                 <Typography.Text strong style={{ fontSize: '1em'}}>Payment Type </Typography.Text>
-                                <Select size={"large"} dropdownMatchSelectWidth={false} placement={'bottomRight'} defaultValue={paymentType} options={[{value:"Cash", label: 'Cash'}, {value:"Mobile Money", label: 'Mobile Money'} ]} onChange={(value) =>setPaymentType(value)}/>
+                                <Select size={"large"} dropdownMatchSelectWidth={false} placement={'bottomRight'} defaultValue={paymentType} options={[
+                                    {value:"Cash", label: 'Cash'}, 
+                                    {value:"Mobile Money", label: 'Mobile Money'},
+                                    {value:"Cheque", label: 'Cheque'}  
+                                    ]} onChange={(value) =>setPaymentType(value)}/>
                             </div>
 
                             {
