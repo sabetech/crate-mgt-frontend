@@ -332,7 +332,6 @@ const POS = () => {
                                 <Typography.Text>{index + 1} {item.sku_name}</Typography.Text>
                                 <Badge showZero count={(item.inventory_balance != null) ? item.inventory_balance.quantity : 0 } color={(item.inventory_balance != null) ? (item.inventory_balance.quantity > 40) ? "green": (item.inventory_balance.quantity > 22 ? "gold" : "red") : 'red' } />
                             </List.Item>
-
                             
                         )}
                     />
@@ -382,7 +381,12 @@ const POS = () => {
                                 <Form.Item label="Select Product" name="product" style={{ marginBottom: "10px" }} >
                                     <AutoComplete 
                                         allowClear={true}
-                                        onClear={() => formClear()}
+                                        onClear={() => {
+                                            setUnitPrice(0);
+                                            setQuantity(1);
+                                            setSelectedProduct(undefined);
+                                            form.setFieldValue('unit_price', 0)
+                                        }}
                                         bordered={false}
                                         onSearch={onSearch}
                                         onSelect={(text: string, option: any) => onProductChange(text, option)}
@@ -400,7 +404,7 @@ const POS = () => {
                                         justifyContent: "space-between"
                                     }}
                                 >
-                                    <Form.Item label={`Unit Price: ${typeof unitPrice === 'undefined'? "0.00" : unitPrice} GHC`} name="unit_price">
+                                    <Form.Item name={"unit_price"} label={`Unit Price: ${typeof unitPrice === 'undefined'? "0.00" : unitPrice} GHC`}>
                                         <Input placeholder="Unit Price" value={unitPrice} readOnly/>
                                     </Form.Item>
                                     <Form.Item label="Quantity:" name="quantity">
