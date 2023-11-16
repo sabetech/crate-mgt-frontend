@@ -21,7 +21,7 @@ import AddNewCustomers from '../pages/customers/AddNewCustomers';
 import ListCustomers from '../pages/customers/ListAllCustomers';
 import RecordVSESales from '../pages/customers/RecordVSESales';
 import Login from '../pages/users/Login';
-import { useAuthUser } from 'react-auth-kit';
+import { useAuthUser, useIsAuthenticated, useSignOut } from 'react-auth-kit';
 import CustomerReturnEmpties from '../pages/customers/ReturnEmpties';
 import SaveInHouseEmpties from '../pages/empties-inhouse/EmptiesOnGround';
 import ListInHouseEmpties from '../pages/empties-inhouse/ListInHouseEmpties';
@@ -31,7 +31,6 @@ import CreateCustomerEmptiesLoan from '../pages/customers/CreateCustomerEmptiesL
 import CustomerHistory from '../pages/customers/CustomerHistory';
 import ProductManagement from '../pages/inventory/ProductManagement';
 import Receivables from '../pages/inventory/Receivables';
-import Inventory from '../pages/inventory/Inventory';
 import PendingOrders from '../pages/inventory/PendingOrders';
 import POS from '../pages/sales/POS';
 import AddLoadouts from '../pages/inventory/AddLoadouts';
@@ -117,6 +116,8 @@ const LayoutBase = () => {
   
   const userState = authUser();
   const location  = useLocation();
+  const isAuthenticated = useIsAuthenticated();
+  const signOut = useSignOut();
   
   const handleManageUsers = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
@@ -129,7 +130,10 @@ const LayoutBase = () => {
   const navigate = useNavigate();
 
   const onClick: MenuProps['onClick'] = (e) => {
-    navigate('/' + e.key)
+    if (isAuthenticated())
+      navigate('/' + e.key)
+    else
+      signOut();
   };
 
   return (<Layout style={{ minHeight: '100vh' }}>

@@ -60,9 +60,6 @@ const PendingOrders = () => {
     setTimeout(messageApi.destroy, 2500);
   }
 
-
-  console.log(data);
-
   useEffect(() => {
     
     if (data?.data) {
