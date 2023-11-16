@@ -38,6 +38,8 @@ const POS = () => {
         ['products_all'],
         () => getProductsWithStockBalance(authHeader())
     )
+    
+    console.log("PRODUCTSS::::", products);
 
     const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
         ['customers'],
@@ -327,8 +329,8 @@ const POS = () => {
                         renderItem={(item: IProductWithBalance, index: number) => (
                             
                             <List.Item style={{cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }} onClick={() => onProductClicked(item)}>
-                                <Typography.Text>{index} {item.sku_name}</Typography.Text>
-                                <Badge showZero count={(item.stocks != null) ? item.stocks.quantity : 0 } color={(item.stocks != null) ? (item.stocks.quantity > 10) ? "green": (item.stocks.quantity > 7 ? "gold" : "red") : 'red' } />
+                                <Typography.Text>{index + 1} {item.sku_name}</Typography.Text>
+                                <Badge showZero count={(item.inventory_balance != null) ? item.inventory_balance.quantity : 0 } color={(item.inventory_balance != null) ? (item.inventory_balance.quantity > 40) ? "green": (item.inventory_balance.quantity > 22 ? "gold" : "red") : 'red' } />
                             </List.Item>
 
                             
@@ -385,7 +387,7 @@ const POS = () => {
                                         onSearch={onSearch}
                                         onSelect={(text: string, option: any) => onProductChange(text, option)}
                                         placeholder="Search for Product"
-                                        options={productsData?.data.map(prdt => ({...prdt, value: prdt.sku_name}))}
+                                        options={productsData?.data.map(prdt => ({...prdt, value: `${prdt.sku_name} (${prdt?.inventory_balance?.quantity ?? 0})` }))}
                                         filterOption={(inputValue, option) =>
                                             option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
                                         }

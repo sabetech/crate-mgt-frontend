@@ -84,7 +84,7 @@ const ProductManagement = () => {
             title: 'Balance',
             dataIndex: 'balance',
             key: 'balance',
-            render: (_: any , record: any) => (record.stocks?.quantity),
+            render: (_: any , record: any) => (record.inventory_balance?.quantity),
         },
         {
             title: 'Action',

@@ -16,7 +16,7 @@ export interface IProductWithBalance {
     retail_price?: number;
     wholesale_price?: number;
     empty_returnable?: boolean;
-    stocks: IStockProduct;
+    inventory_balance: IInventoryBalance;
 }
 
 export interface IEmptyOnGroundProducts {
@@ -27,6 +27,13 @@ export interface IEmptyOnGroundProducts {
     is_empty: boolean;
 }
 
+export interface IInventoryBalance {
+    id?: number;
+    key?: number;
+    product: IProduct;
+    quantity: number;
+    breakages: number;
+}
 export interface IStockProduct {
     id?: number;
     product: IProduct;
