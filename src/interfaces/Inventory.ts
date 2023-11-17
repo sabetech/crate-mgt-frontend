@@ -41,3 +41,26 @@ export interface IInventoryOrder {
     order: ISaleOrder;
 }
 
+export interface IInventoryReceivableRequest {
+    id?: number;
+    key?: number;
+    date: string;
+    purchase_order_id: string;
+    products: {
+        product: number,
+        quantity: number
+    }[],
+    quantity: number;
+    breakages: number;
+}
+
+export interface IInventoryReceivable {
+    id?: number;
+    key?: number;
+    date: string;
+    puchase_order_id: string;
+    product: IProduct;
+    quantity: number;
+    breakages: number;
+}
+
