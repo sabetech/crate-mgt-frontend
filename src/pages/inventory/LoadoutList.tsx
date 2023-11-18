@@ -69,13 +69,13 @@ const LoadoutList: React.FC = () => {
         },
         {
             title: 'Quantity Returned',
-            dataIndex: 'quantity_returned',
-            key: 'quantity_returned'
+            dataIndex: 'returned',
+            key: 'returned'
         },
         {
             title: 'Outstanding Balance',
-            dataIndex: 'outstanding_balance',
-            key: 'outstanding_balance'
+            dataIndex: 'vse_outstandingbalance',
+            key: 'vse_outstandingbalance'
         }
     ]
 
@@ -123,7 +123,7 @@ const LoadoutList: React.FC = () => {
                             { title: 'SKU', dataIndex: 'sku_name', key: 'sku' },
                             { title: 'Quantity', dataIndex: 'quantity', key: 'quantity' },
                             { title: 'Quantity Sold', dataIndex: 'quantity_sold', key: 'quantity_sold' },
-                            { title: 'Quantity Returned', dataIndex: 'quantity_returned', key: 'quantity_returned' },
+                            { title: 'Quantity Returned', dataIndex: 'returned', key: 'returned' },
                             { title: 'Outstanding Balance', dataIndex: 'outstanding_balance', key: 'outstanding_balance' },
                         ]}
 
@@ -135,7 +135,7 @@ const LoadoutList: React.FC = () => {
                         vse: vseCustomer.name,
                         quantity: vseCustomer.vse_loadout.reduce((acc: number, item: ILoadoutInfo) => acc + item.quantity, 0),
                         quantity_sold: vseCustomer.vse_loadout.reduce((acc: number, item: ILoadoutInfo) => acc + (item.quantity_sold ?? 0) , 0),
-                        quantity_returned: vseCustomer.vse_loadout.reduce((acc: number, item: ILoadoutInfo) => acc + (item.quanty_returned ?? 0) , 0),
+                        quantity_returned: vseCustomer.vse_loadout.reduce((acc: number, item: ILoadoutInfo) => acc + (item.returned ?? 0) , 0),
                         outstanding_balance: vseCustomer.vse_loadout.reduce((acc: number, item: ILoadoutInfo) => acc + (item.vse_outstandingbalance ?? 0) , 0),
                     })
                     )}

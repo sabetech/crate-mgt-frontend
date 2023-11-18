@@ -1,7 +1,7 @@
 import * as api from './API';
 import { ServerResponse } from '../interfaces/Server';
 import { IStock } from '../interfaces/Product';
-import { IInventoryOrder, ILoadout } from '../interfaces/Inventory';
+import { IInventoryOrder, ILoadout, IReturnsFromVSERequest } from '../interfaces/Inventory';
 import { IVSECustomer } from '../interfaces/Customer';
 import { IInventoryReceivableRequest } from '../interfaces/Inventory';
 
@@ -33,6 +33,9 @@ export const addReceivableToInventory = async (values: IInventoryReceivableReque
 
 }
 
+export const addReturnsFromVSEs = async (values: IReturnsFromVSERequest, token: string): Promise<ServerResponse<string>> => {
+    return (await api.post('/stocks/returns-from-vse', values, {'Authorization': token})).data;
+}
 
 export const getPendingOrders = async (token: string): Promise<ServerResponse<IInventoryOrder[]>> => {
     return (await api.get('/stocks/pending-orders', {'Authorization': token})).data;

@@ -22,7 +22,7 @@ export interface ILoadoutInfo {
     product: IProduct;
     quantity: number;
     quantity_sold?: number;
-    quanty_returned?: number;
+    returned?: number;
     vse_outstandingbalance?: number;
 }
 
@@ -42,8 +42,6 @@ export interface IInventoryOrder {
 }
 
 export interface IInventoryReceivableRequest {
-    id?: number;
-    key?: number;
     date: string;
     purchase_order_id: string;
     products: {
@@ -64,3 +62,11 @@ export interface IInventoryReceivable {
     breakages: number;
 }
 
+export interface IReturnsFromVSERequest {
+    date: string;
+    vse: number;
+    products: {
+        product: number,
+        quantity: number
+    }[],
+}

@@ -32,7 +32,7 @@ const AddInventoryReceivableFromGGBL = () => {
 
     const success = (msg:string) => {
         messageApi.destroy();
-        messageApi.success(msg, 2500);
+        messageApi.success(msg, 2.5);
     }
 
     const onChange: DatePickerProps['onChange'] = (date, dateString) => {
