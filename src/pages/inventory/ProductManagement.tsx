@@ -37,7 +37,7 @@ const ProductManagement = () => {
     }
         
     const handleOk = () => {
-
+        setConfirmLoading(true);
     }
 
 

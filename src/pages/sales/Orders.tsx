@@ -13,7 +13,7 @@ const Orders = () => {
     const authHeader = useAuthHeader();
     const navigate = useNavigate();
 
-    const { isLoading, error, data: ordersData } = useQuery<ServerResponse<IOrder[]>, Error>(
+    const { data: ordersData } = useQuery<ServerResponse<IOrder[]>, Error>(
         ["orders"],
         () => getOrders(authHeader()),
     );

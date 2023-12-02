@@ -11,7 +11,7 @@ const Inventory = () => {
 
     //Handle Modal Okay
     const handleOk = () => {
-
+        setConfirmLoading(true);
     }
 
     

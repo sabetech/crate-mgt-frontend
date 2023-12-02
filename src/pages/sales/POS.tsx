@@ -1,4 +1,4 @@
-import { message, Space, Col, Row, List, Typography, InputNumber, Form, Input, Divider, Button, Table, AutoComplete, Select, Badge, Tag } from 'antd'
+import { message, Space, Col, Row, List, Typography, InputNumber, Form, Input, Divider, Button, Table, AutoComplete, Select, Badge} from 'antd'
 import { DeleteFilled } from '@ant-design/icons';
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { getProductsWithStockBalance } from '../../services/ProductsAPI'
