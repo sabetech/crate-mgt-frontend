@@ -1,9 +1,10 @@
-export interface IUser {
+export type IUser = {
     id?: number;
     name?: string;
     email: string;
     password?: string;
-    role?: Role | string;
+    role?: string;
+    roles?: Role[];
     token?: string;
     token_type?: string;
     expires_at?: string;
@@ -16,5 +17,4 @@ export type Role = {
 
 export type Permission = {
     name: string;
-    description: string;
 }

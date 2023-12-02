@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button, List, Skeleton, Modal, Form, Input, Select, message, Popconfirm } from "antd";
+import { Button, List, Skeleton, Modal, Form, Input, Select, message, Popconfirm, Avatar, Typography } from "antd";
 import { PlusOutlined, LockOutlined } from "@ant-design/icons";
 import { getUsers, addUser, deleteUser, editUser, getRoles } from "../../services/UsersAPI";
 import { useAuthHeader, useAuthUser } from "react-auth-kit";
@@ -21,6 +21,7 @@ const ManageUsers = () => {
         queryKey: ['users'],
         queryFn: () => getUsers(authHeader())
     });
+    console.log("USERS::", users);
 
     const {data: roles, isLoading: isLoadingRoles} = useQuery({
         queryKey: ['roles'],
@@ -139,7 +140,7 @@ const ManageUsers = () => {
             </Button>
             <List 
                 dataSource={users?.data || []}
-                renderItem={item => (
+                renderItem={(item: IUser, index) => (
                     <List.Item
                         actions={[<Button type="primary" ghost onClick={() => onEdit(item.id)}> Edit</Button>, 
                         (user()?.email === item.email) ? null : (
@@ -154,13 +155,27 @@ const ManageUsers = () => {
                                 <Button type="primary" danger>Delete</Button>
                             </Popconfirm>
                         )
-
                     ]}
                     >
                         <Skeleton avatar title={false} loading={isLoading} active>
                         <List.Item.Meta
-                            title={<a href="#">{`${item?.name} (${item?.role?.toString()})`}</a>}
-                            description={item?.email}
+                            avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
+                            title={<a href="#">{item?.name} 
+                            {
+                                (typeof item.roles !== 'undefined' && 
+                                item?.roles?.length > 0 &&
+                                item?.roles[0]?.permissions?.length > 0) ?
+                                ` (${item?.role?.toString()}): ${item?.email}`
+                                : null
+                            
+                            }</a>}
+                            description={
+                                (typeof item.roles !== 'undefined' && 
+                                item?.roles?.length > 0 &&
+                                item?.roles[0]?.permissions?.length > 0) ?
+                                `Permissions: ${item.roles[0].permissions.map(permission => permission.name).join(', ')}`
+                                : null
+                            }
                         />
                         </Skeleton>
                     </List.Item>
@@ -177,7 +192,6 @@ const ManageUsers = () => {
                     layout="vertical"
                     size={"large"}
                     form={form}
-
                 >
                     <Form.Item label="Name" name="name">
                         <Input />
