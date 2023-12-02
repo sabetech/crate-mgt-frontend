@@ -163,8 +163,8 @@ const ManageUsers = () => {
                             title={<a href="#">{item?.name} 
                             {
                                 (typeof item.roles !== 'undefined' && 
-                                item?.roles?.length > 0 &&
-                                item?.roles[0]?.permissions?.length > 0) ?
+                                item?.roles?.length > 0) 
+                                ?
                                 ` (${item?.role?.toString()}): ${item?.email}`
                                 : null
                             

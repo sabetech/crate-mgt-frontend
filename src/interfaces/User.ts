@@ -8,7 +8,8 @@ export type IUser = {
     token?: string;
     token_type?: string;
     expires_at?: string;
-}
+    can: (permission: string) => boolean;
+};
 
 export type Role = {
     name: string;
@@ -17,4 +18,5 @@ export type Role = {
 
 export type Permission = {
     name: string;
+    // description: string; -- TO Added later
 }

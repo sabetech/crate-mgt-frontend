@@ -38,9 +38,10 @@ import LoadoutList from '../pages/inventory/LoadoutList';
 import TakeStock from '../pages/inventory/TakeStock';
 import StockInfo from '../pages/inventory/StockInfo';
 import Orders from '../pages/sales/Orders';
+import { Permission } from '../interfaces/User';
 
 const { Header, Content, Footer, Sider } = Layout;
-type MenuItem = Required<MenuProps>['items'][number];
+type MenuItem = Required<MenuProps>['items'][number] & {permission_required?: string};
 
 const UserDropdown: MenuProps['items'] = [
   {
@@ -62,52 +63,54 @@ function getItem(
   key: React.Key,
   icon?: React.ReactNode,
   children?: MenuItem[],
+  permission_required?: string
 ): MenuItem {
+ 
   return {
     key,
     icon,
     children,
     label,
+    permission_required
   } as MenuItem;
 }
 
 const items: MenuItem[] = [
-  getItem('Dashboard', 'dashboard', <PieChartOutlined />),
+  getItem('Dashboard', 'dashboard', <PieChartOutlined />, undefined, 'view_dashboard'),
   getItem('Customers or VSEs', '_', <UserOutlined />, [
     getItem('Add Customer', 'customers/new'),
     getItem('List All Customers', 'customers'),
     getItem('Return Empties', 'customers/return_empties'),
     // getItem('Empties Loan', 'customers/add_empties_loan'),
     getItem('Record Sales', 'customers/record_sales'),
-  ]),
+  ], 'list_customers'),
   getItem('Empties with GGBL', 'empties-ggbl', <DesktopOutlined />, [
-    getItem('Sales In', 'empties/empties_log'),
-    getItem('Empties Returned Log', 'empties/empties_returned_log'),
+    getItem('Sales In', 'empties/empties_log', undefined, undefined, 'empties_sales_in'),
+    getItem('Empties Returned Log', 'empties/empties_returned_log', undefined, undefined, ''),
     getItem('Add Purchase Order', 'empties/add_purchase_order'),
     getItem('Add Returning Empties', 'empties/add_returning_empties'),
-  ]),
+  ], 'empties_sales_in'),
   getItem('Empties Inhouse Mgt', 'empties-inhouse', <InboxOutlined />, [
     getItem('Count Empties on Ground', 'empties/on-ground'),
     getItem('List Empties on Ground', 'empties/list-on-ground'),
-  ]),
+  ], 'empties_sales_in'),
   getItem('Warehouse', 'warehouse', <AppstoreOutlined />, [
     getItem('Products', 'warehouse/products'),
-    // getItem('Inventory', 'warehouse/inventory'),
     getItem('Pending Orders', 'warehouse/pending-orders'),
     getItem('Receivables', 'warehouse/receivables'),
     getItem('Add Loadout', 'warehouse/addloadout'),
     getItem('Loadouts', 'warehouse/listloadouts'),
     getItem('Take Stock', 'warehouse/takestock'),
     getItem('Stock Info', 'warehouse/stockinfo')
-  ]),
+  ], 'inventory'),
   getItem('POS', 'pos', <CalculatorOutlined />, [
     getItem('Sales', 'POS/sales'),
     getItem('Orders', 'POS/orders')
-  ]),
+  ], 'initial_sale'),
   getItem('Reports', 'reports', <FileTextOutlined />, [
     getItem('Balances', 'reports/balances'),
     getItem('GGBL Transactions', 'reports/gbl_transactions'),
-  ]),
+  ], 'approve'),
 ];
 const LayoutBase = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -120,6 +123,7 @@ const LayoutBase = () => {
   const signOut = useSignOut();
 
   console.log("USER INFO", authUser())
+  const user = authUser();
   
   const handleManageUsers = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
@@ -138,12 +142,21 @@ const LayoutBase = () => {
       signOut();
   };
 
+  const filterMenuItemsBasedOnPermissions = (items: MenuItem[]): MenuItem[] => {
+    return items.filter((item) => {
+      if (typeof user?.roles[0].permissions !== 'undefined' && user?.roles[0].permissions.length > 0){
+        return item.permission_required ? user?.roles[0].permissions.some((usrPermission: Permission) => usrPermission.name === item.permission_required) : false;
+      }
+      return false;
+    });
+  }
+
   return (<Layout style={{ minHeight: '100vh' }}>
     <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} width={'15%'}>
       <div style={{ margin: 16, background: 'rgba(255, 255, 255, 0.2)' }} >
         
       </div>
-      <Menu theme="dark" defaultSelectedKeys={[location.pathname.substring(1)]} selectedKeys={[location.pathname.substring(1)]}  mode="inline" onClick={onClick} items={items}  />
+      <Menu theme="dark" defaultSelectedKeys={[location.pathname.substring(1)]} selectedKeys={[location.pathname.substring(1)]}  mode="inline" onClick={onClick} items={filterMenuItemsBasedOnPermissions(items)}  />
     </Sider>
     <Layout className="site-layout">
       <Header style={{ padding: 0, background: colorBgContainer, display: 'flex', justifyContent: 'flex-end' }}>
