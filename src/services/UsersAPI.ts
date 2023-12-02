@@ -17,3 +17,7 @@ export const deleteUser = async (userId: number, token: string) => {
 export const editUser = async (userId: number, values: IUser, token: string) => {
   return (await api.put(`/users/${userId}`, values, {'Authorization': token})).data;
 }
+
+export const getRoles = async (token: string) => {
+  return (await api.get('/roles', {'Authorization': token})).data;
+}

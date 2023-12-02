@@ -87,9 +87,9 @@ const ListCustomers: React.FC = () => {
                     value.reduce(
                         (acc: number, item: ICustomerReturnEmpties) => {
                             if (item.transaction_type === 'in') {
-                                return acc - item.quantity_transacted;
-                            }else {
                                 return acc + item.quantity_transacted;
+                            }else {
+                                return acc - item.quantity_transacted;
                             }
                         }, 0
                     )

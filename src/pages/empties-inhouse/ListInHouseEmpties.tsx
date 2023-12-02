@@ -6,7 +6,7 @@ import { ServerResponse } from "../../interfaces/Server";
 import { getInHouseEmpties } from "../../services/EmptiesAPI";
 import type { ColumnsType } from 'antd/es/table';
 import TableEmptiesOnGround from "../../components/TableEmptiesOnGround";
-import { Table, DatePicker, Row, Col, Statistic, Card } from 'antd';
+import { Table, DatePicker, Row, Col, Statistic, Card, Typography } from 'antd';
 import { formatDate } from "../../utils/helpers";
 
 const ListInHouseEmpties = () => {
@@ -60,6 +60,7 @@ const ListInHouseEmpties = () => {
 
     return (
         <>
+        <Typography.Title level={2}>Empties On Ground</Typography.Title>
         Select a date Range <RangePicker onChange={dateRangeOnChange}/>
             <Row gutter={16}>
                 <Col span={12}>

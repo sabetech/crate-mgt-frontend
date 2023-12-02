@@ -118,6 +118,8 @@ const LayoutBase = () => {
   const location  = useLocation();
   const isAuthenticated = useIsAuthenticated();
   const signOut = useSignOut();
+
+  console.log("USER INFO", authUser())
   
   const handleManageUsers = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();

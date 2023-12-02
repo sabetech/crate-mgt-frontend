@@ -69,7 +69,7 @@ const ReturnFromVSEs = () => {
 
         console.log("REQUEST:::",returnFromVSEs);
 
-        mutate(returnFromVSEs);
+        // mutate(returnFromVSEs);
 
     }
 
@@ -128,20 +128,19 @@ const ReturnFromVSEs = () => {
                                 <Row gutter={5} style={{padding: '0px'}}>
                                     <Col className="gutter-row" span={10} style={{padding: 10}}>
                                         <Typography.Text strong>{ vseloadout.product.sku_name }</Typography.Text>
-                                        <Form.Item hidden={true} name={'products[]'} initialValue={vseloadout.product.id} />
+                                        <Form.Item hidden={true} name={`product_${vseloadout.product.id}`} initialValue={vseloadout.product.id} />
                                         <div ><Tag color="gold">Quantity Given: { vseloadout.quantity }</Tag></div>
                                     </Col>
                                     <Col className="gutter-row" span={12}>
                                         <Form.Item 
                                             label="Quantity Returned"
-                                            name={'quantity[]'}
+                                            name={`product_${vseloadout.product.id}_returned`}
                                             rules={[{ required: true, message: 'Please Enter Quantity' }]}
                                             style={{margin: 0}}
                                             initialValue={vseloadout.returned ?? 0}
                                         >
                                             <InputNumber placeholder="0"/>
                                         </Form.Item>
-                                        
                                     </Col> 
                                 </Row>
                             </div>

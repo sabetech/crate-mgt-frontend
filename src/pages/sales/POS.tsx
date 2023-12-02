@@ -37,9 +37,7 @@ const POS = () => {
     const { data: productsData } = useQuery<ServerResponse<IProductWithBalance[]>, Error>(
         ['products_all'],
         () => getProductsWithStockBalance(authHeader())
-    )
-    
-    console.log("PRODUCTSS::::", products);
+    );
 
     const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
         ['customers'],
@@ -150,11 +148,29 @@ const POS = () => {
                 content: "Please select a product"
             });
             return;
-        }   
+        }
+
+        if (typeof form.getFieldValue("quantity") === 'undefined') {
+            messageApi.open({
+                type: 'error',
+                content: "Please enter a quantity"
+            });
+            return;
+        }
 
         const product = selectedProduct;
         const quantity = form.getFieldValue("quantity");
         const unitPrice = form.getFieldValue("unit_price");
+
+        if (product.empty_returnable && customer.customer_type !== 'wholesaler') {
+            if (emptiesBalance < quantity) { 
+                messageApi.open({
+                    type: 'error',
+                    content: "Customer does not have enough empties to make this purchase"
+                });
+                return;
+            }
+        }
 
         if (typeof product !== 'undefined') {
             setTableContent([{id: product.id, product: product, quantity: quantity, key: product.id} as ISaleItem, ...tableContent]);
@@ -499,7 +515,8 @@ const POS = () => {
                                 <Select size={"large"} dropdownMatchSelectWidth={false} placement={'bottomRight'} defaultValue={paymentType} options={[
                                     {value:"Cash", label: 'Cash'}, 
                                     {value:"Mobile Money", label: 'Mobile Money'},
-                                    {value:"Cheque", label: 'Cheque'}  
+                                    {value:"Cheque", label: 'Cheque'},
+                                    {value:"Bank Transfer", label: 'Bank Transfer'}  
                                     ]} onChange={(value) =>setPaymentType(value)}/>
                             </div>
 

@@ -3,8 +3,18 @@ export interface IUser {
     name?: string;
     email: string;
     password?: string;
-    role?: string;
+    role?: Role | string;
     token?: string;
     token_type?: string;
     expires_at?: string;
+}
+
+export type Role = {
+    name: string;
+    permissions: Permission[];
+};
+
+export type Permission = {
+    name: string;
+    description: string;
 }

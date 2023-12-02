@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, List, Skeleton, Modal, Form, Input, Select, message, Popconfirm } from "antd";
 import { PlusOutlined, LockOutlined } from "@ant-design/icons";
-import { getUsers, addUser, deleteUser, editUser } from "../../services/UsersAPI";
+import { getUsers, addUser, deleteUser, editUser, getRoles } from "../../services/UsersAPI";
 import { useAuthHeader, useAuthUser } from "react-auth-kit";
-import { IUser } from "../../interfaces/User";
+import { IUser, Role } from "../../interfaces/User";
 import { AppError } from "../../interfaces/Error";
 const ManageUsers = () => {
     const [form] = Form.useForm();
@@ -20,6 +20,11 @@ const ManageUsers = () => {
     const {data: users, isLoading} = useQuery({
         queryKey: ['users'],
         queryFn: () => getUsers(authHeader())
+    });
+
+    const {data: roles, isLoading: isLoadingRoles} = useQuery({
+        queryKey: ['roles'],
+        queryFn: () => getRoles(authHeader())
     });
     
     const { mutate, isLoading: isMutating } = useMutation(
@@ -154,7 +159,7 @@ const ManageUsers = () => {
                     >
                         <Skeleton avatar title={false} loading={isLoading} active>
                         <List.Item.Meta
-                            title={<a href="#">{item?.name} ({item?.role})</a>}
+                            title={<a href="#">{`${item?.name} (${item?.role?.toString()})`}</a>}
                             description={item?.email}
                         />
                         </Skeleton>
@@ -190,13 +195,12 @@ const ManageUsers = () => {
                             />
                     </Form.Item>
                     <Form.Item label="Select" name="role">
-                        <Select>
-                            <Select.Option value="admin">Admin</Select.Option>
-                            <Select.Option value="operations manager">Operations Manager</Select.Option>
-                            <Select.Option value="empties manager">Empties Manager</Select.Option>
-                            <Select.Option value="cashier">Cashier</Select.Option>
-                            <Select.Option value="sales manager">Sales Mgr</Select.Option>
-                        </Select>
+                        <Select
+                            loading={isLoadingRoles}
+                            placeholder="Select a role"
+                            options={roles?.data?.map((role: Role) => ({label: role.name, value: role.name}))}
+                        />
+                            
                     </Form.Item>
                 </Form>
             </Modal>
