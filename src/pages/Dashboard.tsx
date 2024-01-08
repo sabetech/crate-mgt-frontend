@@ -19,9 +19,11 @@ const Dashboard = () => {
     const { data:customers} = useQuery<ServerResponse<ICustomer[]>, Error>(
         {
             queryKey: ['customer_with_balance'],
-            queryFn: () => getCustomersWithBalance(authHeader())
+            queryFn: () => getCustomersWithBalance(authHeader(), {customer_type: 'all'})
         }
     );
+
+    console.log("CUSTOMERS", customers?.data)
 
     const { data: totalEmpties } = useQuery(
         {

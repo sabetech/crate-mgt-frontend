@@ -516,7 +516,7 @@ const POS = () => {
                                     {value:"Cash", label: 'Cash'}, 
                                     {value:"Mobile Money", label: 'Mobile Money'},
                                     {value:"Cheque", label: 'Cheque'},
-                                    {value:"Bank Transfer", label: 'Bank Transfer'}  
+                                    {value:"Bank Transfer", label: 'Bank Transfer'}
                                     ]} onChange={(value) =>setPaymentType(value)}/>
                             </div>
 
@@ -545,8 +545,6 @@ const POS = () => {
                                     (<Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={saveAndPrint} disabled={total === 0}>Save and Print</Button>)
 
                                 }
-                                
-
                             </div>
                         </div>
                     </div>

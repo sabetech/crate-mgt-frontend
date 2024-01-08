@@ -6,6 +6,7 @@ import { getLoadoutByVSE } from '../../services/InventoryAPI';
 import { useAuthHeader } from 'react-auth-kit';
 import dayjs from 'dayjs';
 import { ILoadoutInfo } from '../../interfaces/Inventory';
+import { IVSECustomer } from '../../interfaces/Customer';
 
 const LoadoutList: React.FC = () => {
     const authHeader = useAuthHeader();
@@ -14,15 +15,13 @@ const LoadoutList: React.FC = () => {
 
     const { data:vseCustomers, isLoading } = useQuery(
         {
-            queryKey: ['loadouts'],
+            queryKey: ['loadouts', date],
             queryFn: () => getLoadoutByVSE(authHeader(), date),
             onError: (error: Error) => {
                 console.log(error);
             }
         }
     );
-
-    console.log("Date:::", date);
 
     useEffect(() => {
 
@@ -77,7 +76,7 @@ const LoadoutList: React.FC = () => {
             dataIndex: 'vse_outstandingbalance',
             key: 'vse_outstandingbalance'
         }
-    ]
+    ];
 
 
     return (
@@ -90,15 +89,15 @@ const LoadoutList: React.FC = () => {
                 <Space direction={"horizontal"}>
                 {
                     isLoading &&
-                                <>
-                                    <Skeleton.Node active={true} style={{width: 300, height: 140}}>
-                                        <CreditCardOutlined style={{ fontSize: 60, color: '#bfbfbf' }} />
-                                    </Skeleton.Node>
-                                    <Skeleton.Node active={true} style={{width: 300, height: 140}}>
-                                        <CreditCardOutlined style={{ fontSize: 60, color: '#bfbfbf' }} />
-                                    </Skeleton.Node>
-                                </>  ||
-                                <>
+                        <>
+                            <Skeleton.Node active={true} style={{width: 300, height: 140}}>
+                                <CreditCardOutlined style={{ fontSize: 60, color: '#bfbfbf' }} />
+                            </Skeleton.Node>
+                            <Skeleton.Node active={true} style={{width: 300, height: 140}}>
+                                <CreditCardOutlined style={{ fontSize: 60, color: '#bfbfbf' }} />
+                            </Skeleton.Node>
+                        </>  ||
+                        <>
                         <Card title={`Closing Stock as at ${dayjs(date, { format: 'YYYY-MM-DD' }).format('D MMM YYYY')}`} >
                             <Statistic 
                                 value={  0 }
@@ -117,28 +116,18 @@ const LoadoutList: React.FC = () => {
 
                 <Table 
                     style={{ marginTop: 20 }}
-                    expandable=
-                    {{
-                        expandedRowRender: (_) => <Table columns={[
-                            { title: 'SKU', dataIndex: 'sku_name', key: 'sku' },
-                            { title: 'Quantity', dataIndex: 'quantity', key: 'quantity' },
-                            { title: 'Quantity Sold', dataIndex: 'quantity_sold', key: 'quantity_sold' },
-                            { title: 'Quantity Returned', dataIndex: 'returned', key: 'returned' },
-                            { title: 'Outstanding Balance', dataIndex: 'outstanding_balance', key: 'outstanding_balance' },
-                        ]}
-
-                        />,
-                    }}
                     columns={columns}
-                    dataSource={vseCustomers?.data.map(vseCustomer => ({
+                    dataSource={vseCustomers?.data.map(vseCustomer => {
+                        return {
                         key: vseCustomer.id,
                         vse: vseCustomer.name,
                         quantity: vseCustomer.vse_loadout.reduce((acc: number, item: ILoadoutInfo) => acc + item.quantity, 0),
                         quantity_sold: vseCustomer.vse_loadout.reduce((acc: number, item: ILoadoutInfo) => acc + (item.quantity_sold ?? 0) , 0),
                         quantity_returned: vseCustomer.vse_loadout.reduce((acc: number, item: ILoadoutInfo) => acc + (item.returned ?? 0) , 0),
                         outstanding_balance: vseCustomer.vse_loadout.reduce((acc: number, item: ILoadoutInfo) => acc + (item.vse_outstandingbalance ?? 0) , 0),
-                    })
-                    )}
+                        }
+                    }
+                )}
                     loading={isLoading}
                     pagination={false}
                 />

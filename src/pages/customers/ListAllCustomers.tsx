@@ -13,6 +13,7 @@ const { Search } = Input;
 const ListCustomers: React.FC = () => {
     const authHeader = useAuthHeader();
     const [filterByVSE, toggleFilterByVSE] = useState<boolean>(false);
+    const [filterByWholesaler, toggleFilterByWholesaler] = useState<boolean>(false);
     const [customerList, setCustomerList] = React.useState<ICustomer[] | undefined>(undefined);
 
     const { data, isLoading } = useQuery<ServerResponse<ICustomer[]>, Error>(
@@ -37,8 +38,9 @@ const ListCustomers: React.FC = () => {
 
     useEffect(() => {
         if (!customerList) return;
-        
+         
         if (filterByVSE) {
+            //if (filterByWholesaler) toggleFilterByWholesaler(false);
             setCustomerList(customerList.filter((customer) => customer.customer_type === 'retailer-vse' ));
         }else{
             if (data) {
@@ -51,9 +53,29 @@ const ListCustomers: React.FC = () => {
 
     },[filterByVSE]);
 
+    useEffect(() => {
+        if (!customerList) return;
+         
+        if (filterByWholesaler) {
+            // /if (filterByVSE) toggleFilterByVSE(false)
+            
+            setCustomerList(customerList.filter((customer) => customer.customer_type === 'wholesaler' ));
+        }else{
+            if (data) {
+                setCustomerList(data.data?.map((item) => ({
+                    ...item,
+                    key: item.id
+                })));
+            }
+        }
+    },[filterByWholesaler]);
+
 
     const handleFilterByVSE = () => {
         toggleFilterByVSE((prev) => !prev);
+    }
+    const handleFilterByWholesalers = () => {
+        toggleFilterByWholesaler((prev) => !prev);
     }
     
     const onSearch = (value: string) => {
@@ -122,7 +144,8 @@ const ListCustomers: React.FC = () => {
                     size="large"
                     onSearch={onSearch}
                 />
-                <Button type={filterByVSE ? "primary" : "ghost"} onClick={() => handleFilterByVSE()}>Filter By VSE</Button>
+                <Button type={filterByVSE ? "primary" : "default"} onClick={() => handleFilterByVSE()} disabled={filterByWholesaler}>Filter By VSE</Button>
+                <Button type={filterByWholesaler ? "primary" : "default"} onClick={() => handleFilterByWholesalers()} disabled={filterByVSE}>Filter By Wholesalers</Button>
             </Space>
             <TableCustomers 
                 columns={columms}
