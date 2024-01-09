@@ -6,7 +6,7 @@ import { getLoadoutByVSE } from '../../services/InventoryAPI';
 import { useAuthHeader } from 'react-auth-kit';
 import dayjs from 'dayjs';
 import { ILoadoutInfo } from '../../interfaces/Inventory';
-import { IVSECustomer } from '../../interfaces/Customer';
+// import { IVSECustomer } from '../../interfaces/Customer';
 
 const LoadoutList: React.FC = () => {
     const authHeader = useAuthHeader();
