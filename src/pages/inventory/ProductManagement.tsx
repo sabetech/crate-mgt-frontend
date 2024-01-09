@@ -1,29 +1,56 @@
 import { useEffect, useState } from "react";
-import { Button, Space, Table, Tooltip, Typography, Modal, Form, Input, Checkbox, InputNumber} from "antd";
+import { Button, Space, Table, Tooltip, Typography, Modal, Form, Input, Checkbox, InputNumber, message} from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getProductsWithStockBalance } from "../../services/ProductsAPI";
+import { addProduct, updateProduct } from "../../services/ProductsAPI";
 import { useAuthHeader } from "react-auth-kit";
-import { IProductWithBalance } from "../../interfaces/Product";
+import { IProduct, IProductWithBalance } from "../../interfaces/Product";
 
 const { Search } = Input;
 
 const ProductManagement = () => {
 
     const authHeader = useAuthHeader();
+    const [messageApi, contextHolder ] = message.useMessage();
+    const queryClient = useQueryClient()
     const [productsWithBalance, setProductWithBalance] = useState<IProductWithBalance[]>();
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     enum ProductMutationState {
         create, update
     }
     const [productMutationState, setProductMutationState] = useState<ProductMutationState>(ProductMutationState.create);
-    const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
     const [checkIsReturnable, setCheckIsReturnable] = useState<boolean>(false);
     const [form] = Form.useForm()
 
     const { data: products, isLoading } = useQuery(
             ['products_balances'],
             () => getProductsWithStockBalance(authHeader())
+    );
+
+    const { mutate, isLoading: isMutating } = useMutation({
+        mutationFn: (values: IProduct) => {
+                if (productMutationState === ProductMutationState.create) 
+                    return addProduct(values, authHeader());
+                else
+                if (values.id != undefined)
+                    return updateProduct(values.id, values, authHeader()) 
+                else 
+                return new Promise((_, reject) => reject("Product ID is undefined"));
+            },
+            onSuccess: () => {
+                form.resetFields();
+                queryClient.invalidateQueries()
+                setModalOpen(false);
+                
+                messageApi.destroy();
+                messageApi.open({
+                    type: 'success',
+                    content: 'Product has been saved!',
+                });
+
+            }
+        }
     );
 
     const onSearch = (searchTerm: string) => {
@@ -37,7 +64,28 @@ const ProductManagement = () => {
     }
         
     const handleOk = () => {
-        setConfirmLoading(true);
+        
+        if (productMutationState === ProductMutationState.create) {
+            mutate({
+                sku_name: form.getFieldValue("product_name"),
+                sku_code: form.getFieldValue("sku_code"),
+                empty_returnable: checkIsReturnable,
+                retail_price: form.getFieldValue("retail_price"),
+                wholesale_price: form.getFieldValue("wholesale_price"),
+            } as IProduct)
+        } else {
+
+        mutate({
+            id: productsWithBalance?.find((product) => product.sku_code === form.getFieldValue("sku_code"))?.id,
+            sku_name: form.getFieldValue("product_name"),
+            sku_code: form.getFieldValue("sku_code"),
+            empty_returnable: checkIsReturnable,
+            retail_price: form.getFieldValue("retail_price"),
+            wholesale_price: form.getFieldValue("wholesale_price"),
+        } as IProduct);
+
+    }
+
     }
 
 
@@ -48,6 +96,7 @@ const ProductManagement = () => {
         form.setFieldValue("retail_price", product.retail_price);
         form.setFieldValue("wholesale_price", product.wholesale_price);
         setProductMutationState(ProductMutationState.update);
+
         setModalOpen(true);
     }
 
@@ -105,6 +154,7 @@ const ProductManagement = () => {
 
     return (
         <div>
+            {contextHolder}
             <Typography.Title level={2}>Product Management</Typography.Title>
             <Space direction={"vertical"} style={{ display: 'flex' }}>
                 <Space direction={"horizontal"} style={{ marginBottom: "2rem" }}>
@@ -135,7 +185,7 @@ const ProductManagement = () => {
                 title={productMutationState === ProductMutationState.create ? "Add New Product" : "Edit Product"}
                 open={modalOpen}
                 onOk={handleOk}
-                confirmLoading={confirmLoading}
+                confirmLoading={isMutating}
                 onCancel={() => setModalOpen(false)}
                 
                 >

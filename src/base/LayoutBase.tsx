@@ -78,17 +78,16 @@ function getItem(
 const items: MenuItem[] = [
   getItem('Dashboard', 'dashboard', <PieChartOutlined />, undefined, 'view_dashboard'),
   getItem('Customers or VSEs', '_', <UserOutlined />, [
-    getItem('Add Customer', 'customers/new'),
-    getItem('List All Customers', 'customers'),
-    getItem('Return Empties', 'customers/return_empties'),
-    // getItem('Empties Loan', 'customers/add_empties_loan'),
-    getItem('Record Sales', 'customers/record_sales'),
-  ], 'list_customers'),
+    getItem('Add Customer', 'customers/new', undefined, undefined, 'create_customer'),
+    getItem('List All Customers', 'customers', undefined, undefined, 'list_customers'),
+    getItem('Return Empties', 'customers/return_empties', undefined, undefined, 'return_empties'),
+    getItem('Record Sales', 'customers/record_sales', undefined, undefined, 'record_sales'),
+  ], ''),
   getItem('Empties with GGBL', 'empties-ggbl', <DesktopOutlined />, [
     getItem('Sales In', 'empties/empties_log', undefined, undefined, 'empties_sales_in'),
-    getItem('Empties Returned Log', 'empties/empties_returned_log', undefined, undefined, ''),
-    getItem('Add Purchase Order', 'empties/add_purchase_order'),
-    getItem('Add Returning Empties', 'empties/add_returning_empties'),
+    getItem('Empties Returned Log', 'empties/empties_returned_log', undefined, undefined, 'empties_returned'),
+    getItem('Add Purchase Order', 'empties/add_purchase_order', undefined, undefined, 'empties_sales_in' ),
+    getItem('Add Returning Empties', 'empties/add_returning_empties', undefined, undefined, 'empties_returned'),
   ], 'empties_sales_in'),
   getItem('Empties Inhouse Mgt', 'empties-inhouse', <InboxOutlined />, [
     getItem('Count Empties on Ground', 'empties/on-ground'),
@@ -136,6 +135,9 @@ const LayoutBase = () => {
   const navigate = useNavigate();
 
   const onClick: MenuProps['onClick'] = (e) => {
+    
+    console.log(isAuthenticated());
+
     if (isAuthenticated())
       navigate('/' + e.key)
     else

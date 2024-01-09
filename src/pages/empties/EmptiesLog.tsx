@@ -17,7 +17,6 @@ const EmptiesLog: React.FC = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const queryClient = useQueryClient()
 
-    //use react query to fetch data from server
     const { data: receivedEmpties } = useQuery<ServerResponse<IEmptyLog[]>, Error>({
         queryKey: ['empties_received'],
         queryFn: () => getEmptiesLog(authHeader()),

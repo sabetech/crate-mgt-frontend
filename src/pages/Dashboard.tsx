@@ -57,7 +57,7 @@ const Dashboard = () => {
         <Col >
             <Card title="Total Empties" bordered={false} style={{cursor: 'pointer'}} onClick={() => handleClick('emptiesOnGround')}>
             <Statistic
-                title={"Empties Ground as at " + currentEmptiesOnGround?.date}
+                title={"Empties Ground as at " + currentEmptiesOnGround ? currentEmptiesOnGround?.date : "" }
                 value={currentEmptiesOnGround?.quantity}
                 precision={0}
                 valueStyle={{ color: '#3f8600' }}
@@ -74,7 +74,7 @@ const Dashboard = () => {
                 />
             </Card>
         </Col>
-        <Col >
+        {/* <Col >
             <Card title="Empties with GBL" bordered={false} style={{cursor: 'pointer'}}>
                 <Statistic
                     title="Active"
@@ -84,8 +84,8 @@ const Dashboard = () => {
                     
                     />
             </Card>
-        </Col>
-        <Col >
+        </Col> */}
+        {/* <Col >
             <Card title="Opening Stock" bordered={false} style={{cursor: 'pointer'}}>
                 <Statistic
                     title="Date: 12/12/2020"
@@ -93,7 +93,7 @@ const Dashboard = () => {
                     valueStyle={{ color: '#3f8600' }}
                     />
             </Card>
-        </Col>
+        </Col> */}
     </Row>
     );
 }

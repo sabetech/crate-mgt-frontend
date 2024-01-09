@@ -97,6 +97,7 @@ const CustomerReturnEmpties = () => {
                 size={'large'}
                 form={form}
                 onFinish={onFinish}
+                initialValues={{ transaction_type: 'in' }}
             >
                 <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gridGap: '20px'}}>
                     <div>
