@@ -82,7 +82,7 @@ const items: MenuItem[] = [
     getItem('List All Customers', 'customers', undefined, undefined, 'list_customers'),
     getItem('Return Empties', 'customers/return_empties', undefined, undefined, 'return_empties'),
     getItem('Record Sales', 'customers/record_sales', undefined, undefined, 'record_sales'),
-  ], ''),
+  ], 'list_customers'),
   getItem('Empties with GGBL', 'empties-ggbl', <DesktopOutlined />, [
     getItem('Sales In', 'empties/empties_log', undefined, undefined, 'empties_sales_in'),
     getItem('Empties Returned Log', 'empties/empties_returned_log', undefined, undefined, 'empties_returned'),
