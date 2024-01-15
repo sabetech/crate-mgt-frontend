@@ -7,7 +7,7 @@ import { AxiosError } from 'axios';
 // import opk_img from '../../assets/opk_img.jpeg';
 // import opk_img2 from '../../assets/opk_img2.jpeg';
 // import opk_img3 from '../../assets/opk_img3.jpeg';
-// import opk_img4 from '../../assets/opk_img4.jpeg';
+import opk_img4 from '../../assets/opk_img4.jpeg';
 import opk_logo from '../../assets/opk_logo.png';
 
 
@@ -99,7 +99,7 @@ const Login: React.FC = () => {
             </div>
             <div style={{
                             width: "50%", 
-                            backgroundImage: "url('../src/assets/opk_img4.jpeg')",
+                            backgroundImage: "url("+ opk_img4 +")",
                             
                         }}>
                 {/* <Carousel autoplay> */}

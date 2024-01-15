@@ -1,23 +1,15 @@
-# Base image
-FROM node:16.13.0-alpine3.14
+FROM node:18-alpine
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the container
-COPY package.json package-lock.json ./
+COPY package.json .
 
-# Install all dependencies (including devDependencies)
-RUN npm ci
+RUN npm install
 
-# Copy the application code
 COPY . .
 
-# Build the production version of the application
 RUN npm run build
 
-# Expose the desired port
-EXPOSE 3000
+EXPOSE 8080
 
-# Start the application
-CMD ["npm", "run", "serve", "--verbose"]
+CMD [ "npm", "run", "preview" ]
