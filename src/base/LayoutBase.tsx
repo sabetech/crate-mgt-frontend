@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dropdown, Breadcrumb, Layout, Menu, theme, Avatar, Space } from 'antd';
+import { Dropdown, Breadcrumb, Layout, Menu, theme, Avatar, Space, Modal } from 'antd';
 import Dashboard from '../pages/Dashboard';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import EmptiesLog from '../pages/empties/EmptiesLog';
@@ -21,12 +21,12 @@ import AddNewCustomers from '../pages/customers/AddNewCustomers';
 import ListCustomers from '../pages/customers/ListAllCustomers';
 import RecordVSESales from '../pages/customers/RecordVSESales';
 import Login from '../pages/users/Login';
-import { useAuthUser, useIsAuthenticated, useSignOut } from 'react-auth-kit';
+import { useAuthHeader, useAuthUser, useIsAuthenticated, useSignOut } from 'react-auth-kit';
 import CustomerReturnEmpties from '../pages/customers/ReturnEmpties';
 import SaveInHouseEmpties from '../pages/empties-inhouse/EmptiesOnGround';
 import ListInHouseEmpties from '../pages/empties-inhouse/ListInHouseEmpties';
 import ManageUsers from '../pages/users/ManageUsers';
-import LogoutConfirm from '../components/LogoutConfirm';
+import { logout } from '../services/AuthAPI';
 import CreateCustomerEmptiesLoan from '../pages/customers/CreateCustomerEmptiesLoan';
 import CustomerHistory from '../pages/customers/CustomerHistory';
 import ProductManagement from '../pages/inventory/ProductManagement';
@@ -42,21 +42,6 @@ import { Permission } from '../interfaces/User';
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number] & {permission_required?: string};
-
-const UserDropdown: MenuProps['items'] = [
-  {
-    type: 'divider',
-  },
-  {
-    label: (
-      <a  href="/users/logout">
-        Logout
-      </a>
-    ),
-    key: 'logout',
-    
-  },
-];
 
 function getItem(
   label: React.ReactNode,
@@ -115,20 +100,52 @@ const LayoutBase = () => {
   const [collapsed, setCollapsed] = useState(false);
   
   const authUser = useAuthUser();
-  
-  const userState = authUser();
+  console.log("USER INFO", authUser())
+  const user = authUser();
   const location  = useLocation();
   const isAuthenticated = useIsAuthenticated();
   const signOut = useSignOut();
-
-  console.log("USER INFO", authUser())
-  const user = authUser();
+  
+  const authHeader = useAuthHeader();
   
   const handleManageUsers = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
     navigate("/users/manage");
   }
+
+  const handleLogout = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault();
+    Modal.confirm({
+      title: 'Confirm Logout',
+      content: 'Are you sure you want to logout?',
+      okText: 'Logout',
+      cancelText: 'Cancel',
+      onOk() {
+        logout(authHeader());
+        signOut();
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+
+  }
   
+  const UserDropdown: MenuProps['items'] = [
+    {
+      type: 'divider',
+    },
+    {
+      label: (
+        <a onClick={handleLogout}>
+          Logout
+        </a>
+      ),
+      key: 'logout',
+      
+    },
+  ];
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -173,7 +190,7 @@ const LayoutBase = () => {
                             }, ...UserDropdown,]} }>
           <a onClick={(e) => e.preventDefault()}>
             <Space>
-            <h3>{ userState?.name }({userState?.email})</h3>
+            <h3>{ user?.name }({user?.email})</h3>
             <Avatar size={"large"} icon={<UserOutlined />} />
               <DownOutlined />
             </Space>
@@ -215,7 +232,6 @@ const LayoutBase = () => {
             <Route path="POS/orders" element={<Orders />} />
             
             <Route path="/users/manage" element={<ManageUsers />} />
-            <Route path="/users/logout" element={<LogoutConfirm />} />
             <Route path={"/login"} element={<Login />} />
           </Routes>
         </div>
