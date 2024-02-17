@@ -162,6 +162,14 @@ const POS = () => {
         const quantity = form.getFieldValue("quantity");
         const unitPrice = form.getFieldValue("unit_price");
 
+        if (!customer) {
+            messageApi.open({
+                type: 'error',
+                content: "Please Choose a customer!"
+            });
+            return;
+        }
+
         if (product.empty_returnable && customer.customer_type !== 'wholesaler') {
             if (emptiesBalance < quantity) { 
                 messageApi.open({
@@ -513,10 +521,10 @@ const POS = () => {
                             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
                                 <Typography.Text strong style={{ fontSize: '1em'}}>Payment Type </Typography.Text>
                                 <Select size={"large"} dropdownMatchSelectWidth={false} placement={'bottomRight'} defaultValue={paymentType} options={[
-                                    {value:"Cash", label: 'Cash'}, 
-                                    {value:"Mobile Money", label: 'Mobile Money'},
-                                    {value:"Cheque", label: 'Cheque'},
-                                    {value:"Bank Transfer", label: 'Bank Transfer'}
+                                    {value:"cash", label: 'Cash'}, 
+                                    {value:"mobile-money", label: 'Mobile Money'},
+                                    {value:"cheque", label: 'Cheque'},
+                                    {value:"bank-transfer", label: 'Bank Transfer'}
                                     ]} onChange={(value) =>setPaymentType(value)}/>
                             </div>
 

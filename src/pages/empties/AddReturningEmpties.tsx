@@ -59,8 +59,8 @@ const AddReturningEmpties = () => {
             returned_by: values.returned_by,
             pallets_number: values.pallets_number,
             pcs_number: values.pcs_number,
-            quantity: values['product-quanties'].reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0),
-            products: values['product-quanties'].map((item: any) => ({
+            quantity: values.products.reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0),
+            products: values.products.map((item: any) => ({
                 product_id: item.product, // product id
                 quantity: parseInt(item.quantity)
             }))
