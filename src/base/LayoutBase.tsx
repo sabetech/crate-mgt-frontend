@@ -39,6 +39,7 @@ import TakeStock from '../pages/inventory/TakeStock';
 import StockInfo from '../pages/inventory/StockInfo';
 import Orders from '../pages/sales/Orders';
 import { Permission } from '../interfaces/User';
+import EmptiesBalance from '../pages/empties-inhouse/EmptiesBalance';
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number] & {permission_required?: string};
@@ -77,6 +78,7 @@ const items: MenuItem[] = [
   getItem('Empties Inhouse Mgt', 'empties-inhouse', <InboxOutlined />, [
     getItem('Count Empties on Ground', 'empties/on-ground'),
     getItem('List Empties on Ground', 'empties/list-on-ground'),
+    getItem('Empties Balance', 'empties/empties-balance'),
   ], 'empties_sales_in'),
   getItem('Warehouse', 'warehouse', <AppstoreOutlined />, [
     getItem('Products', 'warehouse/products'),
@@ -218,6 +220,7 @@ const LayoutBase = () => {
             <Route path="/empties/add_returning_empties" element={<AddReturningEmpties />} />
             <Route path="/empties/on-ground" element={<SaveInHouseEmpties />} />
             <Route path="/empties/list-on-ground" element={<ListInHouseEmpties />} />
+            <Route path="/empties/empties-balance" element={<EmptiesBalance />} />
             
             <Route path="/warehouse/products" element={<ProductManagement />} />
             {/* <Route path="/warehouse/inventory" element={<Inventory />} /> */}

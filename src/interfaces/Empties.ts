@@ -45,4 +45,11 @@ export interface IEmptiesInHouseCount {
     pcs_number?: number;
 }
 
+export interface IEmptiesBalance {
+    product_id: number;
+    quantity: number;
+    product: {
+        sku_name: string
+    }
+}
 //Add Pallets???

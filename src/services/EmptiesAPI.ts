@@ -1,9 +1,14 @@
 import * as api from './API';
-import { IEmptyLog, IEmptyReturnedLog, IEmptiesInHouseCount } from '../interfaces/Empties';
+import { IEmptyLog, IEmptyReturnedLog, IEmptiesInHouseCount, IEmptiesBalance } from '../interfaces/Empties';
 import { ServerResponse  } from '../interfaces/Server'
 
 export const getEmptiesLog = async (token: string): Promise<ServerResponse<IEmptyLog[]>> => {
     return (await api.get('/empties-receiving-logs', {'Authorization': token})).data;
+}
+
+export const getEmptiesBalance = async (token: string): Promise<ServerResponse<IEmptiesBalance>> => {
+    console.log("TOKEN::", token)
+    return (await api.get('/empties/balance', {'Authorization': token})).data;
 }
 
 export const getEmptiesReturnedLog = async (token: string): Promise<ServerResponse<IEmptyReturnedLog[]>> => {
