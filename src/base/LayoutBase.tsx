@@ -40,6 +40,7 @@ import StockInfo from '../pages/inventory/StockInfo';
 import Orders from '../pages/sales/Orders';
 import { Permission } from '../interfaces/User';
 import EmptiesBalance from '../pages/empties-inhouse/EmptiesBalance';
+import DailySalesReport from '../pages/reports/DailySalesReport';
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number] & {permission_required?: string};
@@ -94,8 +95,8 @@ const items: MenuItem[] = [
     getItem('Orders', 'POS/orders')
   ], 'initial_sale'),
   getItem('Reports', 'reports', <FileTextOutlined />, [
-    getItem('Balances', 'reports/balances'),
-    getItem('GGBL Transactions', 'reports/gbl_transactions'),
+    getItem('Daily Sales Report', 'reports/daily-sales-report'),
+    
   ], 'approve'),
 ];
 const LayoutBase = () => {
@@ -233,6 +234,8 @@ const LayoutBase = () => {
 
             <Route path="POS/sales" element={<POS />} />
             <Route path="POS/orders" element={<Orders />} />
+
+            <Route path="reports/daily-sales-report" element={<DailySalesReport />} />
             
             <Route path="/users/manage" element={<ManageUsers />} />
             <Route path={"/login"} element={<Login />} />
