@@ -59,9 +59,6 @@ const TableDailySalesReport = ({customerOption, dateRange}: SalesReportProps) =>
         }
     ];
 
-    console.log(customerOption);
-    console.log(dateRange);
-
     return (
         <>
         <Button type="primary" size={'large'} style={{float: 'right'}}>Print Report</Button>
