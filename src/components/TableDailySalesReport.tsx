@@ -16,7 +16,7 @@ const TableDailySalesReport = ({customerOption, dateRange}: SalesReportProps) =>
     const authHeader = useAuthHeader();
 
     const { data: salesReport } = useQuery<ServerResponse<TSaleReport[]>, Error>(
-        ['sales_report'],
+        ['sales_report', dateRange],
         () => {
             // if (dateRange[1] == '') return  Promise.resolve({data: []});
             return getDailySalesReport( authHeader(), dateRange, customerOption )
@@ -59,9 +59,13 @@ const TableDailySalesReport = ({customerOption, dateRange}: SalesReportProps) =>
         }
     ];
 
+    const showPDF = () => {
+        
+    }
+
     return (
         <>
-        <Button type="primary" size={'large'} style={{float: 'right'}}>Print Report</Button>
+        <Button type="primary" size={'large'} style={{float: 'right'}} onClick={showPDF}>Print Report</Button>
             <Table 
                 columns={columns} 
                 dataSource={salesReport?.data} 
