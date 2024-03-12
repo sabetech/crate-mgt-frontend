@@ -1,7 +1,7 @@
 import {  Row, Col, Statistic, Card, Typography, List } from 'antd';
 import { useAuthHeader } from "react-auth-kit";
 import { useQuery } from '@tanstack/react-query';
-import { ServerResponse } from "../../interfaces/Server";
+import { ServerResponse } from '../../interfaces/Server';
 import { IEmptiesBalance } from '../../interfaces/Empties';
 import { getEmptiesBalance } from '../../services/EmptiesAPI';
 
@@ -9,7 +9,7 @@ const EmptiesBalance = () => {
 
     const authHeader = useAuthHeader();
 
-    const { data: emptiesBalance, isLoading } = useQuery<ServerResponse<IEmptiesBalance[]>, Error>({
+    const { data: emptiesBalance } = useQuery<ServerResponse<IEmptiesBalance[]>>({
         queryKey: ['empties-balance'],
         queryFn: () => getEmptiesBalance(authHeader()),
     });

@@ -6,8 +6,7 @@ export const getEmptiesLog = async (token: string): Promise<ServerResponse<IEmpt
     return (await api.get('/empties-receiving-logs', {'Authorization': token})).data;
 }
 
-export const getEmptiesBalance = async (token: string): Promise<ServerResponse<IEmptiesBalance>> => {
-    console.log("TOKEN::", token)
+export const getEmptiesBalance = async (token: string): Promise<ServerResponse<IEmptiesBalance[]>> => {
     return (await api.get('/empties/balance', {'Authorization': token})).data;
 }
 
