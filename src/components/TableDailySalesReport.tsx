@@ -17,7 +17,7 @@ const TableDailySalesReport = ({customerOption, dateRange}: SalesReportProps) =>
     const authHeader = useAuthHeader();
 
     const { data: salesReport } = useQuery<ServerResponse<TSaleReport[]>, Error>(
-        ['sales_report', dateRange],
+        ['sales_report', dateRange, customerOption],
         () => {
             return getDailySalesReport( authHeader(), dateRange, customerOption )
         });
@@ -34,7 +34,7 @@ const TableDailySalesReport = ({customerOption, dateRange}: SalesReportProps) =>
     const columns = [
         {
             title: 'Date',
-            dataIndex: 'date',
+            dataIndex: 'transaction_date',
             key: 'date'
         },
         {
@@ -44,8 +44,8 @@ const TableDailySalesReport = ({customerOption, dateRange}: SalesReportProps) =>
         },
         {
             title: 'Quantity',
-            dataIndex: 'Qty_Sold',
-            key: 'Qty_Sold'
+            dataIndex: 'quantity',
+            key: 'quantity'
         },
         {
             title: 'Price',
@@ -60,7 +60,7 @@ const TableDailySalesReport = ({customerOption, dateRange}: SalesReportProps) =>
     ];
 
     const printPDF = () => {
-        window.open(`https://crate-mgt-backend.firstlovegallery.com/download-report?from=${dateRange[0]}&to=${dateRange[1]}&customerOption=${customerOption}`,'_blank', 'rel=noopener noreferrer')
+        window.open(`http://localhost:8000/download-report?from=${dateRange[0]}&to=${dateRange[1]}&customerOption=${customerOption}`,'_blank', 'rel=noopener noreferrer')
     }
 
     return (

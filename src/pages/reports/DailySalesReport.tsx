@@ -22,7 +22,7 @@ const DailySalesReport = () => {
 
     return (
         <>
-            <Typography.Title level={2}>Daily Sales Report</Typography.Title>
+            <Typography.Title level={2}>Sales Report</Typography.Title>
             <Space direction="vertical" style={{ width: '100%' }}>
                 <Typography>Select Date for Report</Typography>
                 <RangePicker onChange={(_, dateString) => onDateChange(dateString)}  />
