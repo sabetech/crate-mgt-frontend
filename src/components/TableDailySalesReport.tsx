@@ -60,7 +60,7 @@ const TableDailySalesReport = ({customerOption, dateRange}: SalesReportProps) =>
     ];
 
     const printPDF = () => {
-        window.open(`http://localhost:8000/download-report?from=${dateRange[0]}&to=${dateRange[1]}&customerOption=${customerOption}`,'_blank', 'rel=noopener noreferrer')
+        window.open(`https://crate-mgt-backend.firstlovegallery.com/download-report?from=${dateRange[0]}&to=${dateRange[1]}&customerOption=${customerOption}`,'_blank', 'rel=noopener noreferrer')
     }
 
     return (

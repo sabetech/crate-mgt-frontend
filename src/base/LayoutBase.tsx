@@ -95,7 +95,7 @@ const items: MenuItem[] = [
     getItem('Orders', 'POS/orders')
   ], 'initial_sale'),
   getItem('Reports', 'reports', <FileTextOutlined />, [
-    getItem('Daily Sales Report', 'reports/daily-sales-report'),
+    getItem('Sales Report', 'reports/daily-sales-report'),
     
   ], 'approve'),
 ];
