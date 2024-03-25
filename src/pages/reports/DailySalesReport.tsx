@@ -40,9 +40,7 @@ const DailySalesReport = () => {
                 <TableDailySalesReport customerOption={customerOption} dateRange={dateRange} />
 
             </Space>
-
-
-
+        
         </>
     )
 }

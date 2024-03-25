@@ -1,29 +1,33 @@
-import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer'
-const MyDocument = () => (
-  <Document>
-    <Page style={styles.page}>
-      <View style={styles.section}>
-        <Text style={styles.text}>Hello, World!</Text>
-      </View>
-    </Page>
-  </Document>
-);
-const styles = StyleSheet.create({
-  page: {
-    backgroundColor: "white",
-    padding: 10,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  section: {
-    margin: 10,
-    padding: 10,
-    flexGrow: 1,
-  },
-  text: {
-    fontSize: 20,
-  },
-});
+import { PDFViewer } from '@react-pdf/renderer'
+import Table from './Table';
+
+
+const MyDocument = ({ dateRange, report }: any) => {
+  
+  return (
+  <PDFViewer>
+      {
+        report &&
+        <Table data={report} dateRange={dateRange}/> 
+      }
+  </PDFViewer>
+)};
+// const styles = StyleSheet.create({
+//   page: {
+//     backgroundColor: "white",
+//     padding: 5,
+//     display: "flex",
+//     alignItems: "center",
+//     justifyContent: "center",
+//   },
+//   section: {
+//     margin: 1,
+//     padding: 1,
+//     flexGrow: 1,
+//   },
+//   text: {
+//     fontSize: 12,
+//   },
+// });
 
 export default MyDocument;
