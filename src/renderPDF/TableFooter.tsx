@@ -1,6 +1,6 @@
 
-const TableFooter = ({ items }) => (
-<></>    
-);
+// const TableFooter = ({ items }) => (
+// <></>    
+// );
 
-export default TableFooter;
+// export default TableFooter;

@@ -1,7 +1,7 @@
 import { View, StyleSheet, Text } from "@react-pdf/renderer";
 import TableRow from "./TableRow";
 import TableHeader from "./TableHeader";
-import TableFooter from "./TableFooter";
+// import TableFooter from "./TableFooter";
 import { TSaleReport } from "../types/TSaleReport";
 
 const styles = StyleSheet.create({
@@ -26,7 +26,7 @@ const ItemsTable = ({ data, dateRange }: SalesReportTableProps ) => (
     </View>
     <TableHeader />
     <TableRow items={data} />
-    {<TableFooter items={data} />}
+    {/* {<TableFooter items={data} />} */}
   </View>
 );
 
