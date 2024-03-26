@@ -345,10 +345,10 @@ const POS = () => {
             <Row>
                 <Col span={5} style={{border: 1, height: "65vh", overflow: 'scroll'}}>
                     <List
-                        header={<strong>List of Products ({products.length})</strong>}
-                        footer={<strong>Total: {products.length} products</strong>}
+                        header={<strong>List of Products </strong>}
+                        footer={"Oppong Kyekyeku LTD"}
                         bordered
-                        dataSource={products}
+                        dataSource={products.filter(pdt => pdt.inventory_balance?.quantity ?? 0 > 0)}
                         size="small"
                         renderItem={(item: IProductWithBalance, index: number) => (
                             
