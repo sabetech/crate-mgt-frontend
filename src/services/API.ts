@@ -15,6 +15,7 @@ const post = (url: string, data: any, headers: object) => {
         switch(key) {
             case "products":
             case "product_quanties":
+            case "product_quantities":
             case "empties_returned":
             case "empties_on_ground_products":
             case "breakages":
@@ -41,7 +42,14 @@ const postWithFile = (url: string, data: any, headers: object) => {
  const formData = new FormData();
  
  Object.keys(data).forEach(key => {
-  formData.append(key, data[key]);
+    switch(key) {
+        case "products":
+            formData.append(key, JSON.stringify(data[key]));
+        break;
+        default:
+            formData.append(key, data[key]);
+    }
+  
  });
  
  return axios(BASE_URL+url, {
