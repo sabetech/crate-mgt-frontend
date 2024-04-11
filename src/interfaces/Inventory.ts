@@ -48,8 +48,15 @@ export interface IInventoryReceivableRequest {
         product: number,
         quantity: number
     }[],
-    quantity: number;
     breakages: number;
+    vehicle_number: string;
+    received_by: string;
+    delivered_by: string;
+    pallets_number: number;
+    pcs_number?: number;
+    image_ref: string;
+    quantity: number;
+
 }
 
 export interface IInventoryReceivable {

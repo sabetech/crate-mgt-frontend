@@ -29,7 +29,7 @@ export const addLoadoutInfo = async (token: string, loadoutInfo: ILoadout): Prom
 }
 
 export const addReceivableToInventory = async (values: IInventoryReceivableRequest, token: string): Promise<ServerResponse<string>> => {
-    return (await api.post('/stocks/receivable', values, {'Authorization': token})).data;
+    return (await api.postWithFile('/stocks/receivable', values, {'Authorization': token})).data;
 
 }
 

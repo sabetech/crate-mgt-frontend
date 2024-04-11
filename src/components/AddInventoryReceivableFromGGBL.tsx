@@ -1,4 +1,5 @@
-import { Button, Form } from "antd";
+import { Button, Form, Upload } from "antd";
+import { PlusOutlined} from '@ant-design/icons'
 import type { DatePickerProps } from 'antd';
 import { DatePicker, Input, message } from 'antd';
 import AddProductQuantityFields from "./AddProductQuantityFields";
@@ -8,6 +9,13 @@ import { useAuthHeader } from "react-auth-kit";
 import { IInventoryReceivableRequest } from "../interfaces/Inventory";
 import { AppError } from "../interfaces/Error";
 import { useState } from "react";
+
+const normFile = (e: any) => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e?.fileList;
+  };
 
 const AddInventoryReceivableFromGGBL = () => {
     const [form] = Form.useForm();
@@ -22,9 +30,10 @@ const AddInventoryReceivableFromGGBL = () => {
             form.resetFields();
         },
         onError: (error: AppError) => {
+
             messageApi.open({
                 type: 'error',
-                content: error.message + ". Please Check your internet connection and refresh the page."
+                content: error.response.data.message
             });
             setTimeout(messageApi.destroy, 2500);
         }
@@ -43,11 +52,34 @@ const AddInventoryReceivableFromGGBL = () => {
     const onFinish = (formValues: any) => {
         console.log("FORm VALUES", formValues);
 
+        if (!formValues.image_ref || formValues.image_ref.length === 0) {
+            messageApi.open({
+                type: 'error',
+                content: "Please upload an image"
+            });
+            setTimeout(messageApi.destroy, 2500);
+            return;
+        }
+
+        if (typeof formValues.products === 'undefined') {
+            messageApi.open({
+                type: 'error',
+                content: "Please select at least one product"
+            });
+            setTimeout(messageApi.destroy, 2500);
+            return;
+        }
         const inventoryReceivableRequest = {
-            date: date,
+            date: date, 
             purchase_order_id: formValues.po_number,
-            products: formValues.products
-        } as IInventoryReceivableRequest;
+            products: formValues.products,
+            received_by: formValues.received_by,
+            delivered_by: formValues.delievered_by,
+            vehicle_number: formValues.vehicle_number,
+            pallets_number: formValues.pallets_number,
+            image_ref: formValues.image_ref[0].originFileObj,
+            quantity: formValues.products.reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0)
+        } as IInventoryReceivableRequest
 
         mutate(inventoryReceivableRequest);
 
@@ -84,6 +116,34 @@ const AddInventoryReceivableFromGGBL = () => {
                             rules={[{required: true, message: 'Please Enter Purchase Order Number'}]}
                             >
                             <Input />
+                        </Form.Item>
+
+                        <Form.Item label="Received By" name="received_by">
+                            <Input />
+                        </Form.Item>
+                        
+                        <Form.Item label="Delivered By" name="delievered_by">
+                            <Input />
+                        </Form.Item>
+
+                        <Form.Item label="Vehicle Number" name="vehicle_number">
+                            <Input />
+                        </Form.Item>
+
+                        <Form.Item label="Number of Pallets" name={"pallets_number"}>
+                            <Input />
+                        </Form.Item>
+
+                        <Form.Item label="Number of PCs" name={"pcs_number"}>
+                            <Input />
+                        </Form.Item>
+                        <Form.Item label="Upload" valuePropName="fileList" getValueFromEvent={normFile} name="image_ref">
+                            <Upload action="/upload.do" listType="picture-card">
+                                <div>
+                                <PlusOutlined />
+                                <div style={{ marginTop: 8 }}>Upload</div>
+                                </div>
+                            </Upload>
                         </Form.Item>
                     </div>
                     <div>

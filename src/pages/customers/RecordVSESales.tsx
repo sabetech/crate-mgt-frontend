@@ -61,7 +61,7 @@ const RecordVSESales: React.FC = () => {
     }
     return (<>
         {contextHolder}
-        <h1>Record a Sale</h1>
+        <h1>Return Empties from VSEs (after they finish a sale)</h1>
             <Form 
                 form={form}
                 style={{ maxWidth: '90%' }}

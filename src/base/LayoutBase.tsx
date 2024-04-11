@@ -68,18 +68,17 @@ const items: MenuItem[] = [
     getItem('Add Customer', 'customers/new', undefined, undefined, 'create_customer'),
     getItem('List All Customers', 'customers', undefined, undefined, 'list_customers'),
     getItem('Return Empties', 'customers/return_empties', undefined, undefined, 'return_empties'),
-    getItem('Record Sales', 'customers/record_sales', undefined, undefined, 'record_sales'),
+    // getItem('Record Sales', 'customers/record_sales', undefined, undefined, 'record_sales'),
   ], 'list_customers'),
   getItem('Empties with GGBL', 'empties-ggbl', <DesktopOutlined />, [
     getItem('Sales In', 'empties/empties_log', undefined, undefined, 'empties_sales_in'),
     getItem('Empties Returned Log', 'empties/empties_returned_log', undefined, undefined, 'empties_returned'),
-    getItem('Add Purchase Order', 'empties/add_purchase_order', undefined, undefined, 'empties_sales_in' ),
     getItem('Add Returning Empties', 'empties/add_returning_empties', undefined, undefined, 'empties_returned'),
   ], 'empties_sales_in'),
   getItem('Empties Inhouse Mgt', 'empties-inhouse', <InboxOutlined />, [
+    getItem('Empties Overview', 'empties/empties-overview'),
     getItem('Count Empties on Ground', 'empties/on-ground'),
     getItem('List Empties on Ground', 'empties/list-on-ground'),
-    getItem('Empties Balance', 'empties/empties-balance'),
   ], 'empties_sales_in'),
   getItem('Warehouse', 'warehouse', <AppstoreOutlined />, [
     getItem('Products', 'warehouse/products'),
@@ -221,7 +220,7 @@ const LayoutBase = () => {
             <Route path="/empties/add_returning_empties" element={<AddReturningEmpties />} />
             <Route path="/empties/on-ground" element={<SaveInHouseEmpties />} />
             <Route path="/empties/list-on-ground" element={<ListInHouseEmpties />} />
-            <Route path="/empties/empties-balance" element={<EmptiesBalance />} />
+            <Route path="/empties/empties-overview" element={<EmptiesBalance />} />
             
             <Route path="/warehouse/products" element={<ProductManagement />} />
             {/* <Route path="/warehouse/inventory" element={<Inventory />} /> */}
