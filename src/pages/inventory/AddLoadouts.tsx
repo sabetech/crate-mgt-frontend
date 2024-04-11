@@ -42,13 +42,17 @@ const AddLoadouts = () => {
         mutationFn: (values: ILoadout) => addLoadoutInfo(authHeader(), values),
         onSuccess: (data) => {
             success(data?.data || "")
-            navigate("/customers")
+            navigate("/warehouse/listloadouts");
             form.resetFields();
         },
         onError: (error: AppError) => {
+            const digestedDetail = error.response.data.data.map((detail: any) => {
+                return "SKU: "+detail.product.sku_name + " Quantity: "+ detail.quantity + " Required: " + detail.required + "\n"
+            })
+
             messageApi.open({
                 type: 'error',
-                content: error.message + ". Please Check your internet connection and refresh the page."
+                content: error.response.data.message + "::"+ digestedDetail.reduce((acc , val) => (val + acc), "")
             });
             setTimeout(messageApi.destroy, 2500);
         }
