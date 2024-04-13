@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Dropdown, Breadcrumb, Layout, Menu, theme, Avatar, Space, Modal } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Dropdown, Breadcrumb, Layout, Menu, theme, Avatar, Space, Modal, Typography } from 'antd';
 import Dashboard from '../pages/Dashboard';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import EmptiesLog from '../pages/empties/EmptiesLog';
@@ -99,22 +99,41 @@ const items: MenuItem[] = [
     
   ], 'approve'),
 ];
+
+
 const LayoutBase = () => {
+  const location = useLocation();
+
   const [collapsed, setCollapsed] = useState(false);
+  const [current, setCurrent] = useState(
+    location.pathname === "/" || location.pathname === ""
+        ? "/dashboard"
+        : location.pathname,
+  );
   
   const authUser = useAuthUser();
   console.log("USER INFO", authUser())
+  console.log("ITEMS::", items);
   const user = authUser();
-  const location  = useLocation();
   const isAuthenticated = useIsAuthenticated();
   const signOut = useSignOut();
   
   const authHeader = useAuthHeader();
+
+  useEffect(() => {
+    console.log(location.pathname)
+      if (location) {
+          if( current !== location.pathname ) {
+              setCurrent(location.pathname);
+          }
+      }
+  }, [location, current]);
   
   const handleManageUsers = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
     navigate("/users/manage");
   }
+  
 
   const handleLogout = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
@@ -181,29 +200,37 @@ const LayoutBase = () => {
       <Menu theme="dark" defaultSelectedKeys={[location.pathname.substring(1)]} selectedKeys={[location.pathname.substring(1)]}  mode="inline" onClick={onClick} items={filterMenuItemsBasedOnPermissions(items)}  />
     </Sider>
     <Layout className="site-layout">
-      <Header style={{ padding: 0, background: colorBgContainer, display: 'flex', justifyContent: 'flex-end' }}>
+      <Header style={{ padding: 0, background: colorBgContainer, display: 'flex', justifyContent: 'space-between' }}>
+        
+        <Space style={{padding: 30,marginTop: 10}}>
+
+          <Typography.Title level={3}> { 
+              items.find(menuItem => '/'+menuItem.key === current)?.key || 'Dashboard'
+            }</Typography.Title>
+
+        </Space>
+        
         <Space style={{marginRight: '2em'}}>
-        <Dropdown menu={ {items: [{
-                              label: (
-                                <a onClick={handleManageUsers}>
-                                  Manage Users
-                                </a>
-                              ),
-                              key: 'manage_users',
-                            }, ...UserDropdown,]} }>
-          <a onClick={(e) => e.preventDefault()}>
-            <Space>
-            <h3>{ user?.name }({user?.email})</h3>
-            <Avatar size={"large"} icon={<UserOutlined />} />
-              <DownOutlined />
-            </Space>
-          </a>
-        </Dropdown>
-          
+          <Dropdown menu={ {items: [{
+                                label: (
+                                  <a onClick={handleManageUsers}>
+                                    Manage Users
+                                  </a>
+                                ),
+                                key: 'manage_users',
+                              }, ...UserDropdown,]} }>
+            <a onClick={(e) => e.preventDefault()}>
+              <Space>
+              <h3>{ user?.name }({user?.email})</h3>
+              <Avatar size={"large"} icon={<UserOutlined />} />
+                <DownOutlined />
+              </Space>
+            </a>
+          </Dropdown>
         </Space>
       </Header>
       <Content style={{ margin: '0 16px' }}>
-        <Breadcrumb style={{ margin: '16px 0' }} items={[{ title: 'TODO' }]}/>
+        <Breadcrumb style={{ margin: '16px 0' }} items={[{ title: 'TODO' }, { title: 'TODO' }]}/>
         <div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>
           <Routes>
             <Route path="/" element={<Dashboard />} />
