@@ -85,6 +85,7 @@ const items: MenuItem[] = [
     getItem('Pending Orders', 'warehouse/pending-orders'),
     getItem('Receivables', 'warehouse/receivables'),
     getItem('Receivables Log', 'warehouse/receivables-log'),
+    getItem('Inventory Transaction', 'warehouse/inventory-transaction'),
     getItem('Add Loadout', 'warehouse/addloadout'),
     getItem('Loadouts', 'warehouse/listloadouts'),
     getItem('Take Stock', 'warehouse/takestock'),
@@ -255,6 +256,7 @@ const LayoutBase = () => {
             <Route path="/warehouse/pending-orders" element={<PendingOrders />} />
             <Route path="/warehouse/receivables" element={<Receivables />} />
             <Route path="/warehouse/receivables-log" element={<></>} />
+            <Route path="warehouse/inventory-transaction" element={<></>} />
             <Route path="/warehouse/addloadout" element={<AddLoadouts />} />
             <Route path="/warehouse/listloadouts" element={<LoadoutList />} />
             <Route path="/warehouse/takestock" element={<TakeStock />} />
