@@ -1,4 +1,4 @@
-import { message, Space, Col, Row, List, Typography, InputNumber, Form, Input, Divider, Button, Table, AutoComplete, Select, Badge} from 'antd'
+import { Checkbox, message, Space, Col, Row, List, Typography, InputNumber, Form, Input, Divider, Button, Table, AutoComplete, Select, Badge} from 'antd'
 import { DeleteFilled } from '@ant-design/icons';
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { getProductsWithStockBalance } from '../../services/ProductsAPI'
@@ -13,6 +13,7 @@ import { IOrder, ISaleItem } from '../../interfaces/Sale';
 import dayjs from 'dayjs';
 import {useLocation} from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import * as constants from "../../utils/constants";
 import "./sales.css";
 
 
@@ -110,6 +111,11 @@ const POS = () => {
             form.setFieldValue("unit_price", selectedProduct?.retail_price);
             setUnitPrice(typeof selectedProduct?.retail_price === 'undefined' ? 0 : selectedProduct?.retail_price);
         }
+    }
+
+    const [vseCustomer, setVSECustomer] = useState<ICustomer|undefined>(undefined)
+    const onVseChange = (_: string, option: ICustomer) => {
+        setVSECustomer(option)
     }
 
     const onProductChange = (_: string, option: IProductWithBalance) => {
@@ -284,6 +290,11 @@ const POS = () => {
         onProductChange(product.sku_name, product);
     }
 
+    const [isVseAssistedSale, setIsVSEAssistedSale] = useState<boolean>(false);
+    const onCheckedVSEAssistedSale = ( e: { target: { checked: boolean; }; } ) => {
+        setIsVSEAssistedSale(e.target.checked)
+    }
+
     const posTableColumns = [
         {
             title: '# ('+(tableContent).length+')',
@@ -348,16 +359,23 @@ const POS = () => {
                         header={<strong>List of Products </strong>}
                         footer={"Oppong Kyekyeku LTD"}
                         bordered
-                        dataSource={products.filter(pdt => pdt.inventory_balance?.quantity ?? 0 > 0)}
+                        dataSource={products}
                         size="small"
-                        renderItem={(item: IProductWithBalance, index: number) => (
-                            
-                            <List.Item style={{cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }} onClick={() => onProductClicked(item)}>
-                                <Typography.Text>{index + 1} {item.sku_name}</Typography.Text>
-                                <Badge showZero count={(item.inventory_balance != null) ? item.inventory_balance.quantity : 0 } color={(item.inventory_balance != null) ? (item.inventory_balance.quantity > 40) ? "green": (item.inventory_balance.quantity > 22 ? "gold" : "red") : 'red' } />
-                            </List.Item>
-                            
-                        )}
+                        renderItem={(item: IProductWithBalance, index: number) => 
+                            { 
+                                return (item.inventory_balance != null && item.inventory_balance.quantity > 0) ?
+                                            (<List.Item style={{cursor: 'pointer', display: 'flex', justifyContent: 'space-between' }} onClick={() => onProductClicked(item)}>
+                                                <Typography.Text>{index + 1} {item.sku_name}</Typography.Text>
+                                                <Badge showZero count={(item.inventory_balance != null) ? item.inventory_balance.quantity : 0 } color={(item.inventory_balance != null) ? (item.inventory_balance.quantity > 40) ? "green": (item.inventory_balance.quantity > 22 ? "gold" : "red") : 'red' } />
+                                            </List.Item>
+                                        ) :
+                                        (   <List.Item style={{display: 'flex', justifyContent: 'space-between' }}>
+                                                <Typography.Text style={{color: '#d3d3d3'}}>{index + 1} {item.sku_name}</Typography.Text>
+                                                <Badge showZero count={(item.inventory_balance != null) ? item.inventory_balance.quantity : 0 } color={(item.inventory_balance != null) ? (item.inventory_balance.quantity > 40) ? "green": (item.inventory_balance.quantity > 22 ? "gold" : "red") : 'red' } />
+                                            </List.Item>
+                                        )
+                            }
+                        }
                     />
                 </Col>
 
@@ -391,7 +409,6 @@ const POS = () => {
                                 <AutoComplete 
                                     allowClear={true}
                                     bordered={false}
-                                    onSearch={onSearch}
                                     onSelect={(text: string, option: ICustomer) => onCustomerChange(text, option)}
                                     placeholder="Search for Customer"
                                     options={ customersResponse?.data.map(custmr => ({...custmr, value: `${custmr.name} (${custmr.customer_type.toUpperCase()})`})) }
@@ -400,6 +417,22 @@ const POS = () => {
                                         }
                                 />
                             </Form.Item>
+                            <Checkbox onChange={onCheckedVSEAssistedSale} style={{ marginBottom: "10px" }}>VSE Assisted Sale</Checkbox>
+                            {
+                            isVseAssistedSale && 
+                                <Form.Item label="Select VSE" style={{ marginBottom: "10px" }}>
+                                    <AutoComplete 
+                                    allowClear={true}
+                                    bordered={false}
+                                    onSelect={(text: string, option: ICustomer) => onVseChange(text, option)}
+                                    placeholder="Search for VSE"
+                                    options={ customersResponse?.data.map(custmr => ({...custmr, value: `${custmr.name} (${custmr.customer_type.toUpperCase()})`})).filter(custmr => custmr.customer_type === constants.RETAILER_VSE) }
+                                    filterOption={(inputValue, option) =>
+                                        option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                        }
+                                />
+                                </Form.Item>
+                            }
                             
                                 
                                 <Form.Item label="Select Product" name="product" style={{ marginBottom: "10px" }} >
@@ -415,7 +448,7 @@ const POS = () => {
                                         onSearch={onSearch}
                                         onSelect={(text: string, option: any) => onProductChange(text, option)}
                                         placeholder="Search for Product"
-                                        options={productsData?.data.map(prdt => ({...prdt, value: `${prdt.sku_name} (${prdt?.inventory_balance?.quantity ?? 0})` }))}
+                                        options={productsData?.data.map(prdt => ({...prdt, value: `${prdt.sku_name} (${prdt?.inventory_balance?.quantity ?? 0})` })).filter(prdt => prdt?.inventory_balance?.quantity > 0)}
                                         filterOption={(inputValue, option) =>
                                             option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
                                         }

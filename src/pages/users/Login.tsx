@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Button, message, Form, Input } from 'antd';
 import { useSignIn } from 'react-auth-kit'
 import { signIn as login} from '../../services/AuthAPI';
@@ -19,12 +19,15 @@ const onFinishFailed = (errorInfo: any) => {
 const Login: React.FC = () => {
     const signIn = useSignIn();
     const [messageApi, contextHolder] = message.useMessage();
+    const [loading, setLoading] = useState(false);
 
     const onFinish = async (values: IUser) => {
         // : Promise<ServerResponse<IUser | Error>>
         console.log(values);
         try {
+            setLoading(true)
             const response = await login({email:values.email, password: values.password});
+            setLoading(false);
             showSuccess('Login successful');
             if (response.status === 201){
                 signIn({
@@ -91,7 +94,7 @@ const Login: React.FC = () => {
                     </Form.Item>
 
                     <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" loading={loading}>
                         Submit
                     </Button>
                     </Form.Item>

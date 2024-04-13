@@ -45,6 +45,11 @@ const StockInfo = () => {
             key: 'product',
           },
           {
+            title: 'Current Balance',
+            dataIndex: 'current_balance',
+            key: 'current_balance',
+          },
+          {
             title: 'Closing Stock',
             dataIndex: 'closing_stock',
             key: 'closing_stock',
