@@ -351,9 +351,10 @@ const POS = () => {
     return (
         <>
             {contextHolder}
-            <Typography.Title level={2} >Point of Sale</Typography.Title>
+            <Typography.Title level={2}> {!location.state ? "Point of Sale" : "Order Checkout"}</Typography.Title>
             
             <Row>
+                {!location.state &&
                 <Col span={5} style={{border: 1, height: "65vh", overflow: 'scroll'}}>
                     <List
                         header={<strong>List of Products </strong>}
@@ -378,6 +379,7 @@ const POS = () => {
                         }
                     />
                 </Col>
+                }
 
                 <Col style={{marginLeft: "1rem"}}>
                     
