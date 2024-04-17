@@ -1,10 +1,12 @@
 import { Card, Row, Col, DatePicker, Statistic, Space } from "antd";
 import dayjs from 'dayjs'
 import TableReceivableLog from "../../components/TableReceivableLog";
+import type { ColumnsType } from 'antd/es/table';
+import { IInventoryReceivable } from "../../interfaces/Inventory";
 
 const ReceivablesLog = () => {
 
-
+    const columns: ColumnsType<IInventoryReceivable> = []
 
     return (
         <>
