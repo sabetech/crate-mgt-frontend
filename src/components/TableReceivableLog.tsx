@@ -6,10 +6,13 @@ type TableReceivableLogProps = {
 }
 
 const TableReceivableLog: React.FC<TableReceivableLogProps> = ({columns, data}) => {
+
+    console.log("TABLE DATAA::", data)
+
     return (<>
         <Table 
             columns={columns}
-            dataSource={data}
+            dataSource={data.data}
         />
     </>)
 }

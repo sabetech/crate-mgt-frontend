@@ -1,7 +1,7 @@
 import * as api from './API';
 import { ServerResponse } from '../interfaces/Server';
 import { IStock } from '../interfaces/Product';
-import { IInventoryOrder, ILoadout, IReturnsFromVSERequest } from '../interfaces/Inventory';
+import { IInventoryOrder, IInventoryReceivable, ILoadout, IReturnsFromVSERequest } from '../interfaces/Inventory';
 import { IVSECustomer } from '../interfaces/Customer';
 import { IInventoryReceivableRequest } from '../interfaces/Inventory';
 
@@ -30,7 +30,6 @@ export const addLoadoutInfo = async (token: string, loadoutInfo: ILoadout): Prom
 
 export const addReceivableToInventory = async (values: IInventoryReceivableRequest, token: string): Promise<ServerResponse<string>> => {
     return (await api.postWithFile('/stocks/receivable', values, {'Authorization': token})).data;
-
 }
 
 export const addReturnsFromVSEs = async (values: IReturnsFromVSERequest, token: string): Promise<ServerResponse<string>> => {
@@ -43,4 +42,8 @@ export const getPendingOrders = async (token: string): Promise<ServerResponse<II
 
 export const approveInventoryOrder = async (token: string, order: IInventoryOrder): Promise<ServerResponse<string>> => {
     return (await api.post(`/stocks/approve-order/${order.id}`, order, {'Authorization': token})).data;
+}
+
+export const getReceivableLogs = async (date: string, token: string): Promise<ServerResponse<IInventoryReceivable[]>> => {
+    return (await api.get(`/stocks/inventory-log?date=${date}`, {'Authorization': token})).data;
 }
