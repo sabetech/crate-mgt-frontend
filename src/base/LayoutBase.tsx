@@ -206,7 +206,7 @@ const LayoutBase = () => {
         <Space style={{padding: 30,marginTop: 10}}>
 
           <Typography.Title level={3}> { 
-              items.find(menuItem => '/'+menuItem.key === current)?.key || 'Dashboard'
+              items.find(menuItem => '/'+menuItem.key === current)?.key || 'OPK Manager'
             }</Typography.Title>
 
         </Space>
