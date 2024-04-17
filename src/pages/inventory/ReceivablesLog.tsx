@@ -1,6 +1,11 @@
 import { Card, Row, Col, DatePicker, Statistic, Space } from "antd";
+import dayjs from 'dayjs'
+import TableReceivableLog from "../../components/TableReceivableLog";
 
 const ReceivablesLog = () => {
+
+
+
     return (
         <>
             <h1>
@@ -8,6 +13,7 @@ const ReceivablesLog = () => {
             </h1>
             <DatePicker 
                 size={'large'}
+                value={dayjs()}
             />
             <Row gutter={16} style={{marginTop: '2%'}}>
                 <Col span={6}>
@@ -20,7 +26,7 @@ const ReceivablesLog = () => {
                 </Col>
             </Row>
             <Space>
-                
+                <TableReceivableLog />
             </Space>
         </>
     );
