@@ -1,4 +1,4 @@
-import { DatePicker, Statistic } from "antd";
+import { Card, Row, Col, DatePicker, Statistic, Space } from "antd";
 
 const ReceivablesLog = () => {
     return (
@@ -9,9 +9,19 @@ const ReceivablesLog = () => {
             <DatePicker 
                 size={'large'}
             />
-            <Statistic 
+            <Row gutter={16} style={{marginTop: '2%'}}>
+                <Col span={6}>
+                    <Card bordered={true}>
+                        <Statistic 
+                            title={"Products Received"}
+                            value={0}
+                        />
+                    </Card>
+                </Col>
+            </Row>
+            <Space>
                 
-            />
+            </Space>
         </>
     );
 }
