@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, Row, Col, DatePicker, Statistic, Space } from "antd";
+import { Card, Row, Col, DatePicker, Statistic, Space, Image } from "antd";
 import dayjs from 'dayjs'
 import TableReceivableLog from "../../components/TableReceivableLog";
 import type { ColumnsType } from 'antd/es/table';
@@ -17,12 +17,15 @@ const ReceivablesLog = () => {
 
     const columns: ColumnsType<IInventoryReceivable> = [
         { title: 'Date', dataIndex: 'date', key: 'date' },
+        {title: 'Purchase Order', dataIndex: 'purchase_order_number', key: 'purchase_order_number'},
         { title: 'Product', dataIndex: 'product', key: 'date', 
             render: (product: IProduct) => product.sku_name
          },
          {title: 'Amount Received', dataIndex: 'quantity', key: 'quantity'},
-
-
+         {title: 'Way Bill Image', dataIndex: 'way_bill_image_url', key: 'way_bill_image_url',
+            render: (val: string) => <Image src={`http://localhost:8000${val}`} width={50} />
+         }
+         
     ]
     
     const handleDateSelect = (_: any, dateString: string) => {
@@ -30,7 +33,7 @@ const ReceivablesLog = () => {
     }
 
     const {data: receiveableLogs} = useQuery<ServerResponse<IInventoryReceivable[]>>({
-        queryKey: ['inventory_receivable'],
+        queryKey: ['inventory_receivable', date],
         queryFn: () => getReceivableLogs(date.format("YYYY-MM-DD"), authHeader())
     })
 

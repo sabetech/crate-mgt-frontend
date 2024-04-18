@@ -12,7 +12,7 @@ const TableReceivableLog: React.FC<TableReceivableLogProps> = ({columns, data}) 
     return (<>
         <Table 
             columns={columns}
-            dataSource={data.data}
+            dataSource={data?.data}
         />
     </>)
 }
