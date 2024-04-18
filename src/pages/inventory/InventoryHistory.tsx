@@ -9,11 +9,13 @@ const InventoryHistory = () => {
 
 
     return (<>
-        <Typography.Title level={3}>Inventory History</Typography.Title>
-        <DatePicker 
-            value={dayjs(date)}
-            onChange={(date) => {date && setDate(date.format('YYYY-MM-DD'))}}
-        />
+        <Space>
+            <Typography.Title level={3}>Inventory History</Typography.Title>
+            <DatePicker 
+                value={dayjs(date)}
+                onChange={(date) => {date && setDate(date.format('YYYY-MM-DD'))}}
+            />
+        </Space>
         <Space direction={"horizontal"} style={{marginTop: '2%'}}>
             <Card>
                 <Statistic 
