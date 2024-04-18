@@ -9,7 +9,7 @@ const InventoryHistory = () => {
 
 
     return (<>
-        <Space>
+        <Space direction={"vertical"}>
             <Typography.Title level={3}>Inventory History</Typography.Title>
             <DatePicker 
                 value={dayjs(date)}
