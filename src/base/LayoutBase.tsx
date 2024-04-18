@@ -42,6 +42,7 @@ import { Permission } from '../interfaces/User';
 import EmptiesBalance from '../pages/empties-inhouse/EmptiesBalance';
 import DailySalesReport from '../pages/reports/DailySalesReport';
 import ReceivablesLog from '../pages/inventory/ReceivablesLog'
+import InventoryHistory from '../pages/inventory/InventoryHistory';
 
 const { Header, Content, Footer, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number] & {permission_required?: string};
@@ -257,7 +258,7 @@ const LayoutBase = () => {
             <Route path="/warehouse/pending-orders" element={<PendingOrders />} />
             <Route path="/warehouse/receivables" element={<Receivables />} />
             <Route path="/warehouse/receivables-log" element={<ReceivablesLog />} />
-            <Route path="warehouse/inventory-transaction" element={<></>} />
+            <Route path="warehouse/inventory-transaction" element={<InventoryHistory/>} />
             <Route path="/warehouse/addloadout" element={<AddLoadouts />} />
             <Route path="/warehouse/listloadouts" element={<LoadoutList />} />
             <Route path="/warehouse/takestock" element={<TakeStock />} />
