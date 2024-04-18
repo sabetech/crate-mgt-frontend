@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DatePicker, Typography } from "antd";
+import { DatePicker, Typography, Space, Card, Statistic } from "antd";
 import dayjs from 'dayjs';
 
 const InventoryHistory = () => {
@@ -12,8 +12,22 @@ const InventoryHistory = () => {
         <Typography.Title level={3}>Inventory History</Typography.Title>
         <DatePicker 
             value={dayjs(date)}
-            onChange={(date) => setDate(date.format('YYYY-MM-DD'))}
+            onChange={(date) => {date && setDate(date.format('YYYY-MM-DD'))}}
         />
+        <Space direction={"horizontal"} style={{marginTop: '2%'}}>
+            <Card>
+                <Statistic 
+                    title={"Total Opening balance"}
+                    value={0}
+                />
+            </Card>
+            <Card>
+                <Statistic 
+                    title={"Total Closing Balance"}
+                    value={0}
+                />
+            </Card>
+        </Space>
     </>)
 }
 
