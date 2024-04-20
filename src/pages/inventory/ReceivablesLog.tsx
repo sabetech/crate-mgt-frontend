@@ -37,8 +37,6 @@ const ReceivablesLog = () => {
         queryFn: () => getReceivableLogs(date.format("YYYY-MM-DD"), authHeader())
     })
 
-    console.log(receiveableLogs)
-
     return (
         <>
             <h1>

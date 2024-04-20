@@ -77,3 +77,13 @@ export interface IReturnsFromVSERequest {
         quantity: number
     }[],
 }
+
+export interface IInventoryTransaction {
+    date: string;
+    time: string;
+    product: IProduct;
+    action: string;
+    comment: string;
+    quantity: number;
+    balance: number;
+}

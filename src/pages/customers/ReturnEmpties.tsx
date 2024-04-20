@@ -134,7 +134,7 @@ const CustomerReturnEmpties = () => {
                         </Form.Item>
                         
                     </div>
-            
+            {/* FIX THAT HORRIBLE UI below */}
                     <div>
                         <Form.List name="product-quanties">
                             {(fields, { add, remove }) => (
