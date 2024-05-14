@@ -41,7 +41,7 @@ const InventoryHistory = () => {
 
     const makeSummary = () => {
         let summary = [];
-
+        
         
         
 

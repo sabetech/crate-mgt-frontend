@@ -2,8 +2,8 @@ import {  Row, Col, Statistic, Card, Typography, List } from 'antd';
 import { useAuthHeader } from "react-auth-kit";
 import { useQuery } from '@tanstack/react-query';
 import { ServerResponse } from '../../interfaces/Server';
-import { IEmptiesBalance } from '../../interfaces/Empties';
-import { getEmptiesBalance } from '../../services/EmptiesAPI';
+import { IEmptiesBalance, IEmptiesTransaction } from '../../interfaces/Empties';
+import { getEmptiesBalance, getEmptiesTransaction } from '../../services/EmptiesAPI';
 
 const EmptiesOverview = () => {
 
@@ -14,7 +14,12 @@ const EmptiesOverview = () => {
         queryFn: () => getEmptiesBalance(authHeader()),
     });
 
-    console.log("EMPTIES BALANCE::", emptiesBalance);
+    const { data: emptiesTransactions } = useQuery<ServerResponse<IEmptiesTransaction[]>>({
+        queryKey: ['empties-transaction'],
+        queryFn: () => getEmptiesTransaction(authHeader()),
+    });
+
+    console.log("EMPTIES Transaction::", emptiesTransactions);
 
     return (
         <>
@@ -56,6 +61,22 @@ const EmptiesOverview = () => {
                 <Col span={12}>
                     <List
                         header={<Typography.Title level={4}>Empties Balances</Typography.Title>}
+                        bordered
+                        dataSource={emptiesBalance?.data}
+                        renderItem={(item: IEmptiesBalance) => (
+                            <List.Item>
+                            <Typography.Text>{item.product.sku_name} : </Typography.Text> 
+                            <Typography.Text>{item.quantity}</Typography.Text>
+                            </List.Item>
+                        )}
+                    />
+                </Col>
+            </Row>
+
+            <Row gutter={16} style={{marginTop: '30px'}}>
+                <Col span={12}>
+                    <List
+                        header={<Typography.Title level={4}>Empties Transaction History</Typography.Title>}
                         bordered
                         dataSource={emptiesBalance?.data}
                         renderItem={(item: IEmptiesBalance) => (

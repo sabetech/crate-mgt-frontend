@@ -52,4 +52,17 @@ export interface IEmptiesBalance {
         sku_name: string
     }
 }
+
+export interface IEmptiesTransaction {
+    transaction_id: string;
+    datetime: string;
+    quantity: number;
+    product_id: number;
+    transaction_type: string;
+    activity: string;
+    product: {
+        sku_name: string
+    }
+}
+
 //Add Pallets???
