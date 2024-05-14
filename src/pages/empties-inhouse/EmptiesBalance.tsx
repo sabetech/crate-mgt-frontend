@@ -1,9 +1,10 @@
-import {  Row, Col, Statistic, Card, Typography, List } from 'antd';
+import {  Row, Col, Statistic, Card, Typography, List, Tag } from 'antd';
 import { useAuthHeader } from "react-auth-kit";
 import { useQuery } from '@tanstack/react-query';
 import { ServerResponse } from '../../interfaces/Server';
 import { IEmptiesBalance, IEmptiesTransaction } from '../../interfaces/Empties';
 import { getEmptiesBalance, getEmptiesTransaction } from '../../services/EmptiesAPI';
+import dayjs from 'dayjs';
 
 const EmptiesOverview = () => {
 
@@ -78,11 +79,12 @@ const EmptiesOverview = () => {
                     <List
                         header={<Typography.Title level={4}>Empties Transaction History</Typography.Title>}
                         bordered
-                        dataSource={emptiesBalance?.data}
-                        renderItem={(item: IEmptiesBalance) => (
+                        dataSource={emptiesTransactions?.data}
+                        renderItem={(item: IEmptiesTransaction) => (
                             <List.Item>
-                            <Typography.Text>{item.product.sku_name} : </Typography.Text> 
-                            <Typography.Text>{item.quantity}</Typography.Text>
+                                <Typography.Text>{dayjs(item.datetime).format('D MMM, YYYY H:m A')} </Typography.Text> 
+                                <Typography.Text>{item.product.sku_name} <Tag color={item.transaction_type == 'in' ? 'green': 'red'}> { item.transaction_type.toUpperCase() } </Tag> </Typography.Text> 
+                                <Typography.Text>{item.quantity}</Typography.Text>
                             </List.Item>
                         )}
                     />
