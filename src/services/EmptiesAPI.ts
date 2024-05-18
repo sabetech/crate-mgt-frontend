@@ -1,6 +1,7 @@
 import * as api from './API';
 import { IEmptyLog, IEmptyReturnedLog, IEmptiesInHouseCount, IEmptiesBalance, IEmptiesTransaction } from '../interfaces/Empties';
 import { ServerResponse  } from '../interfaces/Server'
+import { ICustomerReturnEmpties } from '../interfaces/Customer';
 
 export const getEmptiesLog = async (token: string): Promise<ServerResponse<IEmptyLog[]>> => {
     return (await api.get('/empties-receiving-logs', {'Authorization': token})).data;
@@ -16,6 +17,10 @@ export const getEmptiesTransaction = async (token: string): Promise<ServerRespon
 
 export const getEmptiesReturnedLog = async (token: string): Promise<ServerResponse<IEmptyReturnedLog[]>> => {
     return (await api.get('/empties-returned-logs', {'Authorization': token})).data;
+}
+
+export const getEmptiesInTrade = async (token: string): Promise<ServerResponse<number>> => {
+    return (await api.get('/empties/empties-in-trade', {'Authorization': token})).data;
 }
 
 export const addEmptiesLog = async (values: IEmptyLog, token: string): Promise<ServerResponse<string>> => {

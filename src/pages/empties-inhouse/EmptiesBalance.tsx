@@ -5,6 +5,8 @@ import { ServerResponse } from '../../interfaces/Server';
 import { IEmptiesBalance, IEmptiesTransaction } from '../../interfaces/Empties';
 import { getEmptiesBalance, getEmptiesTransaction } from '../../services/EmptiesAPI';
 import dayjs from 'dayjs';
+import { ICustomerReturnEmpties } from '../../interfaces/Customer';
+import { getEmptiesInTrade } from '../../services/EmptiesAPI'
 
 const EmptiesOverview = () => {
 
@@ -15,12 +17,17 @@ const EmptiesOverview = () => {
         queryFn: () => getEmptiesBalance(authHeader()),
     });
 
+    const {data: emptiesInTrade } = useQuery<ServerResponse<number>>({
+        queryKey: ['empties-in-trade'],
+        queryFn: () => getEmptiesInTrade(authHeader()),
+    });
+
     const { data: emptiesTransactions } = useQuery<ServerResponse<IEmptiesTransaction[]>>({
         queryKey: ['empties-transaction'],
         queryFn: () => getEmptiesTransaction(authHeader()),
     });
 
-    console.log("EMPTIES Transaction::", emptiesTransactions);
+    console.log("EMPTIES In trade::", emptiesInTrade);
 
     return (
         <>
@@ -40,7 +47,7 @@ const EmptiesOverview = () => {
                     <Card bordered={true}>
                         <Statistic
                             title="Empties in Trade"
-                            value={emptiesBalance && emptiesBalance.data?.reduce((acc: number, item: IEmptiesBalance) => acc + item.quantity, 0)}
+                            value={emptiesInTrade != null ? emptiesInTrade.data : 0}
                             valueStyle={{ color: '#3f8600' }}
                             suffix="empties"
                         />
@@ -51,7 +58,7 @@ const EmptiesOverview = () => {
                     <Card bordered={true}>
                         <Statistic
                             title="Empties Owned By OPK"
-                            value={emptiesBalance && emptiesBalance.data?.reduce((acc: number, item: IEmptiesBalance) => acc + item.quantity, 0)}
+                            value={0}
                             valueStyle={{ color: '#3f8600' }}
                             suffix="empties"
                         />
