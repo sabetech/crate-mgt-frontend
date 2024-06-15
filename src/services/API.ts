@@ -8,6 +8,24 @@ import axios from "axios";
 const BASE_URL = "http://localhost:8000/api/v1";
 const SERVER_URL = "http://localhost:8000";
 
+const PRINT_URL = "http://localhost:80/print";
+
+const print = (data: any) => {
+    const formData = new FormData();
+    
+    Object.keys(data).forEach(key => {
+        formData.append(key, JSON.stringify(data[key]));
+    });
+
+    return axios(PRINT_URL, {
+        method: "POST",
+        headers: {
+            'Content-Type': '"application/json"',
+        },
+        data: formData
+    })
+}
+
 const post = (url: string, data: any, headers: object) => {
     const formData = new FormData();
     
@@ -111,4 +129,4 @@ const auth = (url: string, data: any, headers: object) => {
 }
 
 
-export { post, postWithFile, get, deleteRequest, put, auth, SERVER_URL };
+export { post, postWithFile, get, deleteRequest, put, auth, SERVER_URL, print };

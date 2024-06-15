@@ -82,7 +82,7 @@ export interface IInventoryTransaction {
     date: string;
     time: string;
     product: IProduct;
-    action: string;
+    activity: string;
     comment: string;
     quantity: number;
     balance: number;

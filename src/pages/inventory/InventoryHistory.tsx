@@ -12,7 +12,7 @@ const InventoryHistory = () => {
     const authHeader = useAuthHeader();
     const [inventoryHistory, setInventoryHistory] = useState<IInventoryTransaction[]>([]);
     const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
-    const [inventoryHistorySummary, setInventoryHistorySummary] = useState();
+    const [inventoryHistorySummary, setInventoryHistorySummary] = useState([]);
 
     const { data: inventoryLogs } = useQuery({
         queryKey: ['inventoryLogs', date],
@@ -26,6 +26,123 @@ const InventoryHistory = () => {
         }
 
     },[inventoryLogs]);
+
+    useEffect(() => {
+
+        if (inventoryHistory) {
+            const productHistoryMap = new Map();
+
+            for(let i = 0; i < inventoryHistory.length; i++) {
+                let item = inventoryHistory[i];
+
+                if (typeof productHistoryMap.get(item.product.id) === 'undefined') {
+
+                    switch(item.activity) {
+                        case 'purchase_order':
+                            productHistoryMap.set(item.product.id, {
+                                product: item.product,
+                                quantity_received: item.quantity,
+                                vse_loadout: 0,
+                                quantity_sold: 0,
+                                vse_returns: 0,
+                                breakages: 0,
+                                other: 0,
+                                closing_stock: 0
+                            });
+                        break;
+
+                        case 'sale_request':
+                            productHistoryMap.set(item.product.id, {
+                                product: item.product,
+                                quantity_received: 0,
+                                vse_loadout: 0,
+                                quantity_sold: item.quantity,
+                                vse_returns: 0,
+                                breakages: 0,
+                                other: 0,
+                                closing_stock: 0
+                            });
+                        break;
+
+                        case 'load_out':
+                            productHistoryMap.set(item.product.id, {
+                                product: item.product,
+                                quantity_received: 0,
+                                vse_loadout: item.quantity,
+                                quantity_sold: 0,
+                                vse_returns: 0,
+                                breakages: 0,
+                                other: 0,
+                                closing_stock: 0
+                            });
+                        break;
+
+                        case 'return_in':
+                            productHistoryMap.set(item.product.id, {
+                                product: item.product,
+                                quantity_received: 0,
+                                vse_loadout: 0,
+                                quantity_sold: 0,
+                                vse_returns: item.quantity,
+                                breakages: 0,
+                                other: 0,
+                                closing_stock: 0
+                            });
+                        break;
+
+                        case 'other':
+                            productHistoryMap.set(item.product.id, {
+                                product: item.product,
+                                quantity_received: 0,
+                                vse_loadout: 0,
+                                quantity_sold: 0,
+                                vse_returns: 0,
+                                breakages: 0,
+                                other: item.quantity,
+                                closing_stock: 0
+                            });
+                        break;
+                    } 
+                }else {
+                    const productObject = productHistoryMap.get(item.product.id);
+                    switch(item.activity) {
+                        case 'purchase_order':
+                            productHistoryMap.set(item.product.id, {...productObject, quantity_received: item.quantity});
+                        break;
+
+                        case 'sale_request':
+                            productHistoryMap.set(item.product.id, {
+                               ...productHistoryMap,
+                                quantity_sold: item.quantity,
+                            });
+                        break;
+
+                        case 'load_out':
+                            productHistoryMap.set(item.product.id, {
+                                ...productHistoryMap,
+                                vse_loadout: item.quantity,
+                            });
+                        break;
+
+                        case 'return_in':
+                            productHistoryMap.set(item.product.id, {
+                                ...productHistoryMap,
+                                vse_returns: item.quantity,
+                            });
+                        break;
+
+                        case 'other':
+                            productHistoryMap.set(item.product.id, {
+                                ...productHistoryMap,
+                                other: item.quantity,
+                            });
+                        break;
+                    } 
+                }
+            }
+            console.log("PRODUCT HISTORY::", productHistoryMap)
+        }
+    }, [inventoryHistory]);
 
     console.log("inventory logs", inventoryHistory)
     const columns = [

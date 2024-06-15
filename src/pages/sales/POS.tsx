@@ -8,7 +8,7 @@ import { ServerResponse } from '../../interfaces/Server'
 import { IProductWithBalance } from '../../interfaces/Product'
 import { useEffect, useState } from 'react'
 import { ICustomer, ICustomerReturnEmpties } from '../../interfaces/Customer'
-import { pay } from '../../services/SalesAPI'
+import { pay, printReceipt as print } from '../../services/SalesAPI'
 import { IOrder, ISaleItem } from '../../interfaces/Sale';
 import dayjs from 'dayjs';
 import {useLocation} from 'react-router-dom';
@@ -45,12 +45,23 @@ const POS = () => {
         () => getCustomersWithBalance(authHeader(), { customer_type: 'all'} )
     )
 
+    const { mutate: printAction } = useMutation({
+        mutationFn: (values: IOrder) => {
+            return print(values)
+        },
+        onSuccess: (data) => {
+            console.log("data: ", data);
+    
+        },
+    });
+
     const { mutate } = useMutation({
         mutationFn: (values: IOrder) => {
             return pay(authHeader(), values)
         },
-        onSuccess: (data) => {
+        onSuccess: (data, orderDetails: IOrder) => {
             console.log("data: ", data);
+            printAction(orderDetails);
             if (location.state) navigate("/POS/orders");
 
             form.resetFields();
@@ -64,6 +75,8 @@ const POS = () => {
             setTimeout(messageApi.destroy, 2500);
         }
     });
+
+    
 
 
     useEffect(() => {
@@ -232,12 +245,7 @@ const POS = () => {
             content: "Order successful"
         });
         mutate(order);
-        printReceipt();
         posReset();
-    }
-
-    const printReceipt = () => {
-        console.log("print receipt");
     }
 
     const handlePay = () => {
