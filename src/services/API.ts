@@ -8,7 +8,7 @@ import axios from "axios";
 const BASE_URL = "http://localhost:8000/api/v1";
 const SERVER_URL = "http://localhost:8000";
 
-const PRINT_URL = "http://localhost:80/print";
+const PRINT_URL = "http://localhost:80/epson_print/print.php";
 
 const print = (data: any) => {
     const formData = new FormData();
