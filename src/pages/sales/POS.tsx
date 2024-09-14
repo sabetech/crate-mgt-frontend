@@ -126,7 +126,7 @@ const POS = () => {
         }
     }
 
-    const [vseCustomer, setVSECustomer] = useState<ICustomer|undefined>(undefined)
+    const [_, setVSECustomer] = useState<ICustomer|undefined>(undefined)
     const onVseChange = (_: string, option: ICustomer) => {
         setVSECustomer(option)
     }

@@ -1,7 +1,7 @@
 import * as api from './API';
 import { IEmptyLog, IEmptyReturnedLog, IEmptiesInHouseCount, IEmptiesBalance, IEmptiesTransaction } from '../interfaces/Empties';
 import { ServerResponse  } from '../interfaces/Server'
-import { ICustomerReturnEmpties } from '../interfaces/Customer';
+// import { ICustomerReturnEmpties } from '../interfaces/Customer';
 
 export const getEmptiesLog = async (token: string): Promise<ServerResponse<IEmptyLog[]>> => {
     return (await api.get('/empties-receiving-logs', {'Authorization': token})).data;

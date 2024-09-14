@@ -6,13 +6,13 @@ import { getInventoryTransactions } from "../../services/InventoryAPI";
 import { useAuthHeader } from "react-auth-kit";
 import { IInventoryTransaction } from "../../interfaces/Inventory";
 import TableInventoryTransaction from "../../components/TableInventoryTransactions";
-import type { ColumnsType } from 'antd/es/table';
+// import type { ColumnsType } from 'antd/es/table';
 
 const InventoryHistory = () => {
     const authHeader = useAuthHeader();
     const [inventoryHistory, setInventoryHistory] = useState<IInventoryTransaction[]>([]);
     const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
-    const [inventoryHistorySummary, setInventoryHistorySummary] = useState([]);
+    // const [inventoryHistorySummary, setInventoryHistorySummary] = useState([]);
 
     const { data: inventoryLogs } = useQuery({
         queryKey: ['inventoryLogs', date],
@@ -156,13 +156,13 @@ const InventoryHistory = () => {
         { title: 'Closing Stock', dataIndex: '', key: 'closing_stock' },
     ]
 
-    const makeSummary = () => {
-        let summary = [];
+    // const makeSummary = () => {
+    //     let summary = [];
         
         
         
 
-    }
+    // }
 
     return (<>
         <Row>

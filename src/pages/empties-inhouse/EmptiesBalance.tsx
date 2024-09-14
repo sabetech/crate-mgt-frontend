@@ -5,7 +5,7 @@ import { ServerResponse } from '../../interfaces/Server';
 import { IEmptiesBalance, IEmptiesTransaction } from '../../interfaces/Empties';
 import { getEmptiesBalance, getEmptiesTransaction } from '../../services/EmptiesAPI';
 import dayjs from 'dayjs';
-import { ICustomerReturnEmpties } from '../../interfaces/Customer';
+// import { ICustomerReturnEmpties } from '../../interfaces/Customer';
 import { getEmptiesInTrade } from '../../services/EmptiesAPI'
 
 const EmptiesOverview = () => {
