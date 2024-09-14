@@ -5,14 +5,17 @@ import axios from "axios";
 // const BASE_URL = "https://crate-mgt-backend.firstlovegallery.com/api/v1";
 // const SERVER_URL = "https://crate-mgt-backend.firstlovegallery.com";
 
-const BASE_URL = "http://localhost:8000/api/v1";
-const SERVER_URL = "http://localhost:8000";
+// const BASE_URL = "http://localhost:8000/api/v1";
+// const SERVER_URL = "http://localhost:8000";
+
+const BASE_URL = "http://192.168.8.161:8000/api/v1";
+const SERVER_URL = "http://192.168.8.161:8000";
 
 const PRINT_URL = "http://localhost:80/epson_print/print.php";
 
 const print = (data: any) => {
     const formData = new FormData();
-    
+
     Object.keys(data).forEach(key => {
         formData.append(key, JSON.stringify(data[key]));
     });
