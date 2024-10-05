@@ -136,7 +136,7 @@ const AddNewCustomers: React.FC = () => {
                 <Space direction="vertical" style={{ width: '100%' }}>
                     <Alert
                         message="Success Tips"
-                        description={<p>Download this <a href="/opk_customer_sample.xlsx" download="Sample Import Excel" target="_blank" rel="noreferrer">sample Excel</a> and fill it up with your customers."</p>}
+                        description={<p>Download this <a href="/customer_upload_sample.csv" download="Sample Import Excel" target="_blank" rel="noreferrer">sample Excel</a> and fill it up with your customers."</p>}
                         type="success"
                         showIcon
                     />
