@@ -11,7 +11,7 @@ const SERVER_URL = "https://crate-mgt-backend.firstlovegallery.com";
 // const BASE_URL = "https://192.168.8.161:443/api/v1";
 // const SERVER_URL = "https://192.168.8.161:443";
 
-const PRINT_URL = "http://localhost:80/epson_print/print.php";
+const PRINT_URL = "http://localhost:81/epson_print/print.php";
 
 const print = (data: any) => {
     const formData = new FormData();
