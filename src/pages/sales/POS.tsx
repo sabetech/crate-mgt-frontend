@@ -59,8 +59,9 @@ const POS = () => {
         mutationFn: (values: IOrder) => {
             return pay(authHeader(), values)
         },
-        onSuccess: (data, orderDetails: IOrder) => {
-            console.log("data: ", data);
+        onSuccess: (data: any, orderDetails: IOrder) => {
+            orderDetails.transaction_id = data.data.transaction_id
+            console.log("order details: ", orderDetails);
             printAction(orderDetails);
             if (location.state) navigate("/POS/orders");
 
