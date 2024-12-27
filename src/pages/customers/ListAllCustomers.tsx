@@ -129,6 +129,9 @@ const ListCustomers: React.FC = () => {
                     <Tooltip title="Delete">
                         <Button shape="circle" icon={<DeleteOutlined />} danger/>
                     </Tooltip>
+                    <Tooltip title="Attach MOU">
+                        <Button>Attach MOU</Button>
+                    </Tooltip>
                 </Space>
             )
         }
@@ -144,8 +147,8 @@ const ListCustomers: React.FC = () => {
                     size="large"
                     onSearch={onSearch}
                 />
-                <Button type={filterByVSE ? "primary" : "default"} onClick={() => handleFilterByVSE()} disabled={filterByWholesaler}>Filter By VSE</Button>
-                <Button type={filterByWholesaler ? "primary" : "default"} onClick={() => handleFilterByWholesalers()} disabled={filterByVSE}>Filter By Wholesalers</Button>
+                <Button type={filterByVSE ? "primary" : "default"} onClick={() => handleFilterByVSE()} disabled={filterByWholesaler} size={'large'}>Filter By VSE</Button>
+                <Button type={filterByWholesaler ? "primary" : "default"} onClick={() => handleFilterByWholesalers()} disabled={filterByVSE} size={'large'}>Filter By Wholesalers</Button>
             </Space>
             <TableCustomers 
                 columns={columms}

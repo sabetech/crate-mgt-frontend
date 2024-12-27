@@ -5,8 +5,11 @@ import { ServerResponse } from '../../interfaces/Server';
 import { IEmptiesBalance, IEmptiesTransaction } from '../../interfaces/Empties';
 import { getEmptiesBalance, getEmptiesTransaction } from '../../services/EmptiesAPI';
 import dayjs from 'dayjs';
+import { getProductsWithStockBalance } from '../../services/ProductsAPI';
 // import { ICustomerReturnEmpties } from '../../interfaces/Customer';
 import { getEmptiesInTrade } from '../../services/EmptiesAPI'
+import { IProductWithBalance } from '../../interfaces/Product';
+
 
 const EmptiesOverview = () => {
 
@@ -16,6 +19,13 @@ const EmptiesOverview = () => {
         queryKey: ['empties-balance'],
         queryFn: () => getEmptiesBalance(authHeader()),
     });
+
+    const { data: products, isLoading } = useQuery({
+        queryKey: ['products_balances'],
+        queryFn: () => getProductsWithStockBalance(authHeader())
+    });
+
+    console.log("Yayba::", products);
 
     const {data: emptiesInTrade } = useQuery<ServerResponse<number>>({
         queryKey: ['empties-in-trade'],
@@ -36,13 +46,29 @@ const EmptiesOverview = () => {
                 <Col span={6}>
                     <Card bordered={true}>
                         <Statistic
-                            title="Total Empties On Ground"
+                            title="Total Empties"
                             value={emptiesBalance && emptiesBalance.data?.reduce((acc: number, item: IEmptiesBalance) => acc + item.quantity, 0)}
                             valueStyle={{ color: '#3f8600' }}
                             suffix="empties"
                         />
                     </Card>
                 </Col>
+
+                <Col span={6}>
+                    <Card bordered={true}>
+                        <Statistic
+                            title="Number of Fulls"
+                            value={
+                                products && 
+                                products.data
+                                ?.filter((product: IProductWithBalance) => product.empty_returnable === true)
+                                ?.reduce((acc: number, item: IProductWithBalance) => acc + item.inventory_balance.quantity, 0)}
+                            valueStyle={{ color: '#3f8600' }}
+                            suffix="Amount of Fulls"
+                        />
+                    </Card>
+                </Col>
+
                 <Col span={6}>
                     <Card bordered={true}>
                         <Statistic
@@ -90,7 +116,10 @@ const EmptiesOverview = () => {
                         renderItem={(item: IEmptiesTransaction) => (
                             <List.Item>
                                 <Typography.Text>{dayjs(item.datetime).format('D MMM, YYYY H:m A')} </Typography.Text> 
-                                <Typography.Text>{item.product.sku_name} <Tag color={item.transaction_type == 'in' ? 'green': 'red'}> { item.transaction_type.toUpperCase() } </Tag> </Typography.Text> 
+                                <Typography.Text>
+                                    {item.product.sku_name} <Tag color={item.transaction_type == 'in' ? 'green': 'red'}> { item.transaction_type.toUpperCase() } </Tag> 
+                                    <Tag color="default">{item.activity}</Tag> 
+                                    </Typography.Text> 
                                 <Typography.Text>{item.quantity}</Typography.Text>
                             </List.Item>
                         )}
