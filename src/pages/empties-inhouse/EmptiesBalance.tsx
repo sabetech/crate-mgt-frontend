@@ -20,7 +20,7 @@ const EmptiesOverview = () => {
         queryFn: () => getEmptiesBalance(authHeader()),
     });
 
-    const { data: products, isLoading } = useQuery({
+    const { data: products } = useQuery({
         queryKey: ['products_balances'],
         queryFn: () => getProductsWithStockBalance(authHeader())
     });
