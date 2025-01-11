@@ -8,6 +8,7 @@ import { ServerResponse } from "../../interfaces/Server";
 import { getCustomersWithBalance } from "../../services/CustomersAPI";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { WHOLESALER } from "../../utils/constants";
 
 const { Search } = Input;
 const ListCustomers: React.FC = () => {
@@ -121,7 +122,7 @@ const ListCustomers: React.FC = () => {
             title: 'Action',
             dataIndex: 'action',
             key: 'action', 
-            render: (_: any) => (
+            render: (_: any, customer: ICustomer) => (
                 <Space direction="horizontal">
                     <Tooltip title="Edit">
                         <Button shape="circle" icon={<EditOutlined />} />
@@ -129,9 +130,12 @@ const ListCustomers: React.FC = () => {
                     <Tooltip title="Delete">
                         <Button shape="circle" icon={<DeleteOutlined />} danger/>
                     </Tooltip>
-                    <Tooltip title="Attach MOU">
-                        <Button>Attach MOU</Button>
-                    </Tooltip>
+                    {
+                        customer.customer_type.toLowerCase() === WHOLESALER &&
+                        <Tooltip title="Attach MOU">
+                            <Button>Attach MOU</Button>
+                        </Tooltip>
+                    }
                 </Space>
             )
         }
