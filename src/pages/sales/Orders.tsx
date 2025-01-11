@@ -3,7 +3,7 @@ import { IOrder } from "../../interfaces/Sale";
 import { useQuery } from "@tanstack/react-query";
 import { getOrders } from "../../services/SalesAPI";
 import { useAuthHeader } from "react-auth-kit";
-import { Typography, Table, Tag, Button, Space } from "antd";
+import { Alert, Typography, Table, Tag, Button, Space } from "antd";
 import { ServerResponse } from "../../interfaces/Server";
 import { SyncOutlined, CheckCircleOutlined, CloseCircleOutlined, CloseOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -92,6 +92,13 @@ const Orders = () => {
     return (
         <div>
             <Typography.Title level={2}>Orders</Typography.Title>
+            <Alert
+                message="Help"
+                description="As a cashier, approve orders on this page as they bring the receipt to you. Take the chance to review the order before approving."
+                type="info"
+                showIcon
+                style={{marginBottom: 20}}
+            />
             <Table 
                 columns={columns}
                 dataSource={orders}

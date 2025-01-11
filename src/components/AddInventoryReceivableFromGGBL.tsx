@@ -1,4 +1,4 @@
-import { Button, Form, Upload } from "antd";
+import { Button, Form, Upload, Alert } from "antd";
 import { PlusOutlined} from '@ant-design/icons'
 import type { DatePickerProps } from 'antd';
 import { DatePicker, Input, message } from 'antd';
@@ -94,6 +94,16 @@ const AddInventoryReceivableFromGGBL = () => {
     return (
         <>
         {contextHolder}
+        <Alert
+            message="Help"
+            description="Whenever a truck from GGBL comes to deliver crates, 
+                        you fill in the details here. Use the product quantities 
+                        to choose which products are being delivered. 
+                        Include a picture of the purchase order!"
+            type="info"
+            showIcon
+            style={{marginBottom: 20}}
+        />
             <Form
                 form={form}
                 onFinish={onFinish}

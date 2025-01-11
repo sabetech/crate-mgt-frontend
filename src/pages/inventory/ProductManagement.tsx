@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Space, Table, Tooltip, Typography, Modal, Form, Input, Checkbox, InputNumber, message} from "antd";
+import { Alert, Button, Space, Table, Tooltip, Typography, Modal, Form, Input, Checkbox, InputNumber, message} from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getProductsWithStockBalance } from "../../services/ProductsAPI";
@@ -156,6 +156,13 @@ const ProductManagement = () => {
         <div>
             {contextHolder}
             <Typography.Title level={2}>Product Management</Typography.Title>
+            <Alert
+            message="Help"
+            description="This page shows the list of products, their prices and the stock balance. You can edit the prices when they change from the edit buttons."
+            type="info"
+            showIcon
+            style={{marginBottom: 20}}
+        />
             <Space direction={"vertical"} style={{ display: 'flex' }}>
                 <Space direction={"horizontal"} style={{ marginBottom: "2rem" }}>
                 <Search
