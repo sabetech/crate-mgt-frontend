@@ -85,6 +85,7 @@ const items: MenuItem[] = [
   getItem('Warehouse', 'warehouse', <AppstoreOutlined />, [
     getItem('Products', 'warehouse/products'),
     getItem('Pending Orders', 'warehouse/pending-orders'),
+    getItem('Adjust Stock', 'warehouse/adjust-stock'),
     getItem('Receivables', 'warehouse/receivables'),
     getItem('Receivables Log', 'warehouse/receivables-log'),
     getItem('Inventory Transaction', 'warehouse/inventory-transaction'),
@@ -256,6 +257,7 @@ const LayoutBase = () => {
             <Route path="/warehouse/products" element={<ProductManagement />} />
             {/* <Route path="/warehouse/inventory" element={<Inventory />} /> */}
             <Route path="/warehouse/pending-orders" element={<PendingOrders />} />
+            <Route path="warehouse/adjust-stock" element={<></>} />
             <Route path="/warehouse/receivables" element={<Receivables />} />
             <Route path="/warehouse/receivables-log" element={<ReceivablesLog />} />
             <Route path="warehouse/inventory-transaction" element={<InventoryHistory/>} />

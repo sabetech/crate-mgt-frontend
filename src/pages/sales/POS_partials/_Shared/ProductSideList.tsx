@@ -6,13 +6,13 @@ import { useAuthHeader } from 'react-auth-kit';
 
 const ProductSideList = () => {
     const authHeader = useAuthHeader()
-    // const [products, setProducts] = useState<IProductWithBalance[]>([]);
+
 
     const {data: products} = useGetProducts(authHeader);
 
 
     return (
-        <Col span={5} style={{border: 1, height: "65vh", overflow: 'scroll'}}>
+        <Col style={{border: 1, height: "65vh", borderRadius: 12, overflow: 'scroll'}}>
             <List
                 header={<strong>List of Products </strong>}
                 footer={"Oppong Kyekyeku LTD"}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AutoComplete, Form, message } from "antd";
+import { AutoComplete, Form, message, Input, Space, Button, Typography, InputNumber } from "antd";
 import { ICustomer } from "../../../interfaces/Customer";
 import { IProductWithBalance } from '../../../interfaces/Product'
 import { getCustomersWithBalance } from '../../../services/CustomersAPI';
@@ -9,6 +9,7 @@ import { ServerResponse } from '../../../interfaces/Server'
 import { useAuthHeader } from 'react-auth-kit'
 import { IOrder, ISaleItem } from '../../../interfaces/Sale';
 import { pay, printReceipt as print } from '../../../services/SalesAPI'
+import ProductSearch from "./_Shared/ProductSearch";
 
 const POS_Customer = () => {
     const authHeader = useAuthHeader();
@@ -20,6 +21,15 @@ const POS_Customer = () => {
     const [selectedProduct, setSelectedProduct] = useState<IProductWithBalance | undefined>();
 
     const [customer, setCustomer] = useState<ICustomer>(location.state?.customer as ICustomer);
+    
+    const [quantity, setQuantity] = useState<number>(1); //put out side and share across all 4
+
+    const formClear = () => {
+        form.resetFields();
+        setUnitPrice(0);
+        setQuantity(1);
+        setSelectedProduct(undefined);
+    }
 
     const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
             ['customers'],
@@ -46,6 +56,58 @@ const POS_Customer = () => {
             form.setFieldValue("unit_price", selectedProduct?.retail_price);
             setUnitPrice(typeof selectedProduct?.retail_price === 'undefined' ? 0 : selectedProduct?.retail_price);
         }
+    }
+
+    const savePurchase = () => {
+        /*
+        if (!selectedProduct || typeof selectedProduct === 'undefined' || typeof form.getFieldValue("product") === 'undefined') {
+            messageApi.open({
+                type: 'error',
+                content: "Please select a product"
+            });
+            return;
+        }
+
+        if (typeof form.getFieldValue("quantity") === 'undefined') {
+            messageApi.open({
+                type: 'error',
+                content: "Please enter a quantity"
+            });
+            return;
+        }
+
+        const product = selectedProduct;
+        const quantity = form.getFieldValue("quantity");
+        const unitPrice = form.getFieldValue("unit_price");
+
+        if (!customer) {
+            messageApi.open({
+                type: 'error',
+                content: "Please Choose a customer!"
+            });
+            return;
+        }
+
+        if (product.empty_returnable && customer.customer_type !== 'wholesaler') {
+            if (emptiesBalance < quantity) { 
+                messageApi.open({
+                    type: 'error',
+                    content: "Customer does not have enough empties to make this purchase"
+                });
+                return;
+            }
+        }
+
+        if (typeof product !== 'undefined') {
+            setTableContent([{id: product.id, product: product, quantity: quantity, key: product.id} as ISaleItem, ...tableContent]);
+        }
+
+        if (product.empty_returnable) updateCustomerEmptiesBalance(-quantity);
+
+        form.resetFields();
+        (unitPrice || unitPrice > 0) && setUnitPrice(0);
+        form.setFieldValue("customer", `${customer?.name} (${customer?.customer_type.toUpperCase()})`);
+        */
     }
 
     const { mutate } = useMutation({
@@ -83,17 +145,49 @@ const POS_Customer = () => {
                 'quantity': 1
             }}
         >  
+            <Form.Item
+                label={'Select Customer'}
+            >
+                <AutoComplete 
+                    allowClear={true}
+                    bordered={true}
+                    onSelect={(text: string, option: ICustomer) => onCustomerChange(text, option)}
+                    placeholder="Search for Customer"
+                    options={ customersResponse?.data.map(custmr => ({...custmr, value: `${custmr.name} (${custmr.customer_type.toUpperCase()})`})) }
+                    filterOption={(inputValue, option) =>
+                        option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                        }
+                />
+            </Form.Item>
+            
+            <Form.Item
+                label={'Select Product'}
+            >
+                <ProductSearch customer={customer}/>
+            </Form.Item>
+            <hr />
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "space-between"
+                }}
+            >
+                <Form.Item name={"unit_price"} label={`Unit Price: ${typeof unitPrice === 'undefined'? "0.00" : unitPrice} GHC`}>
+                    <Input placeholder="Unit Price" value={unitPrice} readOnly/>
+                </Form.Item>
+                <Form.Item label="Quantity:" name="quantity">
+                    <InputNumber min={1} onChange={(val) => setQuantity( val === null ? 1 : val  )}/>
+                </Form.Item>
+                <Form.Item label="Price">
+                    <Typography className="ant-form-text">{(unitPrice * quantity).toFixed(2)} GHC</Typography>
+                </Form.Item>
+            </div>
+            <Space wrap>
+                <Button size={"large"} type="primary" onClick={savePurchase} disabled={(typeof selectedProduct === 'undefined') } >Save</Button>
+                <Button size={"large"} onClick={() => formClear()}>Clear</Button>
+            </Space>
+            
 
-            <AutoComplete 
-                allowClear={true}
-                bordered={false}
-                onSelect={(text: string, option: ICustomer) => onCustomerChange(text, option)}
-                placeholder="Search for Customer"
-                options={ customersResponse?.data.map(custmr => ({...custmr, value: `${custmr.name} (${custmr.customer_type.toUpperCase()})`})) }
-                filterOption={(inputValue, option) =>
-                    option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                    }
-            />
         </Form>
     </>)
 }
