@@ -8,17 +8,25 @@ import VSE_Loadout from "./POS_partials/VSE_loadout";
 import VSE_Return from "./POS_partials/VSE_Return";
 import POS_Customer_Edit_sale from "./POS_partials/POS_Customer_Edit_Sale";
 import SelectedProducts from "./POS_partials/_Shared/SelectedProducts";
+import { IProductWithBalance } from "../../interfaces/Product";
+import { TagsOutlined } from '@ant-design/icons';
 
 
 const POS = () => {
 
+    const [customerSaleItems, setCustomerSaleItems] = useState<ISaleItem[]>([]);
+    const [vseSaleItems, setVseSaleItems] = useState<ISaleItem[]>([]);
+
     const [tableContent, setTableContent] = useState<ISaleItem[]>([]);
+    const onProductClicked = (product: IProductWithBalance) => {
+        
+    }
 
     return <>
             <Row>
                 <POS_HelpInfo />
                 <Col>
-                    <ProductSideList />
+                    <ProductSideList onProductClicked={onProductClicked} />
                 </Col>
                 <Col>
                     <div style={{
@@ -33,16 +41,33 @@ const POS = () => {
                             style={{marginLeft: 20}}
                             defaultActiveKey='1'
                             size={'small'}
+                            onChange={(key) => {
+                                switch(key) {
+                                    case '1':
+                                        setTableContent(customerSaleItems)
+                                    break;
+
+                                    case '2':
+                                        setTableContent(vseSaleItems)
+                                    break;
+                                }
+                            }}
                             items={[
                                 {
                                     label: 'Customer',
                                     key: '1',
-                                    children: <POS_Customer setTableContent={setTableContent}/>
+                                    children: <POS_Customer 
+                                                    setTableContent={setTableContent} 
+                                                    setCustomerSaleItems={setCustomerSaleItems}/>
+
                                 },
                                 {
                                     label: 'VSE Loadout',
                                     key: '2',
-                                    children: <VSE_Loadout />
+                                    children: <VSE_Loadout 
+                                                setTableContent={setTableContent} 
+                                                setVseSaleItems={setVseSaleItems}
+                                                />
                                 },
                                 {
                                     label: 'VSE Return',

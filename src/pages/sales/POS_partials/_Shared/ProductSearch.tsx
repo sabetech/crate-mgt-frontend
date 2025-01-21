@@ -1,16 +1,18 @@
-import { AutoComplete, FormItemProps } from "antd";
+import { useState } from "react";
+import { AutoComplete } from "antd";
 import { useGetProducts } from "../../hooks/salesHook";
 import { useAuthHeader } from "react-auth-kit";
 import { IProductWithBalance } from "../../../../interfaces/Product";
-import { ICustomer, ICustomerReturnEmpties } from "../../../../interfaces/Customer";
+
 
 type ProductSearchPros = {
     onProductSelected: (product: IProductWithBalance) => void
 }
 
-    const ProductSearch:React.FC<ProductSearchPros> = ({ onProductSelected}) => {
+const ProductSearch:React.FC<ProductSearchPros> = ({ onProductSelected }) => {
     const authHeader = useAuthHeader()
     const {data: products} = useGetProducts(authHeader);
+    // const [_internalSelectedProducts, _setSelectedProducts] = useState<IProductWithBalance[]>([]);
 
     const onProductChange = (_: string, option: IProductWithBalance) => {
         if (typeof option === 'undefined') {
@@ -18,6 +20,7 @@ type ProductSearchPros = {
         }
         
         onProductSelected(option)
+        // _setSelectedProducts(prev => [...prev, option])
         
     };
 
@@ -36,7 +39,7 @@ type ProductSearchPros = {
             // onSearch={onSearch}
             onSelect={(text: string, option: any) => onProductChange(text, option)}
             placeholder="Search for Product"
-            options={products?.data.map(prdt => ({...prdt, value: `${prdt.sku_name} (${prdt?.inventory_balance?.quantity ?? 0})` })).filter(prdt => prdt?.inventory_balance?.quantity > 0)}
+            options={products?.data.map(prdt => ({...prdt, value: `${prdt.sku_name} (${prdt?.inventory_balance?.quantity ?? 0})` })).filter(prdt => (prdt?.inventory_balance?.quantity > 0 ))}
             filterOption={(inputValue, option) =>
                 option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
             }

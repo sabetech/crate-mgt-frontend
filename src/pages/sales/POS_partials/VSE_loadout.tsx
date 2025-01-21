@@ -1,3 +1,4 @@
+import { useState, useEffect} from "react";
 import { Form, AutoComplete, Input, Typography, InputNumber, Space, Button } from "antd";
 import { ServerResponse } from "../../../interfaces/Server";
 import { ICustomer } from "../../../interfaces/Customer";
@@ -5,14 +6,28 @@ import { useQuery } from "@tanstack/react-query";
 import { getCustomersWithBalance } from "../../../services/CustomersAPI";
 import { useAuthHeader } from "react-auth-kit";
 import ProductSearch from "./_Shared/ProductSearch";
+import { IProductWithBalance } from "../../../interfaces/Product";
+import { ISaleItem } from "../../../interfaces/Sale";
 
-const VSE_Loadout = () => {
+type Props = {
+    // selectedProducts: ISaleItem[];
+    // setSelectedProducts: (products: ISaleItem[]) => void;
+    setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
+    setVseSaleItems: React.Dispatch<React.SetStateAction<ISaleItem[]>>
+}
+
+const VSE_Loadout:React.FC<Props> = ({setTableContent, setVseSaleItems}) => {
     const authHeader = useAuthHeader();
     const [form] = Form.useForm();
+    const [unitPrice, setUnitPrice] = useState<number>(0);
+    const [quantity, setQuantity] = useState<number>(1); 
+    const [selectedProduct, setSelectedProduct] = useState<IProductWithBalance | undefined>();
+
+    const [selectedProducts, setSelectedProducts] = useState<ISaleItem[]>([]);
 
      const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
-                ['customers'],
-                () => getCustomersWithBalance(authHeader(), { customer_type: 'vse'} )
+                ['customers-vse'],
+                () => getCustomersWithBalance(authHeader(), { customer_type: 'retailer-vse'} )
         );
 
     const onCustomerChange = (text: any, option: any) => {
@@ -20,6 +35,35 @@ const VSE_Loadout = () => {
         // form.setFieldValue("unit_price", selectedProduct?.retail_price);
         // setUnitPrice(typeof selectedProduct?.retail_price === 'undefined' ? 0 : selectedProduct?.retail_price);
     }
+
+    const onCustomerSelectedProduct = (product: IProductWithBalance) => {
+        form.setFieldValue("unit_price", product.retail_price);
+        setUnitPrice(typeof product.retail_price === 'undefined' ? 0 : product.retail_price);
+    
+        setSelectedProduct(product);
+        form.setFieldValue("product", product.sku_name);
+    }
+    
+    const formClear = () => {
+        form.resetFields();
+        setUnitPrice(0);
+        setQuantity(1);
+        setSelectedProduct(undefined);
+    }
+
+    const saveVSELoadout = () => {
+        if (typeof selectedProduct !== 'undefined') {
+            setSelectedProducts((prev) => [...prev, {id: selectedProduct.id, product: selectedProduct, quantity: quantity, key: selectedProduct.id} as ISaleItem]);
+        }
+    }
+
+    useEffect(() => {
+        if (selectedProducts) {
+            setTableContent(selectedProducts);
+            setVseSaleItems(selectedProducts);
+        }
+
+    },[selectedProducts])
 
     return (<>
         <Form
@@ -41,7 +85,7 @@ const VSE_Loadout = () => {
                     allowClear={true}
                     bordered={true}
                     onSelect={(text: string, option: ICustomer) => onCustomerChange(text, option)}
-                    placeholder="Search for Customer"
+                    placeholder="Search for VSE"
                     options={ customersResponse?.data.map(custmr => ({...custmr, value: `${custmr.name} (${custmr.customer_type.toUpperCase()})`})) }
                     filterOption={(inputValue, option) =>
                         option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
@@ -51,8 +95,12 @@ const VSE_Loadout = () => {
             
             <Form.Item
                 label={'Select Product'}
+                name={"product"}
             >
-                <ProductSearch customer={customer}/>
+                <ProductSearch 
+                    onProductSelected={(product) => onCustomerSelectedProduct(product)}
+                    
+                />
             </Form.Item>
             <hr />
             <div
@@ -72,7 +120,7 @@ const VSE_Loadout = () => {
                 </Form.Item>
             </div>
             <Space wrap>
-                <Button size={"large"} type="primary" onClick={savePurchase} disabled={(typeof selectedProduct === 'undefined') } >Save</Button>
+                <Button size={"large"} type="primary" onClick={saveVSELoadout} disabled={(typeof selectedProduct === 'undefined') } >Save</Button>
                 <Button size={"large"} onClick={() => formClear()}>Clear</Button>
             </Space>
             

@@ -13,8 +13,9 @@ import ProductSearch from "./_Shared/ProductSearch";
 
 type Props = {
     setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
+    setCustomerSaleItems: React.Dispatch<React.SetStateAction<ISaleItem[]>>
 }
-const POS_Customer:React.FC<Props> = ({setTableContent}) => {
+const POS_Customer:React.FC<Props> = ({setTableContent, setCustomerSaleItems}) => {
     const authHeader = useAuthHeader();
     const navigate = useNavigate();
     const [form] = Form.useForm();
@@ -75,9 +76,6 @@ const POS_Customer:React.FC<Props> = ({setTableContent}) => {
     }
 
     const savePurchase = () => {
-        
-        console.log("Selected Product: ", selectedProduct);
-        console.log("form.getFieldValue(product): ", form.getFieldValue("product"));
 
         if (!selectedProduct || typeof selectedProduct === 'undefined' || typeof form.getFieldValue("product") === 'undefined' || form.getFieldValue("product") === '') {
             messageApi.open({
@@ -137,6 +135,7 @@ const POS_Customer:React.FC<Props> = ({setTableContent}) => {
     useEffect(() => {
         if (selectedProducts) {
             setTableContent(selectedProducts);
+            setCustomerSaleItems(selectedProducts);
         }
 
 
