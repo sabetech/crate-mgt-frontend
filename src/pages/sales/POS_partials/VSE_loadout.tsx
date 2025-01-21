@@ -1,9 +1,10 @@
-import { Form, AutoComplete } from "antd";
+import { Form, AutoComplete, Input, Typography, InputNumber, Space, Button } from "antd";
 import { ServerResponse } from "../../../interfaces/Server";
 import { ICustomer } from "../../../interfaces/Customer";
 import { useQuery } from "@tanstack/react-query";
 import { getCustomersWithBalance } from "../../../services/CustomersAPI";
 import { useAuthHeader } from "react-auth-kit";
+import ProductSearch from "./_Shared/ProductSearch";
 
 const VSE_Loadout = () => {
     const authHeader = useAuthHeader();
@@ -14,8 +15,10 @@ const VSE_Loadout = () => {
                 () => getCustomersWithBalance(authHeader(), { customer_type: 'vse'} )
         );
 
-    const onCustomerChange = (text, option) => {
-
+    const onCustomerChange = (text: any, option: any) => {
+        console.log("Text ", text, option)
+        // form.setFieldValue("unit_price", selectedProduct?.retail_price);
+        // setUnitPrice(typeof selectedProduct?.retail_price === 'undefined' ? 0 : selectedProduct?.retail_price);
     }
 
     return (<>

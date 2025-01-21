@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AutoComplete, Form, message, Input, Space, Button, Typography, InputNumber } from "antd";
 import { ICustomer } from "../../../interfaces/Customer";
 import { IProductWithBalance } from '../../../interfaces/Product'
@@ -11,7 +11,10 @@ import { IOrder, ISaleItem } from '../../../interfaces/Sale';
 import { pay, printReceipt as print } from '../../../services/SalesAPI'
 import ProductSearch from "./_Shared/ProductSearch";
 
-const POS_Customer = () => {
+type Props = {
+    setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
+}
+const POS_Customer:React.FC<Props> = ({setTableContent}) => {
     const authHeader = useAuthHeader();
     const navigate = useNavigate();
     const [form] = Form.useForm();
@@ -19,10 +22,10 @@ const POS_Customer = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const [unitPrice, setUnitPrice] = useState<number>(0);
     const [selectedProduct, setSelectedProduct] = useState<IProductWithBalance | undefined>();
-
     const [customer, setCustomer] = useState<ICustomer>(location.state?.customer as ICustomer);
-    
-    const [quantity, setQuantity] = useState<number>(1); //put out side and share across all 4
+    const [quantity, setQuantity] = useState<number>(1); 
+
+    const [selectedProducts, setSelectedProducts] = useState<ISaleItem[]>(location.state?.sales ?? []);
 
     const formClear = () => {
         form.resetFields();
@@ -58,9 +61,25 @@ const POS_Customer = () => {
         }
     }
 
+    const onCustomerSelectedProduct = (product: IProductWithBalance) => {
+        if (customer && customer.customer_type === 'wholesaler') {
+            form.setFieldValue("unit_price", product.wholesale_price);
+            setUnitPrice(typeof product.wholesale_price === 'undefined' ? 0 : product.wholesale_price);
+        }else{
+            form.setFieldValue("unit_price", product.retail_price);
+            setUnitPrice(typeof product.retail_price === 'undefined' ? 0 : product.retail_price);
+        }
+
+        setSelectedProduct(product);
+        form.setFieldValue("product", product.sku_name);
+    }
+
     const savePurchase = () => {
-        /*
-        if (!selectedProduct || typeof selectedProduct === 'undefined' || typeof form.getFieldValue("product") === 'undefined') {
+        
+        console.log("Selected Product: ", selectedProduct);
+        console.log("form.getFieldValue(product): ", form.getFieldValue("product"));
+
+        if (!selectedProduct || typeof selectedProduct === 'undefined' || typeof form.getFieldValue("product") === 'undefined' || form.getFieldValue("product") === '') {
             messageApi.open({
                 type: 'error',
                 content: "Please select a product"
@@ -88,27 +107,41 @@ const POS_Customer = () => {
             return;
         }
 
-        if (product.empty_returnable && customer.customer_type !== 'wholesaler') {
-            if (emptiesBalance < quantity) { 
-                messageApi.open({
-                    type: 'error',
-                    content: "Customer does not have enough empties to make this purchase"
-                });
-                return;
-            }
-        }
-
         if (typeof product !== 'undefined') {
-            setTableContent([{id: product.id, product: product, quantity: quantity, key: product.id} as ISaleItem, ...tableContent]);
+            setSelectedProducts((prev) => [...prev, {id: product.id, product: product, quantity: quantity, key: product.id} as ISaleItem]);
         }
+        
 
-        if (product.empty_returnable) updateCustomerEmptiesBalance(-quantity);
+        // if (product.empty_returnable && customer.customer_type !== 'wholesaler') {
+        //     if (emptiesBalance < quantity) { 
+        //         messageApi.open({
+        //             type: 'error',
+        //             content: "Customer does not have enough empties to make this purchase"
+        //         });
+        //         return;
+        //     }
+        // }
+
+        
+        
+
+        // if (product.empty_returnable) updateCustomerEmptiesBalance(-quantity);
 
         form.resetFields();
         (unitPrice || unitPrice > 0) && setUnitPrice(0);
         form.setFieldValue("customer", `${customer?.name} (${customer?.customer_type.toUpperCase()})`);
-        */
+        form.setFieldValue("product", "");
+        
     }
+
+    useEffect(() => {
+        if (selectedProducts) {
+            setTableContent(selectedProducts);
+        }
+
+
+
+    },[selectedProducts])
 
     const { mutate } = useMutation({
             mutationFn: (values: IOrder) => {
@@ -133,6 +166,7 @@ const POS_Customer = () => {
         });
 
     return (<>
+        {contextHolder}
         <Form
             layout={'horizontal'}
             form={form}
@@ -162,8 +196,12 @@ const POS_Customer = () => {
             
             <Form.Item
                 label={'Select Product'}
+                name={"product"}
             >
-                <ProductSearch customer={customer}/>
+                <ProductSearch 
+                    onProductSelected={(product) => onCustomerSelectedProduct(product)}
+                    
+                />
             </Form.Item>
             <hr />
             <div

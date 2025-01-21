@@ -4,14 +4,22 @@ import {useLocation} from 'react-router-dom';
 import { ISaleItem } from "../../../../interfaces/Sale";
 import { DeleteFilled } from '@ant-design/icons';
 
-const SelectedProducts = () => {
+type props = {
+    tableContent: ISaleItem[],
+    setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
+}
+const SelectedProducts:React.FC<props> = ({tableContent, setTableContent}) => {
     
-    const location = useLocation();
-    const [tableContent, setTableContent] = useState<ISaleItem[]>(location.state?.sales ?? []); // [{sku_code: "sku_code", product: "product", quantity: 1, price: 0.00}]
+    // const location = useLocation();
+    // const [] = useState<ISaleItem[]>(location.state?.sales ?? []); // [{sku_code: "sku_code", product: "product", quantity: 1, price: 0.00}]
 
     const removePOSItem = (record: ISaleItem) => {
         setTableContent( (prev) => prev.filter((item) => item.id !== record.id) )
         if (record.product.empty_returnable) updateCustomerEmptiesBalance(record.quantity);
+    }
+
+    const updateCustomerEmptiesBalance = (quantity: number) => {
+
     }
 
     const posTableColumns = [

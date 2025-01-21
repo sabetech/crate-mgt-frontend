@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Row, Col, Tabs } from "antd";
+import { ISaleItem } from "../../interfaces/Sale";
 import ProductSideList from "./POS_partials/_Shared/ProductSideList";
 import POS_HelpInfo from "./POS_partials/POS_HelpInfo";
 import POS_Customer from "./POS_partials/POS_Customer";
@@ -9,6 +11,9 @@ import SelectedProducts from "./POS_partials/_Shared/SelectedProducts";
 
 
 const POS = () => {
+
+    const [tableContent, setTableContent] = useState<ISaleItem[]>([]);
+
     return <>
             <Row>
                 <POS_HelpInfo />
@@ -32,7 +37,7 @@ const POS = () => {
                                 {
                                     label: 'Customer',
                                     key: '1',
-                                    children: <POS_Customer />
+                                    children: <POS_Customer setTableContent={setTableContent}/>
                                 },
                                 {
                                     label: 'VSE Loadout',
@@ -52,7 +57,7 @@ const POS = () => {
 
                             ]}
                         /> 
-                        <SelectedProducts />
+                        <SelectedProducts tableContent={tableContent} setTableContent={setTableContent} />
                     </div>
                     
                 </Col>

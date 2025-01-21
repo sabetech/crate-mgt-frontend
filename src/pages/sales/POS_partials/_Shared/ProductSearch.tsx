@@ -5,10 +5,10 @@ import { IProductWithBalance } from "../../../../interfaces/Product";
 import { ICustomer, ICustomerReturnEmpties } from "../../../../interfaces/Customer";
 
 type ProductSearchPros = {
-    customer: ICustomer
+    onProductSelected: (product: IProductWithBalance) => void
 }
 
-const ProductSearch:React.FC<ProductSearchPros> = ({customer}) => {
+    const ProductSearch:React.FC<ProductSearchPros> = ({ onProductSelected}) => {
     const authHeader = useAuthHeader()
     const {data: products} = useGetProducts(authHeader);
 
@@ -17,23 +17,15 @@ const ProductSearch:React.FC<ProductSearchPros> = ({customer}) => {
             return;
         }
         
-        // setSelectedProduct(option);
-        
-        if (customer && customer.customer_type === 'wholesaler') {
-            // form.setFieldValue("unit_price", option.wholesale_price);
-            // setUnitPrice(typeof option.wholesale_price === 'undefined' ? 0 : option.wholesale_price);
-        }else{
-            // form.setFieldValue("unit_price", option.retail_price);
-            // setUnitPrice(typeof option.retail_price === 'undefined' ? 0 : option.retail_price);
-        }
+        onProductSelected(option)
         
     };
 
 
     return (
         <AutoComplete 
-            disabled={typeof customer === 'undefined'}
             allowClear={true}
+            // value={"faec"}
             onClear={() => {
                 // setUnitPrice(0);
                 // setQuantity(1);
