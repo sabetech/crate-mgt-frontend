@@ -199,7 +199,6 @@ const POS_Customer:React.FC<Props> = ({setTableContent, setCustomerSaleItems}) =
             >
                 <ProductSearch 
                     onProductSelected={(product) => onCustomerSelectedProduct(product)}
-                    
                 />
             </Form.Item>
             <hr />

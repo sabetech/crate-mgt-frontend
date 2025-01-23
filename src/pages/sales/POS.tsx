@@ -9,13 +9,14 @@ import VSE_Return from "./POS_partials/VSE_Return";
 import POS_Customer_Edit_sale from "./POS_partials/POS_Customer_Edit_Sale";
 import SelectedProducts from "./POS_partials/_Shared/SelectedProducts";
 import { IProductWithBalance } from "../../interfaces/Product";
-import { TagsOutlined } from '@ant-design/icons';
-
+import OrderSummary from "./POS_partials/_Shared/OrderSummary";
 
 const POS = () => {
 
     const [customerSaleItems, setCustomerSaleItems] = useState<ISaleItem[]>([]);
     const [vseSaleItems, setVseSaleItems] = useState<ISaleItem[]>([]);
+    const [vseReturnSaleItems, setvseReturnSaleItems] = useState<ISaleItem[]>([]);
+    const [customerSaleReturnItems, setcustomerSaleReturnItems] = useState<ISaleItem[]>([]);
 
     const [tableContent, setTableContent] = useState<ISaleItem[]>([]);
     const onProductClicked = (product: IProductWithBalance) => {
@@ -50,6 +51,14 @@ const POS = () => {
                                     case '2':
                                         setTableContent(vseSaleItems)
                                     break;
+                                    
+                                    case '3':
+                                        setTableContent(vseReturnSaleItems)
+                                    break;
+                                    
+                                    case '4':
+                                        setTableContent(customerSaleReturnItems)
+                                    break;
                                 }
                             }}
                             items={[
@@ -72,12 +81,17 @@ const POS = () => {
                                 {
                                     label: 'VSE Return',
                                     key: '3',
-                                    children: <VSE_Return />
+                                    children: <VSE_Return 
+                                                    setTableContent={setTableContent}
+                                                    setVseReturnSaleItems={setvseReturnSaleItems}/>
                                 },
                                 {
                                     label: 'Customer Modify Sale',
                                     key: '4',
-                                    children: <POS_Customer_Edit_sale />
+                                    children: <POS_Customer_Edit_sale 
+                                                    setTableContent={setTableContent}
+                                                    setcustomerSaleReturnItems={setcustomerSaleReturnItems}
+                                                    />
                                 },
 
                             ]}
@@ -86,11 +100,9 @@ const POS = () => {
                     </div>
                     
                 </Col>
-
-                
-                            
-
-                
+                <Col span={5}>
+                    <OrderSummary tableContent={tableContent} />
+                </Col>
             </Row>
         </>
 }
