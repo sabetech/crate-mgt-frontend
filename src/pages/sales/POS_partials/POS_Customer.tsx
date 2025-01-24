@@ -14,8 +14,9 @@ import ProductSearch from "./_Shared/ProductSearch";
 type Props = {
     setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
     setCustomerSaleItems: React.Dispatch<React.SetStateAction<ISaleItem[]>>
+    setFocusedCustomer: React.Dispatch<React.SetStateAction<ICustomer[] | null | undefined>>
 }
-const POS_Customer:React.FC<Props> = ({setTableContent, setCustomerSaleItems}) => {
+const POS_Customer:React.FC<Props> = ({setTableContent, setCustomerSaleItems, setFocusedCustomer}) => {
     const authHeader = useAuthHeader();
     const navigate = useNavigate();
     const [form] = Form.useForm();
@@ -27,6 +28,23 @@ const POS_Customer:React.FC<Props> = ({setTableContent, setCustomerSaleItems}) =
     const [quantity, setQuantity] = useState<number>(1); 
 
     const [selectedProducts, setSelectedProducts] = useState<ISaleItem[]>(location.state?.sales ?? []);
+
+    useEffect(() => {
+        if (customer) {
+         
+            setFocusedCustomer((prev) => {
+                
+                if (!prev) {
+                    return [customer];
+                }
+                const updatedArray = [...prev];
+                
+                updatedArray[0] = customer;
+                
+                return updatedArray;
+            });
+        }
+    },[customer])
 
     const formClear = () => {
         form.resetFields();

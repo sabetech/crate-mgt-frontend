@@ -12,9 +12,10 @@ import { ISaleItem } from "../../../interfaces/Sale";
 type Props = {
     setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
     setVseReturnSaleItems: React.Dispatch<React.SetStateAction<ISaleItem[]>>
+    setFocusedCustomer: React.Dispatch<React.SetStateAction<(ICustomer | null[]) | null | undefined>>
 }
 
-const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems}) => {
+const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems, setFocusedCustomer}) => {
     const authHeader = useAuthHeader();
     const [form] = Form.useForm();
     const [unitPrice, setUnitPrice] = useState<number>(0);
@@ -25,6 +26,18 @@ const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems}) =>
 
     const onCustomerChange = (text: any, option: any) => {
         console.log("Text ", text, option)
+
+        setFocusedCustomer((prev) => {
+                
+            if (!prev) {
+                return [option];
+            }
+            const updatedArray = [...prev];
+            
+            updatedArray[2] = option;
+            
+            return updatedArray;
+        });
         // form.setFieldValue("unit_price", selectedProduct?.retail_price);
         // setUnitPrice(typeof selectedProduct?.retail_price === 'undefined' ? 0 : selectedProduct?.retail_price);
     }

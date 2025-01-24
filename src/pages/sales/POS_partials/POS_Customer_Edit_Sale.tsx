@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {Form, AutoComplete, Input, Button, InputNumber, Typography, Space } from 'antd';
 import { ICustomer } from '../../../interfaces/Customer';
 import { IProductWithBalance } from '../../../interfaces/Product'
@@ -12,9 +12,10 @@ import { ISaleItem } from '../../../interfaces/Sale';
 type Props = {
     setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
     setcustomerSaleReturnItems: React.Dispatch<React.SetStateAction<ISaleItem[]>>
+    setFocusedCustomer: React.Dispatch<React.SetStateAction<(ICustomer | null[]) | null | undefined>>
 }
 
-const POS_Customer_Edit_sale:React.FC<Props> = ({setTableContent, setcustomerSaleReturnItems}) => {
+const POS_Customer_Edit_sale:React.FC<Props> = ({setTableContent, setcustomerSaleReturnItems, setFocusedCustomer}) => {
     const authHeader = useAuthHeader();
     const [form] = Form.useForm();
     const [customer, setCustomer] = useState<ICustomer>();
@@ -26,6 +27,22 @@ const POS_Customer_Edit_sale:React.FC<Props> = ({setTableContent, setcustomerSal
                 ['customers'],
                 () => getCustomersWithBalance(authHeader(), { customer_type: 'all'} )
     );
+
+    useEffect(() => {
+        if (customer) {
+            setFocusedCustomer((prev) => {
+                
+                if (!prev) {
+                    return [customer];
+                }
+                const updatedArray = [...prev];
+                
+                updatedArray[3] = customer;
+                
+                return updatedArray;
+            });
+        }
+    },[customer])
 
     const onCustomerChange = (_: string, option: ICustomer) => {
         setCustomer(option)

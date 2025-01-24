@@ -14,9 +14,10 @@ type Props = {
     // setSelectedProducts: (products: ISaleItem[]) => void;
     setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
     setVseSaleItems: React.Dispatch<React.SetStateAction<ISaleItem[]>>
+    setFocusedCustomer: React.Dispatch<React.SetStateAction<(ICustomer | null[]) | null | undefined>>
 }
 
-const VSE_Loadout:React.FC<Props> = ({setTableContent, setVseSaleItems}) => {
+const VSE_Loadout:React.FC<Props> = ({setTableContent, setVseSaleItems, setFocusedCustomer}) => {
     const authHeader = useAuthHeader();
     const [form] = Form.useForm();
     const [unitPrice, setUnitPrice] = useState<number>(0);
@@ -30,8 +31,19 @@ const VSE_Loadout:React.FC<Props> = ({setTableContent, setVseSaleItems}) => {
                 () => getCustomersWithBalance(authHeader(), { customer_type: 'retailer-vse'} )
         );
 
-    const onCustomerChange = (text: any, option: any) => {
+    const onCustomerChange = (text: any, option: ICustomer) => {
         console.log("Text ", text, option)
+
+        setFocusedCustomer((prev) => {
+                
+            if (!prev) {return [null, option];}
+            const updatedArray = [...prev];
+            
+            updatedArray[1] = option;
+            
+            return updatedArray;
+        });
+
         // form.setFieldValue("unit_price", selectedProduct?.retail_price);
         // setUnitPrice(typeof selectedProduct?.retail_price === 'undefined' ? 0 : selectedProduct?.retail_price);
     }

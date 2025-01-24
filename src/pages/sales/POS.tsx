@@ -9,6 +9,7 @@ import VSE_Return from "./POS_partials/VSE_Return";
 import POS_Customer_Edit_sale from "./POS_partials/POS_Customer_Edit_Sale";
 import SelectedProducts from "./POS_partials/_Shared/SelectedProducts";
 import { IProductWithBalance } from "../../interfaces/Product";
+import { ICustomer } from "../../interfaces/Customer";
 import OrderSummary from "./POS_partials/_Shared/OrderSummary";
 
 const POS = () => {
@@ -19,9 +20,15 @@ const POS = () => {
     const [customerSaleReturnItems, setcustomerSaleReturnItems] = useState<ISaleItem[]>([]);
 
     const [tableContent, setTableContent] = useState<ISaleItem[]>([]);
+    const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+
+    const [focusedCustomer, setFocusedCustomer] = useState<(ICustomer | null)[] | null>(null);
+    
     const onProductClicked = (product: IProductWithBalance) => {
         
     }
+
+    console.log("Focused customer::", focusedCustomer)
 
     return <>
             <Row>
@@ -39,25 +46,30 @@ const POS = () => {
                                 width: "45vw",
                             }}>
                         <Tabs 
+                            
                             style={{marginLeft: 20}}
                             defaultActiveKey='1'
-                            size={'small'}
+                            size={'large'}
                             onChange={(key) => {
                                 switch(key) {
                                     case '1':
                                         setTableContent(customerSaleItems)
+                                        setSelectedTabIndex(0)
                                     break;
 
                                     case '2':
                                         setTableContent(vseSaleItems)
+                                        setSelectedTabIndex(1)
                                     break;
                                     
                                     case '3':
                                         setTableContent(vseReturnSaleItems)
+                                        setSelectedTabIndex(2)
                                     break;
                                     
                                     case '4':
                                         setTableContent(customerSaleReturnItems)
+                                        setSelectedTabIndex(3)
                                     break;
                                 }
                             }}
@@ -67,7 +79,9 @@ const POS = () => {
                                     key: '1',
                                     children: <POS_Customer 
                                                     setTableContent={setTableContent} 
-                                                    setCustomerSaleItems={setCustomerSaleItems}/>
+                                                    setCustomerSaleItems={setCustomerSaleItems}
+                                                    setFocusedCustomer={setFocusedCustomer}
+                                                    />
 
                                 },
                                 {
@@ -76,22 +90,26 @@ const POS = () => {
                                     children: <VSE_Loadout 
                                                 setTableContent={setTableContent} 
                                                 setVseSaleItems={setVseSaleItems}
+                                                setFocusedCustomer={setFocusedCustomer}
                                                 />
                                 },
                                 {
                                     label: 'VSE Return',
                                     key: '3',
                                     children: <VSE_Return 
-                                                    setTableContent={setTableContent}
-                                                    setVseReturnSaleItems={setvseReturnSaleItems}/>
+                                                setTableContent={setTableContent}
+                                                setVseReturnSaleItems={setvseReturnSaleItems}
+                                                setFocusedCustomer={setFocusedCustomer}
+                                                />
                                 },
                                 {
                                     label: 'Customer Modify Sale',
                                     key: '4',
                                     children: <POS_Customer_Edit_sale 
-                                                    setTableContent={setTableContent}
-                                                    setcustomerSaleReturnItems={setcustomerSaleReturnItems}
-                                                    />
+                                                setTableContent={setTableContent}
+                                                setcustomerSaleReturnItems={setcustomerSaleReturnItems}
+                                                setFocusedCustomer={setFocusedCustomer}
+                                                />
                                 },
 
                             ]}
@@ -101,7 +119,9 @@ const POS = () => {
                     
                 </Col>
                 <Col span={5}>
-                    <OrderSummary tableContent={tableContent} />
+
+                    <OrderSummary tableContent={tableContent} customer={focusedCustomer ? focusedCustomer[selectedTabIndex] : null} />
+
                 </Col>
             </Row>
         </>

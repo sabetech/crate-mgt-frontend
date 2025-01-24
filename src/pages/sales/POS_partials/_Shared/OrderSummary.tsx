@@ -7,7 +7,7 @@ import { ICustomer } from "../../../../interfaces/Customer";
 
 type Props = {
     tableContent: ISaleItem[],
-    customer: ICustomer
+    customer: ICustomer | null | undefined
 }
 
 const OrderSummary:React.FC<Props> = ({tableContent, customer}) => {
@@ -71,7 +71,7 @@ const OrderSummary:React.FC<Props> = ({tableContent, customer}) => {
                 <div style={{display: 'flex', flexDirection: 'column', marginTop: "1rem"}}>
                     <Typography.Title level={5} style={{marginLeft: "1rem"}}>
                         {/* Customer: {location.state.customer.name}<br /> */}
-                        Name of Customer
+                        {customer?.name}<br />
                     </Typography.Title>
                     <Typography.Title level={5} style={{marginLeft: "1rem"}}>
                                 OrderID: <br />
