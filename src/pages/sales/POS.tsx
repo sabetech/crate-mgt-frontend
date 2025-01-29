@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Row, Col, Tabs } from "antd";
 import { ISaleItem } from "../../interfaces/Sale";
 import ProductSideList from "./POS_partials/_Shared/ProductSideList";
@@ -11,6 +11,7 @@ import SelectedProducts from "./POS_partials/_Shared/SelectedProducts";
 import { IProductWithBalance } from "../../interfaces/Product";
 import { ICustomer } from "../../interfaces/Customer";
 import OrderSummary from "./POS_partials/_Shared/OrderSummary";
+import * as constants from "../../utils/constants";
 
 const POS = () => {
 
@@ -22,11 +23,48 @@ const POS = () => {
     const [tableContent, setTableContent] = useState<ISaleItem[]>([]);
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
-    const [focusedCustomer, setFocusedCustomer] = useState<(ICustomer | null)[] | null>(null);
+    const [focusedCustomer, setFocusedCustomer] = useState<(ICustomer | null)[] | undefined>();
+
+    const [orderDetails, setOrderDetails] = useState({
+        quantity: 0,
+        totalCost: 0
+    })
     
     const onProductClicked = (product: IProductWithBalance) => {
         
     }
+
+    useEffect(() => {
+        let _quantity = 0;
+        let _totalCost = 0;
+        tableContent.map((item) => {
+            _quantity += item.quantity;
+            if (focusedCustomer && focusedCustomer[selectedTabIndex]?.customer_type === constants.WHOLESALER ) {
+                if (item.product.wholesale_price) {
+                    _totalCost += (item.quantity * item.product.wholesale_price);
+                }                
+            }
+
+            if (focusedCustomer && focusedCustomer[selectedTabIndex]?.customer_type === constants.RETAILER ) {
+                if (item.product.retail_price) {
+                    _totalCost += (item.quantity * item.product.retail_price);
+                }
+            }
+
+            if (focusedCustomer && focusedCustomer[selectedTabIndex]?.customer_type === constants.RETAILER_VSE ) {
+                if (item.product.wholesale_price) {
+                    _totalCost += (item.quantity * item.product.wholesale_price);
+                }                
+            }
+            
+        });
+
+        setOrderDetails({
+            quantity: _quantity,
+            totalCost: _totalCost
+        })
+
+    }, [tableContent]);
 
     console.log("Focused customer::", focusedCustomer)
 
@@ -120,7 +158,11 @@ const POS = () => {
                 </Col>
                 <Col span={5}>
 
-                    <OrderSummary tableContent={tableContent} customer={focusedCustomer ? focusedCustomer[selectedTabIndex] : null} />
+                    <OrderSummary 
+                        tableContent={tableContent} 
+                        customer={focusedCustomer ? focusedCustomer[selectedTabIndex] : null} 
+                        orderDetails={orderDetails} 
+                    />
 
                 </Col>
             </Row>

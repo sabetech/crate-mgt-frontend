@@ -8,9 +8,13 @@ import { ICustomer } from "../../../../interfaces/Customer";
 type Props = {
     tableContent: ISaleItem[],
     customer: ICustomer | null | undefined
+    orderDetails: {
+        quantity: number,
+        totalCost: number
+    }
 }
 
-const OrderSummary:React.FC<Props> = ({tableContent, customer}) => {
+const OrderSummary:React.FC<Props> = ({tableContent, customer, orderDetails}) => {
     const [total, setTotal] = useState<number>(0);
     const [messageApi, contextHolder] = message.useMessage();
     const [paymentType, setPaymentType] = useState<string>("Cash");
@@ -80,17 +84,17 @@ const OrderSummary:React.FC<Props> = ({tableContent, customer}) => {
                     <Divider orientation="left" >Summary</Divider>
                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
                         <Typography.Text strong style={{marginRight: 10}}>Quantity: </Typography.Text>
-                        <Typography.Text strong >{ "0" }</Typography.Text>
+                        <Typography.Text strong >{ orderDetails.quantity }</Typography.Text>
                     </div>
 
                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
                         <Typography.Text strong style={{marginRight: 10}}>Subtotal: </Typography.Text>
-                        <Typography.Text strong>0.00 GHC</Typography.Text>
+                        <Typography.Text strong>{orderDetails.totalCost} GHC</Typography.Text>
                     </div>
 
                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>
                         <Typography.Text strong style={{ fontSize: '1.5rem'}}>Total: </Typography.Text>
-                        <Typography.Text strong style={{ fontSize: '1.5rem' }}>{ total.toFixed(2) } GHC</Typography.Text>
+                        <Typography.Text strong style={{ fontSize: '1.5rem' }}>{ orderDetails.totalCost.toFixed(2) } GHC</Typography.Text>
                     </div>
                     <Divider></Divider>
                     <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginRight: "1rem", marginLeft: "1rem"}}>

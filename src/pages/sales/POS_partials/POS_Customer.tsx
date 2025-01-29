@@ -14,7 +14,7 @@ import ProductSearch from "./_Shared/ProductSearch";
 type Props = {
     setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
     setCustomerSaleItems: React.Dispatch<React.SetStateAction<ISaleItem[]>>
-    setFocusedCustomer: React.Dispatch<React.SetStateAction<ICustomer[] | null | undefined>>
+    setFocusedCustomer: React.Dispatch<React.SetStateAction<(ICustomer | null)[] | undefined>>
 }
 const POS_Customer:React.FC<Props> = ({setTableContent, setCustomerSaleItems, setFocusedCustomer}) => {
     const authHeader = useAuthHeader();
@@ -45,6 +45,7 @@ const POS_Customer:React.FC<Props> = ({setTableContent, setCustomerSaleItems, se
             });
         }
     },[customer])
+
 
     const formClear = () => {
         form.resetFields();

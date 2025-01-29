@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, AutoComplete, Input, Button, InputNumber, Typography, Space } from "antd";
 import { ICustomer } from "../../../interfaces/Customer";
 import { IProductWithBalance } from "../../../interfaces/Product";
@@ -12,7 +12,7 @@ import { ISaleItem } from "../../../interfaces/Sale";
 type Props = {
     setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
     setVseReturnSaleItems: React.Dispatch<React.SetStateAction<ISaleItem[]>>
-    setFocusedCustomer: React.Dispatch<React.SetStateAction<(ICustomer | null[]) | null | undefined>>
+    setFocusedCustomer: React.Dispatch<React.SetStateAction<(ICustomer | null)[] | undefined>>
 }
 
 const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems, setFocusedCustomer}) => {
@@ -55,11 +55,19 @@ const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems, set
                     () => getCustomersWithBalance(authHeader(), { customer_type: 'retailer-vse'} )
     );
     
-    const saveVSELoadout = () => {
-            if (typeof selectedProduct !== 'undefined') {
-                setSelectedProducts((prev) => [...prev, {id: selectedProduct.id, product: selectedProduct, quantity: quantity, key: selectedProduct.id} as ISaleItem]);
-            }
+    const saveVSEReturn = () => {
+        if (typeof selectedProduct !== 'undefined') {
+            setSelectedProducts((prev) => [...prev, {id: selectedProduct.id, product: selectedProduct, quantity: quantity, key: selectedProduct.id} as ISaleItem]);
         }
+    }
+
+    useEffect(() => {
+        if (selectedProducts) {
+            setTableContent(selectedProducts);
+            setVseReturnSaleItems(selectedProducts);
+        }
+
+    },[selectedProducts])
 
     const formClear = () => {
         form.resetFields();
@@ -123,7 +131,7 @@ const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems, set
                 </Form.Item>
             </div>
             <Space wrap>
-                <Button size={"large"} type="primary" onClick={saveVSELoadout} disabled={(typeof selectedProduct === 'undefined') } >Save</Button>
+                <Button size={"large"} type="primary" onClick={saveVSEReturn} disabled={(typeof selectedProduct === 'undefined') } >Save</Button>
                 <Button size={"large"} onClick={() => formClear()}>Clear</Button>
             </Space>
             

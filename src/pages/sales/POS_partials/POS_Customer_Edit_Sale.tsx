@@ -12,7 +12,7 @@ import { ISaleItem } from '../../../interfaces/Sale';
 type Props = {
     setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
     setcustomerSaleReturnItems: React.Dispatch<React.SetStateAction<ISaleItem[]>>
-    setFocusedCustomer: React.Dispatch<React.SetStateAction<(ICustomer | null[]) | null | undefined>>
+    setFocusedCustomer: React.Dispatch<React.SetStateAction<(ICustomer | null)[] | undefined>>
 }
 
 const POS_Customer_Edit_sale:React.FC<Props> = ({setTableContent, setcustomerSaleReturnItems, setFocusedCustomer}) => {

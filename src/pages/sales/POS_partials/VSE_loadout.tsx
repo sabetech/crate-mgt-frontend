@@ -14,7 +14,7 @@ type Props = {
     // setSelectedProducts: (products: ISaleItem[]) => void;
     setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
     setVseSaleItems: React.Dispatch<React.SetStateAction<ISaleItem[]>>
-    setFocusedCustomer: React.Dispatch<React.SetStateAction<(ICustomer | null[]) | null | undefined>>
+    setFocusedCustomer: React.Dispatch<React.SetStateAction<(ICustomer | null)[] | undefined>>
 }
 
 const VSE_Loadout:React.FC<Props> = ({setTableContent, setVseSaleItems, setFocusedCustomer}) => {
