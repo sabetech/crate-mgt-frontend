@@ -12,6 +12,7 @@ import { IProductWithBalance } from "../../interfaces/Product";
 import { ICustomer } from "../../interfaces/Customer";
 import OrderSummary from "./POS_partials/_Shared/OrderSummary";
 import * as constants from "../../utils/constants";
+import { PosMode } from "../../types/TSale";
 
 const POS = () => {
 
@@ -22,6 +23,12 @@ const POS = () => {
 
     const [tableContent, setTableContent] = useState<ISaleItem[]>([]);
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+    const posmodes = [
+        PosMode.sale,
+        PosMode.loadout,
+        PosMode.loadout_return,
+        PosMode.customer_sale_update
+    ]
 
     const [focusedCustomer, setFocusedCustomer] = useState<(ICustomer | null)[] | undefined>();
 
@@ -78,13 +85,12 @@ const POS = () => {
                     <div style={{
                                 borderStyle: "solid",
                                 borderWidth: "1px",
-                                borderRadius: 2,
+                                borderRadius: 10,
                                 borderColor: "#D9D9D9",
                                 backgroundColor: "#f3f1f1",
-                                width: "45vw",
+                                width: "40vw"
                             }}>
                         <Tabs 
-                            
                             style={{marginLeft: 20}}
                             defaultActiveKey='1'
                             size={'large'}
@@ -161,7 +167,8 @@ const POS = () => {
                     <OrderSummary 
                         tableContent={tableContent} 
                         customer={focusedCustomer ? focusedCustomer[selectedTabIndex] : null} 
-                        orderDetails={orderDetails} 
+                        orderDetails={orderDetails}
+                        posMode={ posmodes[selectedTabIndex] } 
                     />
 
                 </Col>

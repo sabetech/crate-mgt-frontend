@@ -67,6 +67,11 @@ const VSE_Loadout:React.FC<Props> = ({setTableContent, setVseSaleItems, setFocus
         if (typeof selectedProduct !== 'undefined') {
             setSelectedProducts((prev) => [...prev, {id: selectedProduct.id, product: selectedProduct, quantity: quantity, key: selectedProduct.id} as ISaleItem]);
         }
+
+        form.resetFields([
+            'product', 'unit_price', 'quantity'
+,        ]);
+        
     }
 
     useEffect(() => {
