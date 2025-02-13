@@ -2,17 +2,22 @@ import { useState } from "react";
 import { AutoComplete } from "antd";
 import { useGetProducts } from "../../hooks/salesHook";
 import { useAuthHeader } from "react-auth-kit";
-import { IProductWithBalance } from "../../../../interfaces/Product";
+import { IProductWithBalance, IProductWithLoadoutBalance } from "../../../../interfaces/Product";
 
 
 type ProductSearchPros = {
     onProductSelected: (product: IProductWithBalance) => void
+    cachedLoadoutProducts?: IProductWithLoadoutBalance[]
+    disabled?: boolean
 }
 
-const ProductSearch:React.FC<ProductSearchPros> = ({ onProductSelected }) => {
+const ProductSearch:React.FC<ProductSearchPros> = ({ cachedLoadoutProducts, onProductSelected, disabled }) => {
     const authHeader = useAuthHeader()
-    const {data: products} = useGetProducts(authHeader);
+    
+    const {data: products} = cachedLoadoutProducts === undefined ? useGetProducts(authHeader) : {data: cachedLoadoutProducts}; //if there is a cachedLoadoutProducts, use it instead
     // const [_internalSelectedProducts, _setSelectedProducts] = useState<IProductWithBalance[]>([]);
+
+    console.log("products: ?????", products)
 
     const onProductChange = (_: string, option: IProductWithBalance) => {
         if (typeof option === 'undefined') {
@@ -39,10 +44,11 @@ const ProductSearch:React.FC<ProductSearchPros> = ({ onProductSelected }) => {
             // onSearch={onSearch}
             onSelect={(text: string, option: any) => onProductChange(text, option)}
             placeholder="Search for Product"
-            options={products?.data.map(prdt => ({...prdt, value: `${prdt.sku_name} (${prdt?.inventory_balance?.quantity ?? 0})` })).filter(prdt => (prdt?.inventory_balance?.quantity > 0 ))}
+            options={products?.map(prdt => ({...prdt, value: `${prdt.sku_name} (${prdt?.inventory_balance?.quantity ?? 0})` })).filter(prdt => (prdt?.inventory_balance?.quantity > 0 ))}
             filterOption={(inputValue, option) =>
                 option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
             }
+            disabled={disabled}
         />
     )
 }

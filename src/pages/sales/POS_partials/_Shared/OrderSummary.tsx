@@ -39,7 +39,7 @@ const OrderSummary:React.FC<Props> = ({tableContent, customer, orderDetails, pos
         const order = {
             paymentType: paymentType,
             customer: customer,
-            saleItems: saleItems,
+            sales: saleItems,
             total: total,
             amountTendered: 0,
             balance: -total,
@@ -52,7 +52,7 @@ const OrderSummary:React.FC<Props> = ({tableContent, customer, orderDetails, pos
             content: "Order successful"
         });
         
-        pay(order); //either save and print or approving a sale by cashier
+        pay(order); //this is either save and printing, loadout or loadout return or custom return
         posReset();
     }
 
@@ -68,7 +68,7 @@ const OrderSummary:React.FC<Props> = ({tableContent, customer, orderDetails, pos
         const order = {
             paymentType: paymentType,
             customer: customer,
-            saleItems: saleItems,
+            sales: saleItems,
             total: total,
             amountTendered: 0,
             balance: -total,
@@ -158,7 +158,7 @@ const OrderSummary:React.FC<Props> = ({tableContent, customer, orderDetails, pos
                             <Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={saveSaleOrderAndPrint} disabled={orderDetails.totalCost === 0}>Save Loadout</Button>
                             :
                             posMode === PosMode.loadout_return ?
-                            <Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={saveSaleOrderAndPrint} disabled={orderDetails.totalCost === 0}>Submit VSE Returns</Button>
+                            <Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={saveSaleOrderAndPrint} disabled={orderDetails.totalCost === 0}>Submit VSE Sales</Button>
                             :
                             posMode === PosMode.customer_sale_update &&
                             <Button type="primary" size="large" style={{width: "90%", marginTop: "1rem"}} onClick={saveSaleOrderAndPrint} disabled={orderDetails.totalCost === 0}>Customer Sale Returns</Button>

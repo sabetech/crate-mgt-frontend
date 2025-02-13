@@ -11,7 +11,7 @@ export interface ISaleItem {
 
 export interface IOrder {
     id?: number;
-    saleItems: ISaleItem[];
+    sales: ISaleItem[];
     total: number;
     amountTendered: number;
     balance: number;

@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { Form, AutoComplete, Input, Button, InputNumber, Typography, Space } from "antd";
 import { ICustomer } from "../../../interfaces/Customer";
-import { IProductWithBalance } from "../../../interfaces/Product";
+import { IProductWithBalance, IProductWithLoadoutBalance } from "../../../interfaces/Product";
 import { useQuery } from "@tanstack/react-query";
 import { ServerResponse } from "../../../interfaces/Server";
 import { getCustomersWithBalance } from "../../../services/CustomersAPI";
 import { useAuthHeader } from "react-auth-kit";
 import ProductSearch from "./_Shared/ProductSearch";
 import { ISaleItem } from "../../../interfaces/Sale";
+import { useLoadoutSalePosItems } from "../hooks/salesHook";
 
 type Props = {
     setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
@@ -22,11 +23,30 @@ const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems, set
     const [selectedProduct, setSelectedProduct] = useState<IProductWithBalance | undefined>();
     const [quantity, setQuantity] = useState<number>(1); 
     const [selectedProducts, setSelectedProducts] = useState<ISaleItem[]>([]);
+    const [_selectedvse, setSelectedVse] = useState<ICustomer | undefined>(undefined);
+    
+    const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
+                    ['customers-vse'],
+                    () => getCustomersWithBalance(authHeader(), { customer_type: 'retailer-vse'} )
+    );
 
+    //load the latest vse loadout sale items that are pending
+    
+    // const { data: loadoutSaleItems } =  _selectedvse !== undefined  ? useLoadoutSalePosItems(authHeader, _selectedvse) :{data: {saleItems: []} as {saleItems: ISaleItem[]}};
+    // 
 
-    const onCustomerChange = (text: any, option: any) => {
-        console.log("Text ", text, option)
+    const { data: loadoutSaleItems, refetch } = useLoadoutSalePosItems(authHeader, _selectedvse)
 
+    console.log("LOADOUT SALE ITEMS::", loadoutSaleItems)
+
+    //load only the products and quantities that this vse took!
+    console.log("SELECTED VSE::", _selectedvse)
+    console.log("LOADOUT SALE ITEMS::", loadoutSaleItems)
+
+    const onCustomerChange = (_: any, option: any) => {
+        
+        setSelectedVse(option);
+        
         setFocusedCustomer((prev) => {
                 
             if (!prev) {
@@ -42,6 +62,7 @@ const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems, set
         // setUnitPrice(typeof selectedProduct?.retail_price === 'undefined' ? 0 : selectedProduct?.retail_price);
     }
 
+
     const onCustomerSelectedProduct = (product: IProductWithBalance) => {
             form.setFieldValue("unit_price", product.retail_price);
             setUnitPrice(typeof product.retail_price === 'undefined' ? 0 : product.retail_price);
@@ -50,16 +71,20 @@ const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems, set
             form.setFieldValue("product", product.sku_name);
     }
 
-    const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
-                    ['customers-vse'],
-                    () => getCustomersWithBalance(authHeader(), { customer_type: 'retailer-vse'} )
-    );
-    
     const saveVSEReturn = () => {
         if (typeof selectedProduct !== 'undefined') {
             setSelectedProducts((prev) => [...prev, {id: selectedProduct.id, product: selectedProduct, quantity: quantity, key: selectedProduct.id} as ISaleItem]);
         }
     }
+
+    useEffect(() => {
+
+        if (_selectedvse && _selectedvse !== undefined) {
+            refetch();
+        }
+
+    }, [_selectedvse]);
+
 
     useEffect(() => {
         if (selectedProducts) {
@@ -95,12 +120,20 @@ const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems, set
                 <AutoComplete 
                     allowClear={true}
                     bordered={true}
+                    onClear={() => {
+                        setSelectedVse(undefined);
+                    }}
                     onSelect={(text: string, option: ICustomer) => onCustomerChange(text, option)}
                     placeholder="Search for VSE"
                     options={ customersResponse?.data.map(custmr => ({...custmr, value: `${custmr.name} (${custmr.customer_type.toUpperCase()})`})) }
                     filterOption={(inputValue, option) =>
                         option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
                         }
+                    onChange={(val) => {
+                        if (val.length === 0) {
+                            setSelectedVse(undefined);
+                        }
+                    }}  
                 />
             </Form.Item>
             
@@ -110,7 +143,19 @@ const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems, set
             >
                 <ProductSearch 
                     onProductSelected={(product) => onCustomerSelectedProduct(product)}
-                    
+                    cachedLoadoutProducts={ 
+                        loadoutSaleItems && loadoutSaleItems?.map(item => {
+                            return {
+                                ...item.product,
+                                key: item.product.id,
+                                inventory_balance: {
+                                    quantity: item.quantity
+                                }
+                            } as IProductWithLoadoutBalance
+                        }
+                    )       
+                }    
+                disabled={_selectedvse === undefined}
                 />
             </Form.Item>
             <hr />

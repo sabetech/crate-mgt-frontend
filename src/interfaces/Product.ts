@@ -19,6 +19,19 @@ export interface IProductWithBalance {
     inventory_balance: IInventoryBalance;
 }
 
+export interface IProductWithLoadoutBalance {
+    id?: number;
+    key?: number;
+    sku_name: string;
+    sku_code: string;
+    retail_price?: number;
+    wholesale_price?: number;
+    empty_returnable?: boolean;
+    inventory_balance: {
+        quantity: number;
+    }
+}
+
 export interface IEmptyOnGroundProducts {
     id?: number;
     key?: number;
