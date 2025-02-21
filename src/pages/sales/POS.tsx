@@ -168,7 +168,8 @@ const POS = () => {
                         tableContent={tableContent} 
                         customer={focusedCustomer ? focusedCustomer[selectedTabIndex] : null} 
                         orderDetails={orderDetails}
-                        posMode={ posmodes[selectedTabIndex] } 
+                        posMode={ posmodes[selectedTabIndex] }
+                        setTableContent={setTableContent}
                     />
 
                 </Col>

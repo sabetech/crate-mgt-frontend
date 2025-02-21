@@ -124,6 +124,14 @@ const POS_Customer:React.FC<Props> = ({setTableContent, setCustomerSaleItems, se
             return;
         }
 
+        if (quantity > product.inventory_balance?.quantity) {
+            messageApi.open({
+                type: 'error',
+                content: "Customer does not have enough products to make this purchase"
+            });
+            return;
+        }
+
         if (typeof product !== 'undefined') {
             setSelectedProducts((prev) => [...prev, {id: product.id, product: product, quantity: quantity, key: product.id} as ISaleItem]);
         }

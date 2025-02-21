@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Form, AutoComplete, Input, Button, InputNumber, Typography, Space } from "antd";
+import { Form, AutoComplete, Input, Button, InputNumber, Typography, message, Space } from "antd";
 import { ICustomer } from "../../../interfaces/Customer";
 import { IProductWithBalance, IProductWithLoadoutBalance } from "../../../interfaces/Product";
 import { useQuery } from "@tanstack/react-query";
@@ -7,6 +7,7 @@ import { ServerResponse } from "../../../interfaces/Server";
 import { getCustomersWithBalance } from "../../../services/CustomersAPI";
 import { useAuthHeader } from "react-auth-kit";
 import ProductSearch from "./_Shared/ProductSearch";
+
 import { ISaleItem } from "../../../interfaces/Sale";
 import { useLoadoutSalePosItems } from "../hooks/salesHook";
 
@@ -24,16 +25,12 @@ const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems, set
     const [quantity, setQuantity] = useState<number>(1); 
     const [selectedProducts, setSelectedProducts] = useState<ISaleItem[]>([]);
     const [_selectedvse, setSelectedVse] = useState<ICustomer | undefined>(undefined);
+    const [messageApi, contextHolder] = message.useMessage();
     
     const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
                     ['customers-vse'],
                     () => getCustomersWithBalance(authHeader(), { customer_type: 'retailer-vse'} )
     );
-
-    //load the latest vse loadout sale items that are pending
-    
-    // const { data: loadoutSaleItems } =  _selectedvse !== undefined  ? useLoadoutSalePosItems(authHeader, _selectedvse) :{data: {saleItems: []} as {saleItems: ISaleItem[]}};
-    // 
 
     const { data: loadoutSaleItems, refetch } = useLoadoutSalePosItems(authHeader, _selectedvse)
 
@@ -64,17 +61,28 @@ const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems, set
 
 
     const onCustomerSelectedProduct = (product: IProductWithBalance) => {
-            form.setFieldValue("unit_price", product.retail_price);
-            setUnitPrice(typeof product.retail_price === 'undefined' ? 0 : product.retail_price);
-        
-            setSelectedProduct(product);
-            form.setFieldValue("product", product.sku_name);
+        form.setFieldValue("unit_price", product.retail_price);
+        setUnitPrice(typeof product.retail_price === 'undefined' ? 0 : product.retail_price);
+    
+        setSelectedProduct(product);
+        form.setFieldValue("product", product.sku_name);
     }
 
     const saveVSEReturn = () => {
         if (typeof selectedProduct !== 'undefined') {
+            if (quantity > selectedProduct?.inventory_balance.quantity) {
+                messageApi.open({
+                    type: 'error',
+                    content: "Quantity is greater than the available quantity"
+                });
+                return;
+            }
             setSelectedProducts((prev) => [...prev, {id: selectedProduct.id, product: selectedProduct, quantity: quantity, key: selectedProduct.id} as ISaleItem]);
         }
+
+        form.resetFields([
+            'product', 'unit_price', 'quantity'
+,        ]);
     }
 
     useEffect(() => {
@@ -102,6 +110,7 @@ const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems, set
     }
 
     return  (<>
+            { contextHolder }
          <Form
             layout={'horizontal'}
             form={form}
@@ -153,9 +162,9 @@ const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems, set
                                 }
                             } as IProductWithLoadoutBalance
                         }
-                    )       
+                    ) || []   
                 }    
-                disabled={_selectedvse === undefined}
+                disabled={_selectedvse === undefined || loadoutSaleItems === undefined}
                 />
             </Form.Item>
             <hr />

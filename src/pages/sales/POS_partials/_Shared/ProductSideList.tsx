@@ -18,7 +18,7 @@ const ProductSideList:React.FC<Props> = ({onProductClicked}) => {
                 header={<strong>List of Products </strong>}
                 footer={"Oppong Kyekyeku LTD"}
                 bordered
-                dataSource={typeof products != 'undefined' ? products.data : []}
+                dataSource={typeof products != 'undefined' ? products : []}
                 size="small"
                 renderItem={(item: IProductWithBalance, index: number) => 
                     { 

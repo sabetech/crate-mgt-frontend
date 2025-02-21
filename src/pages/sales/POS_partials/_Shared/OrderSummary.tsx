@@ -15,10 +15,11 @@ type Props = {
         totalCost: number
     },
     posMode: PosMode
+    setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
     
 }
 
-const OrderSummary:React.FC<Props> = ({tableContent, customer, orderDetails, posMode}) => {
+const OrderSummary:React.FC<Props> = ({tableContent, customer, orderDetails, posMode, setTableContent}) => {
     const [total, setTotal] = useState<number>(0);
     const [messageApi, contextHolder] = message.useMessage();
     const [paymentType, setPaymentType] = useState<string>("Cash");
@@ -35,6 +36,11 @@ const OrderSummary:React.FC<Props> = ({tableContent, customer, orderDetails, pos
         } as ISaleItem));
 
         console.log("saleItems: ", saleItems)
+        if (customer?.customer_type === 'wholesaler') {
+            setTotal(saleItems.reduce((acc, item) => acc + ((item.product?.wholesale_price ?? 0) * item.quantity), 0));    
+        }else{
+            setTotal(saleItems.reduce((acc, item) => acc + ((item.product?.retail_price ?? 0) * item.quantity), 0));
+        }
 
         const order = {
             paymentType: paymentType,
@@ -86,12 +92,12 @@ const OrderSummary:React.FC<Props> = ({tableContent, customer, orderDetails, pos
     }
 
     const resetStates = () => {
-        // setTableContent([]);
+        setTableContent([]);
         // setAmountTendered(0);
     }
 
     const posReset = () => {
-        // resetStates();
+        resetStates();
         // formClear();
         
     }
