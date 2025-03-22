@@ -63,6 +63,7 @@ const AddProductQuantityFields = ({ name, is_returnable }: AddProductQuantityFie
                                                 filterOption={(input, option:any) =>
                                                     option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                                   }
+                                                  size='large'
                                                 >
                                                     {
                                                     productList && productList.map((item) => (
@@ -83,8 +84,9 @@ const AddProductQuantityFields = ({ name, is_returnable }: AddProductQuantityFie
                                     
                                     rules={[{ required: true, message: 'Missing Qty' }]}
                                     style={{ width: 200, marginLeft: 10 }}
+                
                                     >
-                                    <Input placeholder={"Quantity"} />
+                                    <Input placeholder={"Quantity"} size='large' />
                                 </Form.Item>
                                 <MinusCircleOutlined onClick={() => remove(field.name)} />
                             </Space>

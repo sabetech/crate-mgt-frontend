@@ -55,7 +55,7 @@ const ProductManagement = () => {
 
     const onSearch = (searchTerm: string) => {
         if (searchTerm.length === 0) {
-            setProductWithBalance(products?.data.map((product) => ({...product, key: product.id})));
+            setProductWithBalance(products?.map((product) => ({...product, key: product.id})));
             return;
         }
 
@@ -103,7 +103,7 @@ const ProductManagement = () => {
     useEffect(() => {
 
         if (products) {
-            setProductWithBalance(products.data.map((product) => ({...product, key: product.id})));
+            setProductWithBalance(products.map((product) => ({...product, key: product.id})));
         }
 
     },[products]);
