@@ -1,14 +1,13 @@
 import React from 'react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import LayoutBase from './base/LayoutBase';
 
 import UserProvider from './contexts/UserContext';
 
 import Login from './pages/users/Login';
-import { ConfigProvider } from 'antd';
 
-import { useIsAuthenticated } from './hooks/auth';
-
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import ProtectedRoute from './pages/users/ProtectedRoute';
+import LayoutBase from './base/LayoutBase';
 
 // Create a client
 const queryClient = new QueryClient()
@@ -19,32 +18,30 @@ const queryClient = new QueryClient()
 
  
 const App: React.FC = () => {
-  const isAuthenticated = useIsAuthenticated()
-
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        //other query settings
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
  
   return (
-    
-    <ConfigProvider
-    theme={{
-      token: {
-        // Seed Token
-        colorPrimary: '#B18848',
-        borderRadius: 2,
-
-        // Alias Token
-        // colorBgContainer: '#f6ffed',
-      },
-    }}
-  >
     <QueryClientProvider client={queryClient}>
       <UserProvider>
-        {
-          isAuthenticated ? <LayoutBase /> : <Login />
-        }
-        
+        <Router>
+            <Routes>
+              <Route path={"/login"} element={<Login />} />
+              {
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/*" element={<LayoutBase />} />
+                  </Route>
+              }
+            </Routes>
+        </Router>
       </UserProvider>
     </QueryClientProvider>
-  </ConfigProvider>
   );
 };
 

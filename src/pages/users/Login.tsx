@@ -10,6 +10,7 @@ import { AxiosError } from 'axios';
 import opk_img4 from '../../assets/opk_img4.jpeg';
 import opk_logo from '../../assets/opk_logo.png';
 import { TUser } from '../../types/user';
+import { CREATED } from '../../constants/ResponseStatusCodes';
 
 
 
@@ -25,22 +26,24 @@ const Login: React.FC = () => {
 
     const onFinish = async (values: TUser) => {
         // : Promise<ServerResponse<IUser | Error>>
-        console.log(values);
         try {
-            setLoading(true)
+            await setLoading(true)
             const response = await login({email:values.email, password: values.password});
-            setLoading(false);
+            
             showSuccess('Login successful');
-            if (response.status === 201){
+
+            if (response.status === CREATED){
                 
                 signIn({
                     token: response.data.token,
                     tokenType: response.data.token_type,
                     user: response.data.user
                 });
+
                 navigate('/dashboard');
             }
         } catch (error: AxiosError<any> | any) {
+            await setLoading(false);
             if (error.response.status === 401) {
                 console.log(error.response.data.message);
                 showError(error.response.data.message);
@@ -98,7 +101,7 @@ const Login: React.FC = () => {
 
                     <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                     <Button type="primary" htmlType="submit" loading={loading}>
-                        Submit
+                        Login
                     </Button>
                     </Form.Item>
                 </Form>

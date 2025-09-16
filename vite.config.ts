@@ -13,6 +13,6 @@ export default defineConfig({
     port: 8082,
     strictPort: true,
     host: true,
-    origin: "http://192.168.8.101:8082"
+    origin: "http://localhost:8082"
   }
 })
