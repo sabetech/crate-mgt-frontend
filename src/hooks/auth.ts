@@ -29,10 +29,10 @@ export const useAuthUser = () => {
     return (): TUser => {
         const user = JSON.parse(localStorage.getItem(USER) ?? "{}") as TUser;
         user.hasPermission = (permission: TPermission) => {
-            return user.permissions.map((p: TPermission) => p.name).includes(permission.name);
+            return Array.isArray(user.permissions) && user.permissions.map((p: TPermission) => p.name).includes(permission.name);
         }
         user.hasRole = (role: TRole) => {
-            return user.roles.map((r: TRole) => r.name).includes(role.name);
+            return Array.isArray(user.roles) && user.roles.map((r: TRole) => r.name).includes(role.name);
         }
         return user
     };

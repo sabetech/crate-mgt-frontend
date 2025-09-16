@@ -55,7 +55,7 @@ const CustomerHistory = () => {
         label: <>
                 <div>{formatDate(historyItem)}</div>
                 {
-                loggedInUser?.roles[0].name === 'admin' &&
+                loggedInUser?.roles?.[0]?.name === 'admin' &&
                 <Button type="primary" shape="circle" icon={<EditOutlined />} onClick={() => handleEditHistory(historyItem)}/>
                 }
                 </>,
