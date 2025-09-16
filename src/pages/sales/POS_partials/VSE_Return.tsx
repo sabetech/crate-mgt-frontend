@@ -5,7 +5,7 @@ import { IProductWithBalance, IProductWithLoadoutBalance } from "../../../interf
 import { useQuery } from "@tanstack/react-query";
 import { ServerResponse } from "../../../interfaces/Server";
 import { getCustomersWithBalance } from "../../../services/CustomersAPI";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthToken } from "../../../hooks/auth";
 import ProductSearch from "./_Shared/ProductSearch";
 
 import { ISaleItem } from "../../../interfaces/Sale";
@@ -18,7 +18,7 @@ type Props = {
 }
 
 const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems, setFocusedCustomer}) => {
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [form] = Form.useForm();
     const [unitPrice, setUnitPrice] = useState<number>(0);
     const [selectedProduct, setSelectedProduct] = useState<IProductWithBalance | undefined>();
@@ -29,10 +29,10 @@ const VSE_Return:React.FC<Props> = ({setTableContent, setVseReturnSaleItems, set
     
     const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
                     ['customers-vse'],
-                    () => getCustomersWithBalance(authHeader(), { customer_type: 'retailer-vse'} )
+                    () => getCustomersWithBalance(authToken, { customer_type: 'retailer-vse'} )
     );
 
-    const { data: loadoutSaleItems, refetch } = useLoadoutSalePosItems(authHeader, _selectedvse)
+    const { data: loadoutSaleItems, refetch } = useLoadoutSalePosItems(authToken, _selectedvse)
 
     console.log("LOADOUT SALE ITEMS::", loadoutSaleItems)
 

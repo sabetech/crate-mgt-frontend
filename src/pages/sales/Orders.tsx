@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { IOrder } from "../../interfaces/Sale";
 import { useQuery } from "@tanstack/react-query";
 import { getOrders } from "../../services/SalesAPI";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthToken } from "../../hooks/auth";
 import { Alert, Typography, Table, Tag, Button, Space } from "antd";
 import { ServerResponse } from "../../interfaces/Server";
 import { SyncOutlined, CheckCircleOutlined, CloseCircleOutlined, CloseOutlined } from "@ant-design/icons";
@@ -10,12 +10,12 @@ import { useNavigate } from "react-router-dom";
 
 const Orders = () => {
     const [orders, setOrders] = useState<IOrder[]>([]);
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const navigate = useNavigate();
 
     const { data: ordersData } = useQuery<ServerResponse<IOrder[]>, Error>(
         ["orders"],
-        () => getOrders(authHeader()),
+        () => getOrders(authToken),
     );
     
     useEffect(() => {

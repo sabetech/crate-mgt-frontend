@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AutoComplete } from "antd";
 import { useGetProducts } from "../../hooks/salesHook";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthToken } from "../../../../hooks/auth";
 import { IProductWithBalance, IProductWithLoadoutBalance } from "../../../../interfaces/Product";
 
 
@@ -12,9 +12,9 @@ type ProductSearchPros = {
 }
 
 const ProductSearch:React.FC<ProductSearchPros> = ({ cachedLoadoutProducts, onProductSelected, disabled }) => {
-    const authHeader = useAuthHeader()
+    const authToken = useAuthToken()
     
-    const {data: products} = cachedLoadoutProducts === undefined ? useGetProducts(authHeader) : {data: cachedLoadoutProducts}; //if there is a cachedLoadoutProducts, use it instead
+    const {data: products} = cachedLoadoutProducts === undefined ? useGetProducts(authToken) : {data: cachedLoadoutProducts}; //if there is a cachedLoadoutProducts, use it instead
     // const [_internalSelectedProducts, _setSelectedProducts] = useState<IProductWithBalance[]>([]);
 
     console.log("products: ?????", products)

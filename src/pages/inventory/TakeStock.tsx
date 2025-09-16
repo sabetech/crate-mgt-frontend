@@ -3,19 +3,19 @@ import AddProductQuantityFields from "../../components/AddProductQuantityFields"
 import { useForm } from "antd/es/form/Form";
 import { useMutation } from "@tanstack/react-query";
 import { takeStock } from "../../services/InventoryAPI";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthToken } from "../../hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { AppError } from "../../interfaces/Error";
 
 const TakeStock = () => {
 
     const [form] = useForm();
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [messageApi, contextHolder] = message.useMessage();
     const navigate = useNavigate();
 
     const { mutate, isLoading: isSubmitting } = useMutation({
-        mutationFn: (values: any) => takeStock( authHeader(), values),
+        mutationFn: (values: any) => takeStock( authToken, values),
         onSuccess: (data) => {
             console.log(data);
             success(data?.data || "")

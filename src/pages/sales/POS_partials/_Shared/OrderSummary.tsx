@@ -3,7 +3,7 @@ import { Typography, Divider, Select, Button, message } from "antd";
 import { ISaleItem, IOrder } from "../../../../interfaces/Sale";
 import dayjs from "dayjs";
 import { ICustomer } from "../../../../interfaces/Customer";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthToken } from "../../../../hooks/auth";
 import { useSubmitPosOrder } from "../../hooks/salesHook";
 import { PosMode } from "../../../../types/TSale";
 
@@ -23,9 +23,9 @@ const OrderSummary:React.FC<Props> = ({tableContent, customer, orderDetails, pos
     const [total, setTotal] = useState<number>(0);
     const [messageApi, contextHolder] = message.useMessage();
     const [paymentType, setPaymentType] = useState<string>("Cash");
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
 
-    const { mutate: pay } = useSubmitPosOrder(authHeader)
+    const { mutate: pay } = useSubmitPosOrder(authToken)
 
     const saveSaleOrderAndPrint = () => {
         console.log("save and print:: ", posMode.toString());

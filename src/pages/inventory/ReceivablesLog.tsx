@@ -7,13 +7,13 @@ import { IInventoryReceivable } from "../../interfaces/Inventory";
 import { useQuery } from "@tanstack/react-query";
 import { ServerResponse } from "../../interfaces/Server";
 import { getReceivableLogs } from "../../services/InventoryAPI";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthToken } from "../../hooks/auth";
 import { IProduct } from "../../interfaces/Product";
 
 const ReceivablesLog = () => {
 
     const [date, setDate] = useState(dayjs())
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
 
     const columns: ColumnsType<IInventoryReceivable> = [
         { title: 'Date', dataIndex: 'date', key: 'date' },
@@ -34,7 +34,7 @@ const ReceivablesLog = () => {
 
     const {data: receiveableLogs} = useQuery<ServerResponse<IInventoryReceivable[]>>({
         queryKey: ['inventory_receivable', date],
-        queryFn: () => getReceivableLogs(date.format("YYYY-MM-DD"), authHeader())
+        queryFn: () => getReceivableLogs(date.format("YYYY-MM-DD"), authToken)
     })
 
     return (

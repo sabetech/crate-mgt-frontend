@@ -1,16 +1,15 @@
-import { useState } from 'react';
 import { Col, List, Typography, Badge } from 'antd';
 import { IProductWithBalance } from '../../../../interfaces/Product';
 import { useGetProducts } from '../../hooks/salesHook';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthToken } from '../../../../hooks/auth';
 
 type Props = {
     onProductClicked: (product: IProductWithBalance) => void
 }
 const ProductSideList:React.FC<Props> = ({onProductClicked}) => {
-    const authHeader = useAuthHeader()
+    const authToken = useAuthToken()
 
-    const {data: products} = useGetProducts(authHeader);
+    const {data: products} = useGetProducts(authToken ?? "");
 
     return (
         <Col style={{border: 1, height: "65vh", borderRadius: 12, overflow: 'scroll'}}>

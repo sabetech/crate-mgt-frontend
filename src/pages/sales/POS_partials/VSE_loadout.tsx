@@ -4,7 +4,7 @@ import { ServerResponse } from "../../../interfaces/Server";
 import { ICustomer } from "../../../interfaces/Customer";
 import { useQuery } from "@tanstack/react-query";
 import { getCustomersWithBalance } from "../../../services/CustomersAPI";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthToken } from "../../../hooks/auth";
 import ProductSearch from "./_Shared/ProductSearch";
 import { IProductWithBalance } from "../../../interfaces/Product";
 import { ISaleItem } from "../../../interfaces/Sale";
@@ -18,7 +18,7 @@ type Props = {
 }
 
 const VSE_Loadout:React.FC<Props> = ({setTableContent, setVseSaleItems, setFocusedCustomer}) => {
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [form] = Form.useForm();
     const [unitPrice, setUnitPrice] = useState<number>(0);
     const [quantity, setQuantity] = useState<number>(1); 
@@ -28,7 +28,7 @@ const VSE_Loadout:React.FC<Props> = ({setTableContent, setVseSaleItems, setFocus
 
      const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
                 ['customers-vse'],
-                () => getCustomersWithBalance(authHeader(), { customer_type: 'retailer-vse'} )
+                () => getCustomersWithBalance(authToken, { customer_type: 'retailer-vse'} )
         );
 
     const onCustomerChange = (text: any, option: ICustomer) => {

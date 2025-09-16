@@ -7,25 +7,25 @@ import { ServerResponse } from '../../interfaces/Server';
 import { AddInHouseEmptiesCount } from '../../services/EmptiesAPI';
 import { getProducts } from '../../services/ProductsAPI';
 import { useEffect } from 'react';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthToken } from '../../hooks/auth';
 import { AppError } from '../../interfaces/Error';
 import { IEmptiesInHouseCount } from '../../interfaces/Empties';
 
 const antIcon = <Loading3QuartersOutlined style={{ fontSize: 24, marginRight: 10 }} spin />;
 
 const SaveInHouseEmpties = () => {
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [form] = Form.useForm();
     const [messageApi, contextHolder ] = message.useMessage();
     const [selectedProducts, setSelectedProducts] = React.useState<IProduct[] | undefined>(undefined);
 
     const { data: productsData } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
-        () => getProducts(authHeader(), {is_returnable: true})
+        () => getProducts(authToken, {is_returnable: true})
     );
 
     const { mutate, isLoading: isSubmitting } = useMutation({
-        mutationFn: (values: any) => AddInHouseEmptiesCount(values, authHeader()),
+        mutationFn: (values: any) => AddInHouseEmptiesCount(values, authToken),
         onSuccess: (data) => {
             success(data?.data || "")
             form.resetFields();

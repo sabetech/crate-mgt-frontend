@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthToken } from "../../hooks/auth";
 import { useQuery } from '@tanstack/react-query';
 import { IEmptiesInHouseCount } from "../../interfaces/Empties";
 import { ServerResponse } from "../../interfaces/Server";
@@ -10,14 +10,14 @@ import { Table, Row, Col, Statistic, Card, Typography } from 'antd';
 import { formatDate } from "../../utils/helpers";
 
 const ListInHouseEmpties = () => {
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [inHouseEmptiesData, setInHouseEmptiesData] = React.useState<IEmptiesInHouseCount[] | undefined>(undefined);
 
     console.log("EMPTIES IN HOSUE LOGS::", inHouseEmptiesData);
 
     const { data: inHouseEmpties, isLoading } = useQuery<ServerResponse<IEmptiesInHouseCount[]>, Error>({
         queryKey: ['in-house-empties'],
-        queryFn: () => getInHouseEmpties(authHeader()),
+        queryFn: () => getInHouseEmpties(authToken),
     });
 
     React.useEffect(() => {

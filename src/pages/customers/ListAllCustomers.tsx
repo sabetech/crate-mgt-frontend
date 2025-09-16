@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Input, Space, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import TableCustomers from "../../components/TableCustomers";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthToken } from "../../hooks/auth";
 import { ICustomer, ICustomerReturnEmpties } from "../../interfaces/Customer";
 import { ServerResponse } from "../../interfaces/Server";
 import { getCustomersWithBalance } from "../../services/CustomersAPI";
@@ -12,7 +12,7 @@ import { WHOLESALER } from "../../utils/constants";
 
 const { Search } = Input;
 const ListCustomers: React.FC = () => {
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [filterByVSE, toggleFilterByVSE] = useState<boolean>(false);
     const [filterByWholesaler, toggleFilterByWholesaler] = useState<boolean>(false);
     const [customerList, setCustomerList] = React.useState<ICustomer[] | undefined>(undefined);
@@ -20,7 +20,7 @@ const ListCustomers: React.FC = () => {
     const { data, isLoading } = useQuery<ServerResponse<ICustomer[]>, Error>(
         {
             queryKey: ['customer_with_balance'],
-            queryFn: () => getCustomersWithBalance(authHeader(), {customer_type: 'all'}),
+            queryFn: () => getCustomersWithBalance(authToken ?? "", {customer_type: 'all'}),
             onError: (error: Error) => {
                 console.log(error);
             }

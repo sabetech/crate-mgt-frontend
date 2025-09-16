@@ -7,7 +7,7 @@ import { ServerResponse } from '../../interfaces/Server';
 import { addCustomerReturnEmpties, getCustomers } from '../../services/CustomersAPI';
 import { getProducts } from '../../services/ProductsAPI';
 import { useEffect } from 'react';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthToken } from '../../hooks/auth';
 import { ICustomerReturnEmpties, ICustomer } from '../../interfaces/Customer';
 import AddProductQuantityFields from '../../components/AddProductQuantityFields';
 
@@ -15,23 +15,23 @@ const { Option } = Select;
 const antIcon = <Loading3QuartersOutlined style={{ fontSize: 24, marginRight: 10 }} spin />;
 
 const CustomerReturnEmpties = () => {
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [form] = Form.useForm();
     const [messageApi, contextHolder ] = message.useMessage();
     const [selectedCustomer, setSelectedCustomer] = useState<ICustomer>();
 
     const { data: productsData } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
-        () => getProducts(authHeader(), {is_returnable: true})
+        () => getProducts(authToken, {is_returnable: true})
     );
 
     const { data: customers } = useQuery<ServerResponse<ICustomer[]>> (
         ['customers'],
-        () => getCustomers(authHeader(), {customer_type: 'all'})
+        () => getCustomers(authToken, {customer_type: 'all'})
     );
 
     const { isLoading: isSubmitting, mutate } = useMutation({
-        mutationFn: (values: ICustomerReturnEmpties) => addCustomerReturnEmpties(values, authHeader()),
+        mutationFn: (values: ICustomerReturnEmpties) => addCustomerReturnEmpties(values, authToken),
         onSuccess: (data) => {
             success(data.data || "")
             form.resetFields();

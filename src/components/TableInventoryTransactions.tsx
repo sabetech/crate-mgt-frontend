@@ -12,7 +12,7 @@ const TableInventoryTransaction: React.FC<TableReceivableLogProps> = ({columns, 
     return (<>
         <Table 
             columns={columns}
-            dataSource={data?.data}
+            dataSource={data}
         />
     </>)
 }

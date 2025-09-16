@@ -8,23 +8,23 @@ import { ServerResponse } from '../../interfaces/Server';
 import { addEmptiesReturnedLog } from '../../services/EmptiesAPI';
 import { getProducts } from '../../services/ProductsAPI';
 import { useEffect } from 'react';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthToken } from '../../hooks/auth';
 import AddProductQuantityFields from '../../components/AddProductQuantityFields';
 
 const antIcon = <Loading3QuartersOutlined style={{ fontSize: 24, marginRight: 10 }} spin />;
 
 const AddReturningEmpties = () => {
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [form] = Form.useForm();
     const [messageApi, contextHolder ] = message.useMessage();
 
     const { data } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
-        () => getProducts(authHeader(), { is_returnable: true })
+        () => getProducts(authToken, { is_returnable: true })
     );
 
     const { isLoading: isSubmitting, mutate } = useMutation({
-        mutationFn: (values: IEmptyReturnedLog) => addEmptiesReturnedLog(values, authHeader()),
+        mutationFn: (values: IEmptyReturnedLog) => addEmptiesReturnedLog(values, authToken),
         onSuccess: (data) => {
             success(data.data || "")
             form.resetFields();

@@ -4,7 +4,7 @@ import { Form, DatePicker, AutoComplete, Button, message } from "antd";
 import { SendOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import { getCustomers, recordVSESales } from "../../services/CustomersAPI";
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthToken } from "../../hooks/auth";
 import { ICustomer } from "../../interfaces/Customer";
 import { ServerResponse } from "../../interfaces/Server";
 import { AppError } from "../../interfaces/Error";
@@ -14,11 +14,11 @@ import AddProductQuantityFields from "../../components/AddProductQuantityFields"
 const RecordVSESales: React.FC = () => {
     const [form] = useForm();
     const navigate = useNavigate();
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [messageApi, contextHolder ] = message.useMessage();
 
     const { mutate } = useMutation({
-        mutationFn: (values: any) => recordVSESales(values.customer_id, values, authHeader()),
+        mutationFn: (values: any) => recordVSESales(values.customer_id, values, authToken),
         onSuccess: (data) => {
             success(data?.data || "")
             navigate("/customers")
@@ -48,7 +48,7 @@ const RecordVSESales: React.FC = () => {
 
     const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
         ['customers'],
-        () => getCustomers(authHeader(), {customer_type: 'retailer-vse'})
+        () => getCustomers(authToken, {customer_type: 'retailer-vse'})
     )
 
     const onSearch = (value: string) => {

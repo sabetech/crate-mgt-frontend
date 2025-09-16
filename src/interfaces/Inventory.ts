@@ -87,3 +87,12 @@ export interface IInventoryTransaction {
     quantity: number;
     balance: number;
 }
+
+export interface IPromoStockRequest {
+    date: string;
+    product_quantities: {
+        product: number,
+        quantity: number
+    }[];
+    is_promo_stock: boolean; // if this is true, then subtract from current stock, if not then add to current stock
+}

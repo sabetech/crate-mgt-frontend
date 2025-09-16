@@ -5,7 +5,7 @@ import { DatePicker, Input, message } from 'antd';
 import AddProductQuantityFields from "./AddProductQuantityFields";
 import { useMutation } from "@tanstack/react-query";
 import { addReceivableToInventory } from "../services/InventoryAPI";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthToken } from "../hooks/auth";
 import { IInventoryReceivableRequest } from "../interfaces/Inventory";
 import { AppError } from "../interfaces/Error";
 import { useState } from "react";
@@ -19,12 +19,12 @@ const normFile = (e: any) => {
 
 const AddInventoryReceivableFromGGBL = () => {
     const [form] = Form.useForm();
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [date, setDate] = useState<string>();
     const [messageApi, contextHolder ] = message.useMessage();
 
     const { mutate } = useMutation({
-        mutationFn: (values: IInventoryReceivableRequest) => addReceivableToInventory(values, authHeader()),
+        mutationFn: (values: IInventoryReceivableRequest) => addReceivableToInventory(values, authToken ?? ""),
         onSuccess: (data) => {
             success(data.data || "")
             form.resetFields();

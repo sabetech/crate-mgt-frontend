@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Space, Card, Typography, Statistic, Table, DatePicker, Skeleton } from "antd";
 import { getStock } from "../../services/InventoryAPI";
 import dayjs from 'dayjs';
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthToken } from "../../hooks/auth";
 import { IStockReport } from "../../interfaces/Product";
 import { CreditCardOutlined } from "@ant-design/icons";
 
@@ -12,13 +12,13 @@ const StockInfo = () => {
 
     const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
     const [tableData, setTableData] = useState([]);
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const queryClient = useQueryClient()
 
     const { data: stockInfo, isLoading } = useQuery(
         {
             queryKey: ['stock_info', date],
-            queryFn: () => getStock(authHeader(), date)
+            queryFn: () => getStock(authToken, date)
         },
 
     );

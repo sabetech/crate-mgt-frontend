@@ -4,7 +4,7 @@ import { Form, Input, Select, Button, message, Spin, Modal, Space, Alert, Upload
 import type { UploadProps } from 'antd';
 import { useMutation } from "@tanstack/react-query";
 import { addCustomer } from "../../services/CustomersAPI";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthToken } from "../../hooks/auth";
 import { AppError } from "../../interfaces/Error";
 import { Loading3QuartersOutlined, InboxOutlined } from '@ant-design/icons'
 import { useNavigate } from "react-router-dom";
@@ -17,7 +17,7 @@ const { Dragger } = Upload;
 const antIcon = <Loading3QuartersOutlined style={{ fontSize: 24, marginRight: 10 }} spin />;
 const AddNewCustomers: React.FC = () => {
     const [form] = useForm();
-    const authHeader = useAuthHeader();
+    const authHeader = useAuthToken();
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
     const [importModalOpen, setImportModalOpen] = useState<boolean>(false);
@@ -27,7 +27,7 @@ const AddNewCustomers: React.FC = () => {
         multiple: false,
         action: `${SERVER_URL}/api/v1/customers/import-excel`,
         headers: {
-          'Authorization': authHeader(),
+          'Authorization': useAuthToken() || "",
         },
         onChange(info) {
           console.log('info HERE:>', info);
@@ -47,7 +47,7 @@ const AddNewCustomers: React.FC = () => {
       };
 
     const { mutate, isLoading: isSubmitting } = useMutation({
-        mutationFn: (values: any) => addCustomer(values, authHeader()),
+        mutationFn: (values: any) => addCustomer(values, useAuthToken() || ""),
         onSuccess: (data) => {
             success(data?.data || "")
             navigate("/customers")

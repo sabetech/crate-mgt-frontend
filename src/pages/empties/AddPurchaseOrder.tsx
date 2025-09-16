@@ -9,7 +9,7 @@ import { getProducts } from '../../services/ProductsAPI';
 import { useEffect } from 'react';
 import { IEmptyLog } from '../../interfaces/Empties';
 import { addEmptiesLog } from '../../services/EmptiesAPI';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthToken } from '../../hooks/auth';
 
 
 const { Option } = Select;
@@ -24,13 +24,13 @@ const antIcon = <LoadingOutlined style={{ fontSize: 24, marginRight: 10 }} spin 
 
 const AddPurchaseOrder = () => {
     const [form] = Form.useForm();
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     
 
     const [messageApi, contextHolder ] = message.useMessage();
     const { data, isError } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
-        () => getProducts(authHeader(), {is_returnable: true} ),
+        () => getProducts(authToken, {is_returnable: true} ),
     );
 
     if (isError) {
@@ -42,7 +42,7 @@ const AddPurchaseOrder = () => {
     }
     
     const { isLoading: isSubmitting, mutate } = useMutation({
-        mutationFn: (values: IEmptyLog) => addEmptiesLog(values, authHeader()),
+        mutationFn: (values: IEmptyLog) => addEmptiesLog(values, authToken),
         onSuccess: (data) => {
             success(data.data || "")
             form.resetFields();

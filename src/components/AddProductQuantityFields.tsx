@@ -6,7 +6,7 @@ import { IProduct } from '../interfaces/Product';
 import { getProducts } from '../services/ProductsAPI';
 import { ServerResponse } from '../interfaces/Server';
 import { useEffect } from 'react';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthToken } from '../hooks/auth';
 
 const { Option } = Select;
 interface AddProductQuantityFieldsProps {
@@ -16,10 +16,10 @@ interface AddProductQuantityFieldsProps {
 
 const AddProductQuantityFields = ({ name, is_returnable }: AddProductQuantityFieldsProps) => {
 
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const { data } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
-        () => getProducts(authHeader(), {is_returnable: is_returnable})
+        () => getProducts(authToken, {is_returnable: is_returnable})
     );
 
     const [productList, setProductList] = React.useState<IProduct[] | undefined>([]);

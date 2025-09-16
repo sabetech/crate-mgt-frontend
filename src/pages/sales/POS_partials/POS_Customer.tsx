@@ -6,7 +6,7 @@ import { getCustomersWithBalance } from '../../../services/CustomersAPI';
 import { useQuery, useMutation } from '@tanstack/react-query'
 import {useLocation, useNavigate} from 'react-router-dom';
 import { ServerResponse } from '../../../interfaces/Server'
-import { useAuthHeader } from 'react-auth-kit'
+import { useAuthToken } from "../../../hooks/auth";
 import { IOrder, ISaleItem } from '../../../interfaces/Sale';
 import { pay, printReceipt as print } from '../../../services/SalesAPI'
 import ProductSearch from "./_Shared/ProductSearch";
@@ -17,7 +17,7 @@ type Props = {
     setFocusedCustomer: React.Dispatch<React.SetStateAction<(ICustomer | null)[] | undefined>>
 }
 const POS_Customer:React.FC<Props> = ({setTableContent, setCustomerSaleItems, setFocusedCustomer}) => {
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const location = useLocation();
@@ -56,7 +56,7 @@ const POS_Customer:React.FC<Props> = ({setTableContent, setCustomerSaleItems, se
 
     const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
             ['customers'],
-            () => getCustomersWithBalance(authHeader(), { customer_type: 'all'} )
+            () => getCustomersWithBalance(authToken ?? "", { customer_type: 'all'} )
     );
 
     const { mutate: printAction } = useMutation({
@@ -165,13 +165,11 @@ const POS_Customer:React.FC<Props> = ({setTableContent, setCustomerSaleItems, se
             setCustomerSaleItems(selectedProducts);
         }
 
-
-
     },[selectedProducts])
 
     const { mutate } = useMutation({
             mutationFn: (values: IOrder) => {
-                return pay(authHeader(), values)
+                return pay(authToken, values)
             },
             onSuccess: (data: any, orderDetails: IOrder) => {
                 orderDetails.transaction_id = data.data.transaction_id

@@ -13,7 +13,7 @@ export const useGetProducts = (authHeader: any) => {
   
   const { data, isLoading, error } = useQuery<IProductWithBalance[]>(
     ['products_with_balance'],
-    () => getProductsWithStockBalance(authHeader())
+    () => getProductsWithStockBalance(authHeader)
 );
 
     return { data, isLoading, error };  
@@ -33,7 +33,7 @@ export const useSubmitPosOrder = (authHeader: any) => {
 
   return useMutation(
     {
-      mutationFn: (values: any) => submitPosOrder(authHeader(), values),
+      mutationFn: (values: any) => submitPosOrder(authHeader, values),
       onSuccess: (data: any) => {
         console.log(data)
       },

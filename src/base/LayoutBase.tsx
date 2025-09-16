@@ -21,7 +21,8 @@ import AddNewCustomers from '../pages/customers/AddNewCustomers';
 import ListCustomers from '../pages/customers/ListAllCustomers';
 import RecordVSESales from '../pages/customers/RecordVSESales';
 import Login from '../pages/users/Login';
-import { useAuthHeader, useAuthUser, useIsAuthenticated, useSignOut } from 'react-auth-kit';
+import ProtectedRoute from '../pages/users/ProtectedRoute';
+
 import CustomerReturnEmpties from '../pages/customers/ReturnEmpties';
 import SaveInHouseEmpties from '../pages/empties-inhouse/EmptiesOnGround';
 import ListInHouseEmpties from '../pages/empties-inhouse/ListInHouseEmpties';
@@ -38,7 +39,8 @@ import LoadoutList from '../pages/inventory/LoadoutList';
 import TakeStock from '../pages/inventory/TakeStock';
 import StockInfo from '../pages/inventory/StockInfo';
 import Orders from '../pages/sales/Orders';
-import { Permission } from '../interfaces/User';
+// import { Permission } from '../interfaces/User';
+import { useIsAuthenticated, useAuthUser, useSignOut, useAuthToken } from '../hooks/auth';
 import EmptiesBalance from '../pages/empties-inhouse/EmptiesBalance';
 import DailySalesReport from '../pages/reports/DailySalesReport';
 import ReceivablesLog from '../pages/inventory/ReceivablesLog'
@@ -117,13 +119,13 @@ const LayoutBase = () => {
   );
   
   const authUser = useAuthUser();
-  console.log("USER INFO", authUser())
+  console.log("USER INFO", authUser)
   console.log("ITEMS::", items);
-  const user = authUser();
+  const user = authUser;
   const isAuthenticated = useIsAuthenticated();
   const signOut = useSignOut();
   
-  const authHeader = useAuthHeader();
+  const authToken = useAuthToken() ?? "invalid-token";
 
   useEffect(() => {
     console.log(location.pathname)
@@ -148,7 +150,7 @@ const LayoutBase = () => {
       okText: 'Logout',
       cancelText: 'Cancel',
       onOk() {
-        logout(authHeader());
+        logout(authToken ?? "");
         signOut();
       },
       onCancel() {
@@ -180,29 +182,29 @@ const LayoutBase = () => {
 
   const onClick: MenuProps['onClick'] = (e) => {
     
-    console.log(isAuthenticated());
+    console.log(isAuthenticated);
 
-    if (isAuthenticated())
+    if (isAuthenticated)
       navigate('/' + e.key)
     else
       signOut();
   };
 
-  const filterMenuItemsBasedOnPermissions = (items: MenuItem[]): MenuItem[] => {
-    return items.filter((item) => {
-      if (typeof user?.roles[0].permissions !== 'undefined' && user?.roles[0].permissions.length > 0){
-        return item.permission_required ? user?.roles[0].permissions.some((usrPermission: Permission) => usrPermission.name === item.permission_required) : false;
-      }
-      return false;
-    });
-  }
+  // const filterMenuItemsBasedOnPermissions = (items: MenuItem[]): MenuItem[] => {
+  //   return items.filter((item) => {
+  //     if (typeof user?.roles[0].permissions !== 'undefined' && user?.roles[0].permissions.length > 0){
+  //       return item.permission_required ? user?.roles[0].permissions.some((usrPermission: Permission) => usrPermission.name === item.permission_required) : false;
+  //     }
+  //     return false;
+  //   });
+  // }
 
   return (<Layout style={{ minHeight: '100vh' }}>
     <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} width={'15%'}>
       <div style={{ margin: 16, background: 'rgba(255, 255, 255, 0.2)' }} >
         
       </div>
-      <Menu theme="dark" defaultSelectedKeys={[location.pathname.substring(1)]} selectedKeys={[location.pathname.substring(1)]}  mode="inline" onClick={onClick} items={filterMenuItemsBasedOnPermissions(items)}  />
+      <Menu theme="dark" defaultSelectedKeys={[location.pathname.substring(1)]} selectedKeys={[location.pathname.substring(1)]}  mode="inline" onClick={onClick} items={(items)}  />
     </Sider>
     <Layout className="site-layout">
       <Header style={{ padding: 0, background: colorBgContainer, display: 'flex', justifyContent: 'space-between' }}>
@@ -226,7 +228,7 @@ const LayoutBase = () => {
                               }, ...UserDropdown,]} }>
             <a onClick={(e) => e.preventDefault()}>
               <Space>
-              <h3>{ user?.name }({user?.email})</h3>
+              {/* <h3>{ user?.name }({user?.email})</h3> */}
               <Avatar size={"large"} icon={<UserOutlined />} />
                 <DownOutlined />
               </Space>
@@ -237,44 +239,49 @@ const LayoutBase = () => {
       <Content style={{ margin: '0 16px' }}>
         <Breadcrumb style={{ margin: '16px 0' }} items={[{ title: 'TODO' }, { title: 'TODO' }]}/>
         <div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>
+        
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/customers" element={<ListCustomers />} />
-            <Route path="/customers/new" element={<AddNewCustomers />} />
-            <Route path="/customers/return_empties" element={<CustomerReturnEmpties />} />
-            <Route path="/customers/list_all_customers" element={<ListCustomers />} />
-            <Route path="/customers/add_empties_loan" element={<CreateCustomerEmptiesLoan />} />
-            <Route path="/customers/record_sales" element={<RecordVSESales />} />
-            <Route path="/customers/:id/history" element={<CustomerHistory />} />
-            <Route path="/empties/empties_log" element={<EmptiesLog />} />
-            <Route path="/empties/empties_returned_log" element={<ReturningEmptiesLog />} />
-            <Route path="/empties/add_purchase_order" element={<AddPurchaseOrder />} />
-            <Route path="/empties/add_returning_empties" element={<AddReturningEmpties />} />
-            <Route path="/empties/on-ground" element={<SaveInHouseEmpties />} />
-            <Route path="/empties/list-on-ground" element={<ListInHouseEmpties />} />
-            <Route path="/empties/empties-overview" element={<EmptiesBalance />} />
-            
-            <Route path="/warehouse/products" element={<ProductManagement />} />
-            {/* <Route path="/warehouse/inventory" element={<Inventory />} /> */}
-            <Route path="/warehouse/pending-orders" element={<PendingOrders />} />
-            <Route path="/warehouse/adjust-stock" element={<AdjustStock/>} />
-            <Route path="/warehouse/receivables" element={<Receivables />} />
-            <Route path="/warehouse/receivables-log" element={<ReceivablesLog />} />
-            <Route path="warehouse/inventory-transaction" element={<InventoryHistory/>} />
-            <Route path="/warehouse/addloadout" element={<AddLoadouts />} />
-            <Route path="/warehouse/listloadouts" element={<LoadoutList />} />
-            <Route path="/warehouse/takestock" element={<TakeStock />} />
-            <Route path="/warehouse/stockinfo" element={<StockInfo />} />
+            {<Route element={<ProtectedRoute />}>  
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/customers" element={<ListCustomers />} />
+              <Route path="/customers/new" element={<AddNewCustomers />} />
+              <Route path="/customers/return_empties" element={<CustomerReturnEmpties />} />
+              <Route path="/customers/list_all_customers" element={<ListCustomers />} />
+              <Route path="/customers/add_empties_loan" element={<CreateCustomerEmptiesLoan />} />
+              <Route path="/customers/record_sales" element={<RecordVSESales />} />
+              <Route path="/customers/:id/history" element={<CustomerHistory />} />
+              <Route path="/empties/empties_log" element={<EmptiesLog />} />
+              <Route path="/empties/empties_returned_log" element={<ReturningEmptiesLog />} />
+              <Route path="/empties/add_purchase_order" element={<AddPurchaseOrder />} />
+              <Route path="/empties/add_returning_empties" element={<AddReturningEmpties />} />
+              <Route path="/empties/on-ground" element={<SaveInHouseEmpties />} />
+              <Route path="/empties/list-on-ground" element={<ListInHouseEmpties />} />
+              <Route path="/empties/empties-overview" element={<EmptiesBalance />} />
+              
+              <Route path="/warehouse/products" element={<ProductManagement />} />
+              {/* <Route path="/warehouse/inventory" element={<Inventory />} /> */}
+              <Route path="/warehouse/pending-orders" element={<PendingOrders />} />
+              <Route path="/warehouse/adjust-stock" element={<AdjustStock/>} />
+              <Route path="/warehouse/receivables" element={<Receivables />} />
+              <Route path="/warehouse/receivables-log" element={<ReceivablesLog />} />
+              <Route path="warehouse/inventory-transaction" element={<InventoryHistory/>} />
+              <Route path="/warehouse/addloadout" element={<AddLoadouts />} />
+              <Route path="/warehouse/listloadouts" element={<LoadoutList />} />
+              <Route path="/warehouse/takestock" element={<TakeStock />} />
+              <Route path="/warehouse/stockinfo" element={<StockInfo />} />
 
-            <Route path="POS/sales" element={<POS />} />
-            <Route path="POS/orders" element={<Orders />} />
+              <Route path="POS/sales" element={<POS />} />
+              <Route path="POS/orders" element={<Orders />} />
 
-            <Route path="reports/daily-sales-report" element={<DailySalesReport />} />
-            
-            <Route path="/users/manage" element={<ManageUsers />} />
-            <Route path={"/login"} element={<Login />} />
+              <Route path="reports/daily-sales-report" element={<DailySalesReport />} />
+              
+              <Route path="/users/manage" element={<ManageUsers />} />
+             </Route> 
+          }
+            {/* <Route path={"/login"} element={<Login />} /> */}
           </Routes>
+          
         </div>
       </Content>
       <Footer style={{ textAlign: 'center' }}>Empties Manager ©2023 Created with ❤️</Footer>

@@ -1,5 +1,5 @@
 import * as api from './API';
-import { IUser } from '../interfaces/User'
+import { IUser } from '../interfaces/UserManager'
 
 
 export const signIn = async ({email, password}: IUser) => {

@@ -5,7 +5,7 @@ import { IProductWithBalance } from '../../../interfaces/Product'
 import { useQuery } from '@tanstack/react-query'
 import { ServerResponse } from '../../../interfaces/Server';
 import { getCustomersWithBalance } from '../../../services/CustomersAPI';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthToken } from '../../../hooks/auth';
 import ProductSearch from "./_Shared/ProductSearch";
 import { ISaleItem } from '../../../interfaces/Sale';
 
@@ -16,7 +16,7 @@ type Props = {
 }
 
 const POS_Customer_Edit_sale:React.FC<Props> = ({setTableContent, setcustomerSaleReturnItems, setFocusedCustomer}) => {
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [form] = Form.useForm();
     const [customer, setCustomer] = useState<ICustomer>();
     const [selectedProduct, setSelectedProduct] = useState<IProductWithBalance | undefined>();
@@ -25,7 +25,7 @@ const POS_Customer_Edit_sale:React.FC<Props> = ({setTableContent, setcustomerSal
 
     const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
                 ['customers'],
-                () => getCustomersWithBalance(authHeader(), { customer_type: 'all'} )
+                () => getCustomersWithBalance(authToken, { customer_type: 'all'} )
     );
 
     useEffect(() => {

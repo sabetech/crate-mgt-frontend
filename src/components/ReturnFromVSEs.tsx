@@ -7,10 +7,11 @@ import { ICustomer, IVSECustomer } from '../interfaces/Customer';
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { ServerResponse } from '../interfaces/Server';
 import { getCustomers } from '../services/CustomersAPI';
-import { useAuthHeader } from 'react-auth-kit'
+import { useAuthToken } from "../hooks/auth";
 import { IReturnsFromVSERequest } from "../interfaces/Inventory";
 import { addReturnsFromVSEs } from "../services/InventoryAPI";
 import { AppError } from "../interfaces/Error";
+
 
 
 const ReturnFromVSEs = () => {
@@ -18,19 +19,19 @@ const ReturnFromVSEs = () => {
     const [date, setDate] = useState<string>();
     const [vse, setVse] = useState<ICustomer>();
     const [messageApi, contextHolder ] = message.useMessage();
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
 
     const { data: loadoutInfo } = useQuery<ServerResponse<IVSECustomer>, Error>(
         ['loadout_info', vse],
         () => {
             if ((vse?.id) && (date))
-                return getVSEWithLoadoutInfo(vse?.id, date, authHeader())
+                return getVSEWithLoadoutInfo(vse?.id, date, authToken ?? "");
             return Promise.resolve({data: []})
         }
     )
 
     const { mutate } = useMutation({
-        mutationFn: (values: IReturnsFromVSERequest) => addReturnsFromVSEs(values, authHeader()),
+        mutationFn: (values: IReturnsFromVSERequest) => addReturnsFromVSEs(values, authToken ?? ""),
         onSuccess: (data) => {
             success(data.data || "")
             form.resetFields();
@@ -55,7 +56,7 @@ const ReturnFromVSEs = () => {
 
     const { data: customersResponse } = useQuery<ServerResponse<ICustomer[]>, Error>(
         ['customers'],
-        () => getCustomers(authHeader(), {customer_type: 'retailer-vse'})
+        () => getCustomers(authToken ?? "", {customer_type: 'retailer-vse'})
     )
 
     const onFinish = (formValues: any) => {
