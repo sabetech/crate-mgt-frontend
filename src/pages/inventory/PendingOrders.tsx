@@ -8,7 +8,7 @@ import { useAuthToken } from '../../hooks/auth'
 import { Modal, Table, Tag, Button, Typography, Input, Space, message } from "antd";
 import { useEffect } from 'react'
 import { SyncOutlined } from '@ant-design/icons'
-import { auth } from '../../services/API'
+// import { auth } from '../../services/API'
 
 interface ITableInfo {
   product: string;

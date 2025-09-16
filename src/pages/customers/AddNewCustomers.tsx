@@ -17,7 +17,7 @@ const { Dragger } = Upload;
 const antIcon = <Loading3QuartersOutlined style={{ fontSize: 24, marginRight: 10 }} spin />;
 const AddNewCustomers: React.FC = () => {
     const [form] = useForm();
-    const authHeader = useAuthToken();
+    // const authHeader = useAuthToken();
     const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
     const [importModalOpen, setImportModalOpen] = useState<boolean>(false);

@@ -20,7 +20,7 @@ import ReturningEmptiesLog from '../pages/empties/ReturningEmptiesLog';
 import AddNewCustomers from '../pages/customers/AddNewCustomers';
 import ListCustomers from '../pages/customers/ListAllCustomers';
 import RecordVSESales from '../pages/customers/RecordVSESales';
-import Login from '../pages/users/Login';
+// import Login from '../pages/users/Login';
 import ProtectedRoute from '../pages/users/ProtectedRoute';
 
 import CustomerReturnEmpties from '../pages/customers/ReturnEmpties';
@@ -121,7 +121,7 @@ const LayoutBase = () => {
   const authUser = useAuthUser();
   console.log("USER INFO", authUser)
   console.log("ITEMS::", items);
-  const user = authUser;
+  // const user = authUser;
   const isAuthenticated = useIsAuthenticated();
   const signOut = useSignOut();
   

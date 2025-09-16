@@ -38,7 +38,7 @@ const POS = () => {
     })
     
     const onProductClicked = (product: IProductWithBalance) => {
-        
+        console.log("Product clicked::", product);
     }
 
     useEffect(() => {
@@ -150,8 +150,8 @@ const POS = () => {
                                     label: 'Customer Modify Sale',
                                     key: '4',
                                     children: <POS_Customer_Edit_sale 
-                                                setTableContent={setTableContent}
-                                                setcustomerSaleReturnItems={setcustomerSaleReturnItems}
+                                                // setTableContent={setTableContent}
+                                                // setcustomerSaleReturnItems={setcustomerSaleReturnItems}
                                                 setFocusedCustomer={setFocusedCustomer}
                                                 />
                                 },

@@ -12,10 +12,10 @@ import { useIsAuthenticated } from './hooks/auth';
 
 // Create a client
 const queryClient = new QueryClient()
-interface IUserData {
-  name: string;
-  uuid: string;
- };
+// interface IUserData {
+//   name: string;
+//   uuid: string;
+//  };
 
  
 const App: React.FC = () => {

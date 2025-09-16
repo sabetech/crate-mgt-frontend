@@ -7,15 +7,15 @@ import { ServerResponse } from '../../../interfaces/Server';
 import { getCustomersWithBalance } from '../../../services/CustomersAPI';
 import { useAuthToken } from '../../../hooks/auth';
 import ProductSearch from "./_Shared/ProductSearch";
-import { ISaleItem } from '../../../interfaces/Sale';
+// import { ISaleItem } from '../../../interfaces/Sale';
 
 type Props = {
-    setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
-    setcustomerSaleReturnItems: React.Dispatch<React.SetStateAction<ISaleItem[]>>
+    //setTableContent: React.Dispatch<React.SetStateAction<ISaleItem[]>>
+    //setcustomerSaleReturnItems: React.Dispatch<React.SetStateAction<ISaleItem[]>>
     setFocusedCustomer: React.Dispatch<React.SetStateAction<(ICustomer | null)[] | undefined>>
 }
 
-const POS_Customer_Edit_sale:React.FC<Props> = ({setTableContent, setcustomerSaleReturnItems, setFocusedCustomer}) => {
+const POS_Customer_Edit_sale:React.FC<Props> = ({setFocusedCustomer}) => {
     const authToken = useAuthToken();
     const [form] = Form.useForm();
     const [customer, setCustomer] = useState<ICustomer>();

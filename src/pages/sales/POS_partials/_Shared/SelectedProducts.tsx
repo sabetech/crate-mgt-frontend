@@ -1,6 +1,6 @@
-import { useState } from "react";
+// import { useState } from "react";
 import { Table, Space, Typography, Button } from "antd";
-import {useLocation} from 'react-router-dom';
+// import {useLocation} from 'react-router-dom';
 import { ISaleItem } from "../../../../interfaces/Sale";
 import { DeleteFilled } from '@ant-design/icons';
 
@@ -19,7 +19,7 @@ const SelectedProducts:React.FC<props> = ({tableContent, setTableContent}) => {
     }
 
     const updateCustomerEmptiesBalance = (quantity: number) => {
-
+        console.log("Update customer empties balance by: ", quantity);
     }
 
     const posTableColumns = [

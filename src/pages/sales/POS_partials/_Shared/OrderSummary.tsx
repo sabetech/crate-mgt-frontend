@@ -62,34 +62,34 @@ const OrderSummary:React.FC<Props> = ({tableContent, customer, orderDetails, pos
         posReset();
     }
 
-    const saveLoadoutSubmit = () => {
-        const saleItems = tableContent.map((item) => ({
-            key: item.id,
-            product: item.product,
-            quantity: item.quantity,
-        } as ISaleItem));
+    // const saveLoadoutSubmit = () => {
+    //     const saleItems = tableContent.map((item) => ({
+    //         key: item.id,
+    //         product: item.product,
+    //         quantity: item.quantity,
+    //     } as ISaleItem));
 
-        console.log("saleItems: ", saleItems)
+    //     console.log("saleItems: ", saleItems)
 
-        const order = {
-            paymentType: paymentType,
-            customer: customer,
-            sales: saleItems,
-            total: total,
-            amountTendered: 0,
-            balance: -total,
-            date: dayjs().format('YYYY-MM-DD')
-        } as IOrder;
+    //     const order = {
+    //         paymentType: paymentType,
+    //         customer: customer,
+    //         sales: saleItems,
+    //         total: total,
+    //         amountTendered: 0,
+    //         balance: -total,
+    //         date: dayjs().format('YYYY-MM-DD')
+    //     } as IOrder;
 
-        messageApi.open({
-            type: 'success',
-            content: "Loadout successful"
-        });
+    //     messageApi.open({
+    //         type: 'success',
+    //         content: "Loadout successful"
+    //     });
         
-        pay(order); //either save and print or approving a sale by cashier
-        posReset();
+    //     pay(order); //either save and print or approving a sale by cashier
+    //     posReset();
 
-    }
+    // }
 
     const resetStates = () => {
         setTableContent([]);

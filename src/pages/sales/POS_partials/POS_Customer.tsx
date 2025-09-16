@@ -156,7 +156,7 @@ const POS_Customer:React.FC<Props> = ({setTableContent, setCustomerSaleItems, se
         (unitPrice || unitPrice > 0) && setUnitPrice(0);
         form.setFieldValue("customer", `${customer?.name} (${customer?.customer_type.toUpperCase()})`);
         form.setFieldValue("product", "");
-        
+        payAction({} as IOrder);
     }
 
     useEffect(() => {
@@ -167,7 +167,7 @@ const POS_Customer:React.FC<Props> = ({setTableContent, setCustomerSaleItems, se
 
     },[selectedProducts])
 
-    const { mutate } = useMutation({
+    const { mutate: payAction } = useMutation({
             mutationFn: (values: IOrder) => {
                 return pay(authToken, values)
             },

@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { ServerResponse } from '../../../interfaces/Server';
-import { IProductWithBalance, IProductWithLoadoutBalance } from '../../../interfaces/Product';
+// import { ServerResponse } from '../../../interfaces/Server';
+import { IProductWithBalance } from '../../../interfaces/Product';
 import { getProductsWithStockBalance } from '../../../services/ProductsAPI';
 import { AppError } from '../../../interfaces/Error';
 import { getLoadoutSaleItems, pay } from '../../../services/SalesAPI';

@@ -1,7 +1,7 @@
 import { TUser, TPermission, TRole } from "../types/user";
 import { USER, TOKEN, TOKEN_TYPE} from "../utils/constants";
-import { useQuery } from "@tanstack/react-query";
-import * as apiClient from "../services/UsersAPI";
+// import { useQuery } from "@tanstack/react-query";
+// import * as apiClient from "../services/UsersAPI";
 
 
 type signInType = {
