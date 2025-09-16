@@ -9,8 +9,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import ProtectedRoute from './pages/users/ProtectedRoute';
 import LayoutBase from './base/LayoutBase';
 
-// Create a client
-const queryClient = new QueryClient()
 // interface IUserData {
 //   name: string;
 //   uuid: string;
