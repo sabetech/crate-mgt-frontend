@@ -19,7 +19,7 @@ const POS = () => {
     const [customerSaleItems, setCustomerSaleItems] = useState<ISaleItem[]>([]);
     const [vseSaleItems, setVseSaleItems] = useState<ISaleItem[]>([]);
     const [vseReturnSaleItems, setvseReturnSaleItems] = useState<ISaleItem[]>([]);
-    const [customerSaleReturnItems, setcustomerSaleReturnItems] = useState<ISaleItem[]>([]);
+    const [customerSaleReturnItems, _] = useState<ISaleItem[]>([]);
 
     const [tableContent, setTableContent] = useState<ISaleItem[]>([]);
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);

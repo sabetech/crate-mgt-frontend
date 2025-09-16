@@ -1,9 +1,9 @@
 export type TUser = {
-    name: string
+    name?: string
     email: string
     password?: string
-    roles: TRole[]
-    permissions: TPermission[]
+    roles?: TRole[]
+    permissions?: TPermission[]
     id?: number
     created_at?: string
     
