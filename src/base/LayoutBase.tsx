@@ -20,7 +20,7 @@ import ReturningEmptiesLog from '../pages/empties/ReturningEmptiesLog';
 import AddNewCustomers from '../pages/customers/AddNewCustomers';
 import ListCustomers from '../pages/customers/ListAllCustomers';
 import RecordVSESales from '../pages/customers/RecordVSESales';
-// import Login from '../pages/users/Login';
+
 import ProtectedRoute from '../pages/users/ProtectedRoute';
 
 import CustomerReturnEmpties from '../pages/customers/ReturnEmpties';
@@ -121,7 +121,7 @@ const LayoutBase = () => {
   const authUser = useAuthUser();
   console.log("USER INFO", authUser)
   console.log("ITEMS::", items);
-  // const user = authUser;
+  const user = authUser;
   const isAuthenticated = useIsAuthenticated();
   const signOut = useSignOut();
   
@@ -152,6 +152,7 @@ const LayoutBase = () => {
       onOk() {
         logout(authToken ?? "");
         signOut();
+        navigate('/');
       },
       onCancel() {
         console.log('Cancel');
@@ -229,7 +230,8 @@ const LayoutBase = () => {
             <a onClick={(e) => e.preventDefault()}>
               <Space>
               {/* <h3>{ user?.name }({user?.email})</h3> */}
-              <Avatar size={"large"} icon={<UserOutlined />} />
+              <Avatar size={"large"} src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
+                { user()?.name || 'Unknown User' }
                 <DownOutlined />
               </Space>
             </a>
