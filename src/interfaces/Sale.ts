@@ -1,5 +1,6 @@
 import { ICustomer } from "./Customer";
 import { IProduct } from "./Product";
+import { PosMode } from "../types/TSale";
 
 export interface ISaleItem {
     id?: number;
@@ -10,7 +11,7 @@ export interface ISaleItem {
 
 export interface IOrder {
     id?: number;
-    saleItems: ISaleItem[];
+    sales: ISaleItem[];
     total: number;
     amountTendered: number;
     balance: number;
@@ -20,4 +21,5 @@ export interface IOrder {
     paymentType: string;
     order_transaction_id?: string;
     transaction_id?: string;
+    posMode?: PosMode
 }

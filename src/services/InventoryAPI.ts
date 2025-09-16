@@ -4,6 +4,7 @@ import { IStock } from '../interfaces/Product';
 import { IInventoryOrder, IInventoryReceivable, ILoadout, IReturnsFromVSERequest } from '../interfaces/Inventory';
 import { IVSECustomer } from '../interfaces/Customer';
 import { IInventoryReceivableRequest, IInventoryTransaction } from '../interfaces/Inventory';
+import { IPromoStockRequest } from '../interfaces/Inventory'
 
 export const getLoadouts = async (token: string, date: string): Promise<ServerResponse<ILoadout[]>> => {
     return (await api.get('/stocks/loadouts?date='+date, {'Authorization': token})).data;
@@ -50,4 +51,8 @@ export const getReceivableLogs = async (date: string, token: string): Promise<Se
 
 export const getInventoryTransactions = async (date: string, token: string): Promise<ServerResponse<IInventoryTransaction[]>> => {
     return (await api.get(`/stocks/inventory-transaction?date=${date}`, {'Authorization': token})).data;
+}
+
+export const submitPromostockAdjustment = async (token: string, values: IPromoStockRequest): Promise<ServerResponse<string>> => {
+    return (await api.post('/stocks/promo-stock-adjustment', values, {'Authorization': token})).data;
 }

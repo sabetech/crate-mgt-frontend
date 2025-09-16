@@ -1,5 +1,5 @@
 import {  Row, Col, Statistic, Card, Typography, List, Tag } from 'antd';
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthToken } from "../../hooks/auth";
 import { useQuery } from '@tanstack/react-query';
 import { ServerResponse } from '../../interfaces/Server';
 import { IEmptiesBalance, IEmptiesTransaction } from '../../interfaces/Empties';
@@ -13,28 +13,28 @@ import { IProductWithBalance } from '../../interfaces/Product';
 
 const EmptiesOverview = () => {
 
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
 
     const { data: emptiesBalance } = useQuery<ServerResponse<IEmptiesBalance[]>>({
         queryKey: ['empties-balance'],
-        queryFn: () => getEmptiesBalance(authHeader()),
+        queryFn: () => getEmptiesBalance(authToken),
     });
 
     const { data: products } = useQuery({
         queryKey: ['products_balances'],
-        queryFn: () => getProductsWithStockBalance(authHeader())
+        queryFn: () => getProductsWithStockBalance(authToken)
     });
 
     console.log("Yayba::", products);
 
     const {data: emptiesInTrade } = useQuery<ServerResponse<number>>({
         queryKey: ['empties-in-trade'],
-        queryFn: () => getEmptiesInTrade(authHeader()),
+        queryFn: () => getEmptiesInTrade(authToken),
     });
 
     const { data: emptiesTransactions } = useQuery<ServerResponse<IEmptiesTransaction[]>>({
         queryKey: ['empties-transaction'],
-        queryFn: () => getEmptiesTransaction(authHeader()),
+        queryFn: () => getEmptiesTransaction(authToken),
     });
 
     console.log("EMPTIES In trade::", emptiesInTrade);
@@ -60,7 +60,7 @@ const EmptiesOverview = () => {
                             title="Number of Fulls"
                             value={
                                 products && 
-                                products.data
+                                products
                                 ?.filter((product: IProductWithBalance) => product.empty_returnable === true)
                                 ?.reduce((acc: number, item: IProductWithBalance) => acc + item.inventory_balance.quantity, 0)}
                             valueStyle={{ color: '#3f8600' }}

@@ -6,32 +6,32 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getEmptiesLog, getEmptiesReturnedLog, toggleApprovePurchaseOrder, deletePurchaseOrder } from '../../services/EmptiesAPI';
 import type { ColumnsType } from 'antd/es/table';
 import { Table, Image, DatePicker, Spin, Row, Col, Statistic, Card, Tag, Button, message, Tooltip} from 'antd';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthToken } from '../../hooks/auth';
 import { CheckOutlined, UndoOutlined, DeleteOutlined, LoadingOutlined } from '@ant-design/icons';
 import { formatDate } from '../../utils/helpers';
 const { RangePicker } = DatePicker;
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />
 
 const EmptiesLog: React.FC = () => {
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [messageApi, contextHolder] = message.useMessage();
     const queryClient = useQueryClient()
 
     const { data: receivedEmpties } = useQuery<ServerResponse<IEmptyLog[]>, Error>({
         queryKey: ['empties_received'],
-        queryFn: () => getEmptiesLog(authHeader()),
+        queryFn: () => getEmptiesLog(authToken),
      }
     );
 
     const { data: returnedEmpties } = useQuery<ServerResponse<IEmptyReturnedLog[]>, Error>({
         queryKey: ['empties_returned'],
-        queryFn: () => getEmptiesReturnedLog(authHeader()),
+        queryFn: () => getEmptiesReturnedLog(authToken),
         
         }
     );
 
     const { mutate, isLoading: isSubmitting } = useMutation({
-        mutationFn: (values: any) => toggleApprovePurchaseOrder(values.id, values.approved, authHeader()),
+        mutationFn: (values: any) => toggleApprovePurchaseOrder(values.id, values.approved, authToken),
         onSuccess: () => {
             queryClient.invalidateQueries()
             success("Purchase Order Modified Successfully")
@@ -39,7 +39,7 @@ const EmptiesLog: React.FC = () => {
     });
 
     const { mutate: deleteMutation } = useMutation({
-        mutationFn: (values: any) => deletePurchaseOrder(values.id, authHeader()),
+        mutationFn: (values: any) => deletePurchaseOrder(values.id, authToken),
         onSuccess: () => {
             queryClient.invalidateQueries()
             success("Purchase Order Deleted Successfully")

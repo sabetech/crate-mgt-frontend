@@ -1,15 +1,16 @@
 import { Timeline, TimelineItemProps, Col, Row, Statistic, Button, Modal, Form, Skeleton } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { useQuery } from "@tanstack/react-query";
-import { useAuthHeader, useAuthUser } from "react-auth-kit";
+import { useAuthToken } from '../../hooks/auth';
 import { getCustomerHistory } from '../../services/CustomersAPI';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { IHistoryItem } from '../../interfaces/Customer';
 import { formatDate } from '../../utils/helpers';
+import { useAuthUser } from '../../hooks/auth';
 
 const CustomerHistory = () => {
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const user = useAuthUser();
     const loggedInUser = user();
     const [customerItems, setCustomerHistory] = useState({}) as any
@@ -22,7 +23,7 @@ const CustomerHistory = () => {
     const { data: customerHistory, isLoading } = useQuery(
         {
             queryKey: ['customer_history', customerID],
-            queryFn: () => getCustomerHistory(customerID, authHeader())
+            queryFn: () => getCustomerHistory(customerID, authToken)
         }
     );
 
@@ -54,7 +55,7 @@ const CustomerHistory = () => {
         label: <>
                 <div>{formatDate(historyItem)}</div>
                 {
-                loggedInUser?.role === 'admin' &&
+                loggedInUser?.roles?.[0]?.name === 'admin' &&
                 <Button type="primary" shape="circle" icon={<EditOutlined />} onClick={() => handleEditHistory(historyItem)}/>
                 }
                 </>,

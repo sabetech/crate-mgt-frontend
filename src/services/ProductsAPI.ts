@@ -9,8 +9,8 @@ export const getProducts = async (token: string, option: {is_returnable: boolean
     return (await api.get('/products-all', {'Authorization': token})).data;
 }
 
-export const getProductsWithStockBalance = async (token: string): Promise<ServerResponse<IProductWithBalance[]>> => {
-    return (await api.get('/products/balance', {'Authorization': token})).data;
+export const getProductsWithStockBalance = async (token: string): Promise<IProductWithBalance[]> => {
+    return (await api.get('/products/balance', {'Authorization': token})).data.data;
 }
 
 export const addProduct = async (values: IProduct, token: string): Promise<ServerResponse<string>> => {

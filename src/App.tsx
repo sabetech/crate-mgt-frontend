@@ -1,18 +1,29 @@
 import React from 'react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import LayoutBase from './base/LayoutBase';
-import { useIsAuthenticated } from 'react-auth-kit';
+
+import UserProvider from './contexts/UserContext';
+
 import Login from './pages/users/Login';
 import { ConfigProvider } from 'antd';
 
+import { useIsAuthenticated } from './hooks/auth';
+
+
 // Create a client
 const queryClient = new QueryClient()
+// interface IUserData {
+//   name: string;
+//   uuid: string;
+//  };
 
+ 
 const App: React.FC = () => {
-  const isAuthenticated = useIsAuthenticated();
-  const auth = isAuthenticated
+  const isAuthenticated = useIsAuthenticated()
 
+ 
   return (
+    
     <ConfigProvider
     theme={{
       token: {
@@ -26,11 +37,14 @@ const App: React.FC = () => {
     }}
   >
     <QueryClientProvider client={queryClient}>
-     
-      { auth() ? <LayoutBase /> : <Login /> }
-     
+      <UserProvider>
+        {
+          isAuthenticated ? <LayoutBase /> : <Login />
+        }
+        
+      </UserProvider>
     </QueryClientProvider>
-    </ConfigProvider>
+  </ConfigProvider>
   );
 };
 

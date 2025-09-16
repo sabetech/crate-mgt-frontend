@@ -9,21 +9,21 @@ import { getEmptiesReturnedLog } from '../../services/EmptiesAPI';
 import type { ColumnsType } from 'antd/es/table';
 import { Card, Table } from 'antd';
 import { DatePicker, Row, Col, Statistic } from 'antd';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthToken } from '../../hooks/auth';
 
 const { RangePicker } = DatePicker;
 const ReturningEmptiesLog: React.FC = () => {
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
 
     //use react query to fetch data from server
     const { data: returnedEmpties } = useQuery<ServerResponse<IEmptyReturnedLog[]>, Error>(
         ['empties_returned'],
-        () => getEmptiesReturnedLog(authHeader())
+        () => getEmptiesReturnedLog(authToken)
     );
 
     const { data: receivedEmpties } = useQuery<ServerResponse<IEmptyLog[]>, Error>(
         ['empties_received'],
-        () => getEmptiesLog(authHeader())
+        () => getEmptiesLog(authToken)
     );
 
 

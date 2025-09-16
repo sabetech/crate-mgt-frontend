@@ -11,7 +11,7 @@ export const getCustomers = async (token: string, {customer_type}: {customer_typ
 
 export const getCustomersWithBalance = async (token: string, {customer_type}: {customer_type?: string} = {}): Promise<ServerResponse<ICustomer[]>> => {
     if (customer_type === 'all') {
-        return (await api.get('/customers?with-balance=true', {'Authorization': token})).data;
+        return (await api.get('/customers?with-balance=true', {'Authorization': `${token}`})).data;
     }
     return (await api.get(`/customers?with-balance=true&customer_type=${customer_type}`, {'Authorization': token})).data;
 }

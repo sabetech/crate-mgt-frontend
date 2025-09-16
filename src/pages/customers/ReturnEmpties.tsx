@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button, Form, Input, DatePicker, Select, message, Spin } from 'antd';
+import React, { useState } from 'react';
+import { Button, Form, Input, DatePicker, Select, message, Spin, AutoComplete } from 'antd';
 import {  Loading3QuartersOutlined } from '@ant-design/icons'
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { IProduct } from '../../interfaces/Product';
@@ -7,7 +7,7 @@ import { ServerResponse } from '../../interfaces/Server';
 import { addCustomerReturnEmpties, getCustomers } from '../../services/CustomersAPI';
 import { getProducts } from '../../services/ProductsAPI';
 import { useEffect } from 'react';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthToken } from '../../hooks/auth';
 import { ICustomerReturnEmpties, ICustomer } from '../../interfaces/Customer';
 import AddProductQuantityFields from '../../components/AddProductQuantityFields';
 
@@ -15,22 +15,23 @@ const { Option } = Select;
 const antIcon = <Loading3QuartersOutlined style={{ fontSize: 24, marginRight: 10 }} spin />;
 
 const CustomerReturnEmpties = () => {
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [form] = Form.useForm();
     const [messageApi, contextHolder ] = message.useMessage();
+    const [selectedCustomer, setSelectedCustomer] = useState<ICustomer>();
 
     const { data: productsData } = useQuery<ServerResponse<IProduct[]>, Error>(
         ['products'],
-        () => getProducts(authHeader(), {is_returnable: true})
+        () => getProducts(authToken, {is_returnable: true})
     );
 
     const { data: customers } = useQuery<ServerResponse<ICustomer[]>> (
         ['customers'],
-        () => getCustomers(authHeader(), {customer_type: 'all'})
+        () => getCustomers(authToken, {customer_type: 'all'})
     );
 
     const { isLoading: isSubmitting, mutate } = useMutation({
-        mutationFn: (values: ICustomerReturnEmpties) => addCustomerReturnEmpties(values, authHeader()),
+        mutationFn: (values: ICustomerReturnEmpties) => addCustomerReturnEmpties(values, authToken),
         onSuccess: (data) => {
             success(data.data || "")
             form.resetFields();
@@ -68,11 +69,11 @@ const CustomerReturnEmpties = () => {
         setTimeout(messageApi.destroy, 2500);
     }
 
-//     const filterOption = (input: string, option: { label: string; value: string }) =>
-//   (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
 
     const onFinish = (values: any) => {
         
+        console.log("check values::", values)
+
         if (typeof values['product-quantities'] === 'undefined' || values['product-quantities'].length === 0) {
             messageApi.open({
                 type: 'warning',
@@ -97,17 +98,17 @@ const CustomerReturnEmpties = () => {
             return;
         }
 
-        if (!values.transaction_type) {
+        if (selectedCustomer === undefined) {
             messageApi.open({
                 type: 'warning',
-                content: "Please select a transaction type."
+                content: "Please select a customer."
             });
             return;
         }
 
         let formValues: ICustomerReturnEmpties = {
             date: values.date.format('YYYY-MM-DD'),
-            customer: values.customer_name,
+            customer: selectedCustomer,
             quantity_transacted: values['product-quantities'].reduce((acc: number, item: any) => acc + parseInt(item.quantity), 0),
             products: values['product-quantities'].map((item: any) => ({
                 product_id: item.product, // product id
@@ -140,26 +141,28 @@ const CustomerReturnEmpties = () => {
                         
                         {/* Make the customers searchable... */}
                         <Form.Item label="Customer" name={"customer_name"} required>
-                            <Select 
-                                style={{ width: 400 }}
-                                showSearch
-                                placeholder="Select a Customer"
-                            >
-                                {
-                                    customerList && customerList.map((item) => (
-                                        <Option key={ item.key } value={ item.id }>
-                                            {item.name}(<em>{item.customer_type}</em>)
-                                        </Option>
-                                    ))
-                                }
-                            </Select>
+                            
+                            <AutoComplete 
+                                allowClear={true}
+                                bordered={false}
+                                onSelect={(_: string, option: ICustomer) => {
+                                    setSelectedCustomer(option)
+                                }}
+                                placeholder="Search for Customer"
+                                options={ customerList?.map(custmr => ({...custmr, value: `${custmr.name} (${custmr.customer_type.toUpperCase()})`})) }
+                                filterOption={(inputValue, option) =>
+                                    option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                    }
+                            />
+
+
                         </Form.Item>
                         
                         <Form.Item label="Number of PCs" name={"pcs_number"} style={{ width: 400 }}>
                             <Input />
                         </Form.Item>                                
 
-                        <Form.Item label="Transaction Type" name={"transaction_type"}>
+                        <Form.Item label="Transaction Type" name={"transaction_type"} hidden>
                             <Select style={{ width: 400 }}>
                                <Option value={"in"}>In</Option>
                                <Option value={"out"}>Out</Option>

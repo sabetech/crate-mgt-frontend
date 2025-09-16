@@ -1,14 +1,15 @@
 import React, {useState} from 'react';
 import { Button, message, Form, Input } from 'antd';
-import { useSignIn } from 'react-auth-kit'
+import { useSignIn } from '../../hooks/auth';
 import { signIn as login} from '../../services/AuthAPI';
-import { IUser } from '../../interfaces/User';
+import { useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 // import opk_img from '../../assets/opk_img.jpeg';
 // import opk_img2 from '../../assets/opk_img2.jpeg';
 // import opk_img3 from '../../assets/opk_img3.jpeg';
 import opk_img4 from '../../assets/opk_img4.jpeg';
 import opk_logo from '../../assets/opk_logo.png';
+import { TUser } from '../../types/user';
 
 
 
@@ -18,10 +19,11 @@ const onFinishFailed = (errorInfo: any) => {
 
 const Login: React.FC = () => {
     const signIn = useSignIn();
+    const navigate = useNavigate();
     const [messageApi, contextHolder] = message.useMessage();
     const [loading, setLoading] = useState(false);
 
-    const onFinish = async (values: IUser) => {
+    const onFinish = async (values: TUser) => {
         // : Promise<ServerResponse<IUser | Error>>
         console.log(values);
         try {
@@ -30,12 +32,13 @@ const Login: React.FC = () => {
             setLoading(false);
             showSuccess('Login successful');
             if (response.status === 201){
+                
                 signIn({
                     token: response.data.token,
-                    expiresIn: response.data.expires_at,
                     tokenType: response.data.token_type,
-                    authState: response.data.user,
+                    user: response.data.user
                 });
+                navigate('/dashboard');
             }
         } catch (error: AxiosError<any> | any) {
             if (error.response.status === 401) {

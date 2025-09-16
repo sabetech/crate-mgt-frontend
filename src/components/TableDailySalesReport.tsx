@@ -3,7 +3,7 @@ import { Table, Button, Space } from "antd";
 import { TSaleReport } from "../types/TSaleReport";
 import { ServerResponse } from '../interfaces/Server';
 import { getDailySalesReport } from '../services/SalesAPI';
-import { useAuthHeader } from 'react-auth-kit'
+import { useAuthToken } from "../hooks/auth";
 import { useEffect } from "react";
 import MyDocument from "../renderPDF/createPDF";
 
@@ -14,12 +14,12 @@ type SalesReportProps = {
 
 const TableDailySalesReport = ({customerOption, dateRange}: SalesReportProps) => {
 
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
 
     const { data: salesReport } = useQuery<ServerResponse<TSaleReport[]>, Error>(
         ['sales_report', dateRange, customerOption],
         () => {
-            return getDailySalesReport( authHeader(), dateRange, customerOption )
+            return getDailySalesReport( authToken, dateRange, customerOption )
         });
 
 

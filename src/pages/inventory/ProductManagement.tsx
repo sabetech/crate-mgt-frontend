@@ -4,14 +4,14 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getProductsWithStockBalance } from "../../services/ProductsAPI";
 import { addProduct, updateProduct } from "../../services/ProductsAPI";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthToken } from "../../hooks/auth";
 import { IProduct, IProductWithBalance } from "../../interfaces/Product";
 
 const { Search } = Input;
 
 const ProductManagement = () => {
 
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [messageApi, contextHolder ] = message.useMessage();
     const queryClient = useQueryClient()
     const [productsWithBalance, setProductWithBalance] = useState<IProductWithBalance[]>();
@@ -25,16 +25,16 @@ const ProductManagement = () => {
 
     const { data: products, isLoading } = useQuery(
             ['products_balances'],
-            () => getProductsWithStockBalance(authHeader())
+            () => getProductsWithStockBalance(authToken)
     );
 
     const { mutate, isLoading: isMutating } = useMutation({
         mutationFn: (values: IProduct) => {
                 if (productMutationState === ProductMutationState.create) 
-                    return addProduct(values, authHeader());
+                    return addProduct(values, authToken);
                 else
                 if (values.id != undefined)
-                    return updateProduct(values.id, values, authHeader()) 
+                    return updateProduct(values.id, values, authToken); 
                 else 
                 return new Promise((_, reject) => reject("Product ID is undefined"));
             },
@@ -55,7 +55,7 @@ const ProductManagement = () => {
 
     const onSearch = (searchTerm: string) => {
         if (searchTerm.length === 0) {
-            setProductWithBalance(products?.data.map((product) => ({...product, key: product.id})));
+            setProductWithBalance(products?.map((product) => ({...product, key: product.id})));
             return;
         }
 
@@ -103,7 +103,7 @@ const ProductManagement = () => {
     useEffect(() => {
 
         if (products) {
-            setProductWithBalance(products.data.map((product) => ({...product, key: product.id})));
+            setProductWithBalance(products.map((product) => ({...product, key: product.id})));
         }
 
     },[products]);

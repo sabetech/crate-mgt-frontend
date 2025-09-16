@@ -1,8 +1,8 @@
 import * as api from './API';
-import { IUser } from '../interfaces/User'
+import { TUser } from '../types/user';
 
 
-export const signIn = async ({email, password}: IUser) => {
+export const signIn = async ({email, password}: TUser) => {
     return (await api.post('/login', {email, password}, {}));
 }
 

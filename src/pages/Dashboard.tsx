@@ -4,7 +4,7 @@ import { Card, Col, Row, Statistic } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { getCustomersWithBalance } from '../services/CustomersAPI';
 import { getInHouseEmpties } from '../services/EmptiesAPI';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthToken } from '../hooks/auth';
 import { ServerResponse } from '../interfaces/Server';
 import { ICustomer } from '../interfaces/Customer';
 import { useEffect } from 'react';
@@ -13,13 +13,13 @@ import { IEmptiesInHouseCount } from '../interfaces/Empties';
 
 const Dashboard = () => {
     const navigate = useNavigate();
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [currentEmptiesOnGround, setCurrentEmtpiesOnGround] = useState<IEmptiesInHouseCount>();
     
     const { data:customers} = useQuery<ServerResponse<ICustomer[]>, Error>(
         {
             queryKey: ['customer_with_balance'],
-            queryFn: () => getCustomersWithBalance(authHeader(), {customer_type: 'all'})
+            queryFn: () => getCustomersWithBalance(authToken ?? "", {customer_type: 'all'})
         }
     );
 
@@ -28,7 +28,7 @@ const Dashboard = () => {
     const { data: totalEmpties } = useQuery(
         {
             queryKey: ['totalEmpties'],
-            queryFn: () => getInHouseEmpties(authHeader())
+            queryFn: () => getInHouseEmpties(authToken ?? "")
         }
     )
 
@@ -68,7 +68,25 @@ const Dashboard = () => {
         <Col >
             <Card title="Customers" bordered={false} style={{cursor: 'pointer'}} onClick={() => handleClick('customers')}>
             <Statistic
-                title="All Customers"
+                title=""
+                value={customers?.data?.length || 0}
+                valueStyle={{ color: '#3f8600' }}
+                />
+            </Card>
+        </Col>
+        <Col >
+            <Card title="Inventory" bordered={false} style={{cursor: 'pointer'}} onClick={() => handleClick('fulls')}>
+            <Statistic
+                title=""
+                value={customers?.data?.length || 0} //update this to show total fulls in inventory
+                valueStyle={{ color: '#3f8600' }}
+                />
+            </Card>
+        </Col>
+        <Col >
+            <Card title="Today Sold so far today" bordered={false} style={{cursor: 'pointer'}} onClick={() => handleClick('fulls')}>
+            <Statistic
+                title=""
                 value={customers?.data?.length || 0}
                 valueStyle={{ color: '#3f8600' }}
                 />

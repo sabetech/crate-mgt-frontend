@@ -3,8 +3,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, List, Skeleton, Modal, Form, Input, Select, message, Popconfirm, Avatar } from "antd";
 import { PlusOutlined, LockOutlined } from "@ant-design/icons";
 import { getUsers, addUser, deleteUser, editUser, getRoles } from "../../services/UsersAPI";
-import { useAuthHeader, useAuthUser } from "react-auth-kit";
-import { IUser, Role } from "../../interfaces/User";
+import { useAuthToken, useAuthUser } from "../../hooks/auth";
+// import { IUser, Role } from "../../interfaces/UserManager";
+import { TUser } from "../../types/user";
+import { Role } from "../../interfaces/UserManager";
+
 import { AppError } from "../../interfaces/Error";
 
 const ManageUsers = () => {
@@ -14,28 +17,28 @@ const ManageUsers = () => {
     const queryClient = useQueryClient()
     const user = useAuthUser()
     
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [open, setOpen] = useState<boolean | undefined>(false);
     const [messageApi, contextHolder] = message.useMessage();
 
     const {data: users, isLoading} = useQuery({
         queryKey: ['users'],
-        queryFn: () => getUsers(authHeader())
+        queryFn: () => getUsers(authToken)
     });
     console.log("USERS::", users);
 
     const {data: roles, isLoading: isLoadingRoles} = useQuery({
         queryKey: ['roles'],
-        queryFn: () => getRoles(authHeader())
+        queryFn: () => getRoles(authToken)
     });
     
     const { mutate, isLoading: isMutating } = useMutation(
         {
-            mutationFn: (values: IUser) => {
-                if (isAdding) return addUser(values, authHeader())
+            mutationFn: (values: TUser) => {
+                if (isAdding) return addUser(values, authToken)
                 else
                     if (currentUserId)
-                        return editUser(currentUserId, values, authHeader())
+                        return editUser(currentUserId, values, authToken)
                     else return new Promise((_, reject) => reject(new Error('User Id is not valid')))
             },
             onSuccess: () => {
@@ -57,7 +60,7 @@ const ManageUsers = () => {
 
     const { mutate: removeUser } = useMutation(
         {
-            mutationFn: (values: any) => deleteUser(values, authHeader()),
+            mutationFn: (values: any) => deleteUser(values, authToken),
             onSuccess: (data) => {
                 queryClient.invalidateQueries({queryKey: ['users']});
                 console.log(data);
@@ -83,8 +86,8 @@ const ManageUsers = () => {
                 name: form.getFieldValue('name'),
                 email: form.getFieldValue('email'),
                 password: form.getFieldValue('password'),
-                role: form.getFieldValue('role')
-            } as IUser;
+                roles: [form.getFieldValue('role')]
+            } as TUser;
 
             mutate(user);
 
@@ -118,7 +121,7 @@ const ManageUsers = () => {
                 form.setFieldsValue({
                     name: user.name,
                     email: user.email,
-                    role: user.role
+                    roles: user.roles
                 });
 
                 setIsAdding(false); //to tell the modal that we are editing
@@ -141,7 +144,7 @@ const ManageUsers = () => {
             </Button>
             <List 
                 dataSource={users?.data || []}
-                renderItem={(item: IUser, index) => (
+                renderItem={(item: TUser, index) => (
                     <List.Item
                         actions={[<Button type="primary" ghost onClick={() => onEdit(item.id)}> Edit</Button>, 
                         (user()?.email === item.email) ? null : (
@@ -166,16 +169,12 @@ const ManageUsers = () => {
                                 (typeof item.roles !== 'undefined' && 
                                 item?.roles?.length > 0) 
                                 ?
-                                ` (${item?.role?.toString()}): ${item?.email}`
+                                ` (${item?.roles[0]?.name?.toString()}): ${item?.email}`
                                 : null
                             
                             }</a>}
                             description={
-                                (typeof item.roles !== 'undefined' && 
-                                item?.roles?.length > 0 &&
-                                item?.roles[0]?.permissions?.length > 0) ?
-                                `Permissions: ${item.roles[0].permissions.map(permission => permission.name).join(', ')}`
-                                : null
+                                "[working on it] " + item?.email
                             }
                         />
                         </Skeleton>

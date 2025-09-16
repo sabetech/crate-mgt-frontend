@@ -4,10 +4,11 @@ import { getPendingOrders, approveInventoryOrder } from '../../services/Inventor
 import { IInventoryOrder } from '../../interfaces/Inventory'
 import { ServerResponse } from '../../interfaces/Server'
 import { AppError } from '../../interfaces/Error'
-import { useAuthHeader } from 'react-auth-kit'
+import { useAuthToken } from '../../hooks/auth'
 import { Modal, Table, Tag, Button, Typography, Input, Space, message } from "antd";
 import { useEffect } from 'react'
 import { SyncOutlined } from '@ant-design/icons'
+// import { auth } from '../../services/API'
 
 interface ITableInfo {
   product: string;
@@ -23,19 +24,19 @@ const PendingOrders = () => {
   const [ tableInfo, setTableInfo ] = useState<ITableInfo[]>([])
   const [messageApi, contextHolder] = message.useMessage();
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const authHeader = useAuthHeader();
+  const authToken = useAuthToken();
   const queryClient = useQueryClient()
 
   const { data, isLoading } = useQuery<ServerResponse<IInventoryOrder[]>, Error>(
     ['pending_orders'],
-    () => getPendingOrders(authHeader())
+    () => getPendingOrders(authToken),
   );
   
   const { mutate, isLoading: isSubmitting } = useMutation({
     mutationFn: (inventoryOrder: IInventoryOrder) => {
       setConfirmLoading(isSubmitting)
 
-      return approveInventoryOrder(authHeader(), inventoryOrder)
+      return approveInventoryOrder(authToken, inventoryOrder)
     },
     onSuccess: (data) => {
         queryClient.invalidateQueries();

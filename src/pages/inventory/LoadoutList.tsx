@@ -3,20 +3,20 @@ import { CreditCardOutlined } from '@ant-design/icons';
 import React, {useEffect, useState} from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getLoadoutByVSE } from '../../services/InventoryAPI';
-import { useAuthHeader } from 'react-auth-kit';
+import { useAuthToken } from '../../hooks/auth';
 import dayjs from 'dayjs';
 import { ILoadoutInfo } from '../../interfaces/Inventory';
 // import { IVSECustomer } from '../../interfaces/Customer';
 
 const LoadoutList: React.FC = () => {
-    const authHeader = useAuthHeader();
+    const authToken = useAuthToken();
     const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
     const queryClient = useQueryClient();
 
     const { data:vseCustomers, isLoading } = useQuery(
         {
             queryKey: ['loadouts', date],
-            queryFn: () => getLoadoutByVSE(authHeader(), date),
+            queryFn: () => getLoadoutByVSE(authToken, date),
             onError: (error: Error) => {
                 console.log(error);
             }
