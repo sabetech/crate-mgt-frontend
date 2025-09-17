@@ -9,6 +9,10 @@ export const getCustomers = async (token: string, {customer_type}: {customer_typ
     return (await api.get(`/customers?customer_type=${customer_type}`, {'Authorization': token})).data;
 }
 
+export const removeCustomer = async (id: number, token: string) => {
+    return (await api.deleteRequest(`/customers/${id}`, {'Authorization': token})).data;
+}
+
 export const getCustomersWithBalance = async (token: string, {customer_type}: {customer_type?: string} = {}): Promise<ServerResponse<ICustomer[]>> => {
     if (customer_type === 'all') {
         return (await api.get('/customers?with-balance=true', {'Authorization': `${token}`})).data;
